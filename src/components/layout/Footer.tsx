@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Code2, Globe, Mail, MapPin, Share2 } from 'lucide-react';
+import { Globe, Mail, MapPin, Share2 } from 'lucide-react';
 import { Container } from '../common/Container';
 import { EVENT_CONFIG } from '../../config/event';
 

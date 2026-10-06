@@ -6,6 +6,7 @@ interface CardProps {
   className?: string;
   onClick?: () => void;
   hoverable?: boolean;
+  style?: React.CSSProperties;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -13,6 +14,7 @@ export const Card: React.FC<CardProps> = ({
   className = '',
   onClick,
   hoverable = false,
+  style,
 }) => {
   const hoverClasses = hoverable
     ? 'hover:border-[var(--accent)] hover:shadow-lg cursor-pointer'
@@ -21,6 +23,7 @@ export const Card: React.FC<CardProps> = ({
   return (
     <motion.div
       onClick={onClick}
+      style={style}
       whileHover={hoverable ? { y: -4 } : undefined}
       transition={{ duration: 0.2, ease: 'easeOut' }}
       className={`bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl p-6 shadow-xs backdrop-blur-xs transition-all duration-200 ${hoverClasses} ${className}`}

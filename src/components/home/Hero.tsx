@@ -8,7 +8,6 @@ import { Badge } from '../common/Badge';
 import { useCountdown } from '../../hooks/useCountdown';
 import { DecryptText } from '../common/DecryptText';
 import { MOTION_EASE } from '../../lib/motion';
-import compute50Logo from '../../assets/logos/compute 50 logo.png';
 import psgLogo from '../../assets/logos/psg-logo.png';
 import cseaLogo from '../../assets/logos/csea-logo.png';
 import { EVENT_CONFIG } from '../../config/event';

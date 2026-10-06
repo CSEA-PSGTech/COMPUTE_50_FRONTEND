@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User as UserIcon, Code2, Sun, Moon, ArrowRight, LogIn, UserPlus } from 'lucide-react';
+import { Menu, X, User as UserIcon, Sun, Moon, ArrowRight, LogIn, UserPlus } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useSpring, useReducedMotion } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../hooks/useTheme';
