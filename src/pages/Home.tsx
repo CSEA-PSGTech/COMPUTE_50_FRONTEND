@@ -7,18 +7,35 @@ import { TracksSection } from '../components/home/TracksSection';
 import { SpeakersSection } from '../components/home/SpeakersSection';
 import { SponsorsSection } from '../components/home/SponsorsSection';
 import { EventsSection } from '../components/home/EventsSection';
+import { SectionTransition } from '../components/common/SectionTransition';
 
 export const Home: React.FC = () => {
   return (
-    <div className="w-full">
-      <Hero />
-      <PrizePool />
-      <AboutSection />
-      <ScheduleSection />
-      <TracksSection />
-      <SpeakersSection />
-      <SponsorsSection />
-      <EventsSection />
+    <div className="w-full overflow-hidden">
+      <SectionTransition>
+        <Hero />
+      </SectionTransition>
+      <SectionTransition>
+        <PrizePool />
+      </SectionTransition>
+      <SectionTransition>
+        <AboutSection />
+      </SectionTransition>
+      <SectionTransition>
+        <ScheduleSection />
+      </SectionTransition>
+      <SectionTransition>
+        <TracksSection />
+      </SectionTransition>
+      <SectionTransition>
+        <SpeakersSection />
+      </SectionTransition>
+      <SectionTransition>
+        <SponsorsSection />
+      </SectionTransition>
+      <SectionTransition>
+        <EventsSection />
+      </SectionTransition>
     </div>
   );
 };

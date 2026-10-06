@@ -47,12 +47,20 @@
 - **Counter-Clockwise Sponsor Rotation**: [`src/components/home/SponsorsSection.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/components/home/SponsorsSection.tsx)
   - Uses `useAnimation()` controls on a duplicated array of sponsor items.
   - Auto-slides items leftwards (`x: -step`) every 3000ms, rotating array head to tail on complete step. Pauses on hover, focus, tab-hide, or reduced motion.
-- **Scroll Reveal**: [`src/components/common/Reveal.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/components/common/Reveal.tsx) using `useInView`.
+### 4. Scroll Focus-Pull Section Transitions ([`src/components/common/SectionTransition.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/components/common/SectionTransition.tsx))
+- **Mechanism**: Scroll-linked motion wrapper using Framer Motion's `useScroll()` (`offset: ['start end', 'end start']`) and `useTransform()`.
+- **Target Parameters**:
+  - **Entering Phase** (`0.00` to `0.35` scroll progress):
+    - `opacity`: `0` → `1`
+    - `translateY`: `+48px` → `0px` (`+24px` → `0px` on mobile)
+    - `scale`: `0.97` → `1.0` (`1.0` on mobile)
+    - `filter blur`: `10px` → `0px` (`0px` on mobile)
+  - **Visible Phase** (`0.35` to `0.75` scroll progress):
+    - `opacity`: `1.0`, `translateY`: `0px`, `scale`: `1.0`, `filter blur`: `0px`
+  - **Leaving Phase** (`0.75` to `1.00` scroll progress):
+    - `opacity`: `1` → `0.25` (maintains visibility for tall sections)
+    - `translateY`: `0px` → `-24px` (`-12px` on mobile)
+    - `filter blur`: `0px` → `4px` (`0px` on mobile)
+- **Accessibility & Mobile Optimization**: Automatically disables scale/blur on mobile viewports (<768px) for 60fps performance and respects `prefers-reduced-motion`.
 
-### 2. Pure CSS Keyframes ([`src/index.css`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/index.css))
-- `orbFloat1`, `orbFloat2`: GPU-accelerated background accent orb floating animations (`animate-orb-1`, `animate-orb-2`).
-- `shimmer`: Linear gradient shimmer animation for skeleton loader states (`animate-shimmer`).
-
-### 3. Canvas Confetti (`canvas-confetti`)
-- Celebration confetti bursts in [`src/components/home/Hero.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/components/home/Hero.tsx).
 
