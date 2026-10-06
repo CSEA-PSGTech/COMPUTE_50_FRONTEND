@@ -1,5 +1,5 @@
-import React from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useLocation, useOutlet } from 'react-router-dom';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { Navbar } from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
@@ -7,11 +7,17 @@ import { BottomNav } from '../components/layout/BottomNav';
 import { BackToTop } from '../components/common/BackToTop';
 import { CursorGlow } from '../components/common/CursorGlow';
 import { AnnouncementPopup } from '../components/common/AnnouncementPopup';
-import { StickyMobileRegister } from '../components/layout/StickyMobileRegister';
 import { SectionDotNav } from '../components/common/SectionDotNav';
 
 import { ScrollToTop } from '../components/common/ScrollToTop';
 import { IntroLoader } from '../components/common/IntroLoader';
+
+// Preserves the route element corresponding to the motion.div key so that exiting pages keep rendering their own content during AnimatePresence exit animations
+const FrozenOutlet: React.FC = () => {
+  const outlet = useOutlet();
+  const [frozen] = useState(outlet);
+  return frozen;
+};
 
 export const MainLayout: React.FC = () => {
   const location = useLocation();
@@ -46,7 +52,7 @@ export const MainLayout: React.FC = () => {
             exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
             transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] }}
           >
-            <Outlet />
+            <FrozenOutlet />
           </motion.div>
         </AnimatePresence>
       </main>

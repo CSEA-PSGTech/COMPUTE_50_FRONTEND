@@ -13,8 +13,9 @@ const HOME_SECTIONS: SectionItem[] = [
   { id: 'about', label: 'About' },
   { id: 'schedule', label: 'Schedule' },
   { id: 'tracks', label: 'Tracks' },
+  { id: 'speakers', label: 'Speakers' },
   { id: 'sponsors', label: 'Sponsors' },
-  { id: 'faq', label: 'FAQ' },
+  { id: 'events', label: 'Events' },
   { id: 'contact', label: 'Contact' },
 ];
 
@@ -75,11 +76,10 @@ export const SectionDotNav: React.FC = () => {
             className="group relative flex items-center justify-center p-1.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] rounded-full cursor-pointer"
           >
             <span
-              className={`block rounded-full transition-all duration-300 ${
-                isActive
-                  ? 'w-3 h-3 bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]'
-                  : 'w-2 h-2 bg-[var(--text-secondary)]/40 hover:bg-[var(--text-secondary)] group-hover:scale-125'
-              }`}
+              className={`block rounded-full transition-all duration-300 ${isActive
+                ? 'w-3 h-3 bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]'
+                : 'w-2 h-2 bg-[var(--text-secondary)]/40 hover:bg-[var(--text-secondary)] group-hover:scale-125'
+                }`}
             />
             {/* Tooltip on hover */}
             <span className="absolute right-8 px-2.5 py-1 bg-[var(--bg-surface)] text-[var(--text-primary)] border border-[var(--border-color)] rounded-md text-[11px] font-mono font-semibold whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 shadow-md">
