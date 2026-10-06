@@ -1,20 +1,6 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useSpring, useReducedMotion } from 'framer-motion';
 import { Badge } from '../common/Badge';
-import {
-  Lightbulb,
-  Zap,
-  Users,
-  Code2,
-  CheckCircle2,
-  Cpu,
-  Brain,
-  Database,
-  Globe,
-  Shield,
-  Wifi,
-  Sparkles,
-} from 'lucide-react';
 
 export const EventTheme: React.FC = () => {
   const shouldReduceMotion = useReducedMotion();
@@ -35,24 +21,6 @@ export const EventTheme: React.FC = () => {
     { label: '1951 - PSG College of Technology established' },
     { label: '50 years of M.E. Computer Science and Engineering' },
     { label: '2026 - Compute 50' },
-  ];
-
-  const combinesChips = [
-    { label: 'Ideation', icon: Lightbulb },
-    { label: 'Rapid development', icon: Zap },
-    { label: 'Mentorship', icon: Users },
-    { label: 'Technical collaboration', icon: Code2 },
-    { label: 'Project evaluation', icon: CheckCircle2 },
-  ];
-
-  const domainChips = [
-    { label: 'Software engineering', icon: Cpu },
-    { label: 'Artificial intelligence', icon: Brain },
-    { label: 'Data science', icon: Database },
-    { label: 'Web and mobile technologies', icon: Globe },
-    { label: 'Cybersecurity', icon: Shield },
-    { label: 'IoT', icon: Wifi },
-    { label: 'Emerging technologies', icon: Sparkles },
   ];
 
   return (
@@ -137,51 +105,6 @@ export const EventTheme: React.FC = () => {
               </div>
             </div>
           ))}
-        </div>
-      </div>
-
-      {/* 3. Chip Rows (The event combines & Open to work in) */}
-      <div className="space-y-6 pt-2 max-w-4xl mx-auto">
-        {/* Row 1: The event combines */}
-        <div className="space-y-3">
-          <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--text-secondary)]">
-            The event combines
-          </h4>
-          <div className="flex flex-wrap gap-2.5">
-            {combinesChips.map((chip, idx) => {
-              const Icon = chip.icon;
-              return (
-                <div
-                  key={idx}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-xl text-xs font-semibold text-[var(--text-primary)] shadow-xs hover:border-[var(--accent)]/50 transition-colors"
-                >
-                  <Icon className="w-4 h-4 text-[var(--accent)] shrink-0" />
-                  <span>{chip.label}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Row 2: Open to work in */}
-        <div className="space-y-3">
-          <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--text-secondary)]">
-            Open to work in
-          </h4>
-          <div className="flex flex-wrap gap-2.5">
-            {domainChips.map((chip, idx) => {
-              const Icon = chip.icon;
-              return (
-                <div
-                  key={idx}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-xl text-xs font-semibold text-[var(--text-primary)] shadow-xs hover:border-[var(--accent)]/50 transition-colors"
-                >
-                  <Icon className="w-4 h-4 text-[var(--accent)] shrink-0" />
-                  <span>{chip.label}</span>
-                </div>
-              );
-            })}
-          </div>
         </div>
       </div>
     </div>

@@ -1,8 +1,6 @@
 import React from 'react';
 import { Hero } from '../components/home/Hero';
 import { PrizePool } from '../components/home/PrizePool';
-import { AboutSection } from '../components/home/AboutSection';
-import { ScheduleSection } from '../components/home/ScheduleSection';
 import { TracksSection } from '../components/home/TracksSection';
 import { SpeakersSection } from '../components/home/SpeakersSection';
 import { SponsorsSection } from '../components/home/SponsorsSection';
@@ -17,12 +15,6 @@ export const Home: React.FC = () => {
       </SectionTransition>
       <SectionTransition>
         <PrizePool />
-      </SectionTransition>
-      <SectionTransition>
-        <AboutSection />
-      </SectionTransition>
-      <SectionTransition>
-        <ScheduleSection />
       </SectionTransition>
       <SectionTransition>
         <TracksSection />

@@ -52,16 +52,6 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
     [isMobile ? 1 : 0.97, 1, 1, 1]
   );
 
-  const rawBlur = useTransform(
-    scrollYProgress,
-    [0, 0.35, 0.75, 1.0],
-    [isMobile ? 0 : 10, 0, 0, isMobile ? 0 : 4]
-  );
-
-  const filter = useTransform(rawBlur, (b) =>
-    !isMobile && b > 0.1 ? `blur(${b.toFixed(1)}px)` : 'none'
-  );
-
   if (shouldReduceMotion || disabled) {
     return <div className={className}>{children}</div>;
   }
@@ -73,7 +63,6 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
           opacity,
           y,
           scale,
-          filter,
         }}
         className={className}
       >

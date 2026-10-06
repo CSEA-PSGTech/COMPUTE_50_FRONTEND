@@ -63,4 +63,11 @@
     - `filter blur`: `0px` → `4px` (`0px` on mobile)
 - **Accessibility & Mobile Optimization**: Automatically disables scale/blur on mobile viewports (<768px) for 60fps performance and respects `prefers-reduced-motion`.
 
+### 5. Prize Pool Redesign ([`src/components/home/PrizePool.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/components/home/PrizePool.tsx))
+- **Hero Display Number**: Huge display figure (`text-5xl sm:text-7xl lg:text-8xl`) with white-to-lime gradient text, soft radial glow, and odometer count-up on scroll entry.
+- **3D Podium**: 3-column podium on desktop (**2nd, 1st, 3rd** order) with spring-ease grow-up bars (`scaleY: 0` → `1`) staggered by 0.1s. 1st place pillar is tallest with dedicated accent glow.
+- **Rotating Border Beam**: Hardware-accelerated CSS conic gradient rotation (`.animate-border-beam`) around the inner backdrop-blurred container card.
+- **Interactive Cursor Spotlight**: Real-time cursor-following radial light beam on desktop (`onMouseMove`), auto-fading on touch.
+- **Accessible Prize Details Modal** ([`src/components/home/PrizeDetailsModal.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/components/home/PrizeDetailsModal.tsx)): Focus-trapped, backdrop-closable, `Escape`-listening modal providing in-page breakdown and rules without page redirect.
+
 

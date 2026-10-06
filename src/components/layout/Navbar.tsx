@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, User as UserIcon, Sun, Moon, ArrowRight, LogIn, UserPlus } from 'lucide-react';
-import { motion, AnimatePresence, useScroll, useSpring, useReducedMotion } from 'framer-motion';
+import { Menu, X, User as UserIcon, ArrowRight, LogIn, UserPlus, Volume2, VolumeX } from 'lucide-react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
-import { useTheme } from '../../hooks/useTheme';
+import { isMuted, setMuted, tone } from '../../lib/sound';
 import { Container } from '../common/Container';
 import { Button } from '../common/Button';
 import { EVENT_CONFIG } from '../../config/event';
@@ -16,16 +16,16 @@ export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const { isAuthenticated, user } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const shouldReduceMotion = useReducedMotion();
+  const [muted, setMutedState] = useState<boolean>(isMuted());
 
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 400,
-    damping: 40,
-    restDelta: 0.001,
-  });
+  const handleToggleSound = () => {
+    const next = !muted;
+    setMuted(next);
+    setMutedState(next);
+    if (!next) tone(600, 0.08, 0.045);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -68,12 +68,6 @@ export const Navbar: React.FC = () => {
         : 'bg-[var(--bg-main)]/80 backdrop-blur-xs border-b border-[var(--border-color)]/60'
         }`}
     >
-      {/* Scroll Progress Bar */}
-      <motion.div
-        className="absolute top-0 left-0 right-0 h-[2.5px] bg-[var(--accent)] origin-left z-50"
-        style={{ scaleX }}
-      />
-
       <Container size="lg">
         <div className="flex items-center justify-between h-16 sm:h-20 gap-2">
           {/* Top Left: Compute 50 Logo & Brand */}
@@ -82,8 +76,8 @@ export const Navbar: React.FC = () => {
             className="flex items-center gap-2.5 sm:gap-3 group focus:outline-none focus:ring-2 focus:ring-[var(--accent)] rounded-xl p-1 shrink-0"
             aria-label="Compute 50 Homepage"
           >
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white border border-[var(--accent)]/50 p-1 flex items-center justify-center group-hover:scale-105 transition-transform overflow-hidden shadow-md">
-              <img src={compute50Logo} alt="Compute 50" className="w-full h-full object-contain" />
+            <div className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center transition-transform duration-200 group-hover:scale-110 cursor-pointer">
+              <img src={compute50Logo} alt="Compute 50" className="w-full h-full object-contain transition-transform duration-200" />
             </div>
             <div>
               <span className="font-black text-lg sm:text-xl text-[var(--text-primary)] tracking-tight block font-mono leading-none">
@@ -124,44 +118,41 @@ export const Navbar: React.FC = () => {
           {/* Top Right: Institutional Logos & Actions */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Top Right Institutional Logos Row */}
-            <div className="flex items-center gap-3 px-3.5 py-1.5 bg-white border border-slate-200 rounded-xl shadow-md">
+            <div className="flex items-center gap-3 px-2 py-1">
               <img
                 src={psgLogo}
                 alt="PSG Tech"
-                className="h-6 sm:h-7 w-auto object-contain"
+                className="h-9 sm:h-10 w-auto object-contain transition-transform duration-200 hover:scale-110 cursor-pointer filter drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]"
                 title="PSG College of Technology"
               />
-              <div className="h-4 w-[1px] bg-slate-300" />
+              <div className="h-5 w-[1px] bg-[var(--border-color)]" />
               <img
                 src={cseaLogo}
                 alt="CSEA"
-                className="h-6 sm:h-7 w-auto object-contain"
+                className="h-9 sm:h-10 w-auto object-contain transition-transform duration-200 hover:scale-110 cursor-pointer filter drop-shadow-[0_0_8px_rgba(34,197,94,0.25)]"
                 title="Computer Science & Engineering Association"
               />
-              <div className="h-4 w-[1px] bg-slate-300 hidden sm:block" />
+              <div className="h-5 w-[1px] bg-[var(--border-color)] hidden sm:block" />
               <img
                 src={psg100Logo}
                 alt="PSG 100 Years"
-                className="h-6 sm:h-7 w-auto object-contain hidden sm:block"
+                className="h-9 sm:h-10 w-auto object-contain hidden sm:block transition-transform duration-200 hover:scale-110 cursor-pointer filter drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]"
                 title="PSG Centenary"
               />
             </div>
 
             {/* Desktop Theme Switch & Auth Buttons */}
             <div className="hidden md:flex items-center gap-2">
+
+
               <button
-                onClick={toggleTheme}
+                onClick={handleToggleSound}
+                data-nosound=""
                 className="min-h-[40px] min-w-[40px] p-2 rounded-full border border-[var(--border-color)] bg-[var(--bg-surface)] text-[var(--text-primary)] hover:border-[var(--accent)] transition-all cursor-pointer flex items-center justify-center"
-                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+                aria-label={muted ? 'Unmute sound effects' : 'Mute sound effects'}
+                title={muted ? 'Unmute sound effects' : 'Mute sound effects'}
               >
-                <motion.div
-                  key={theme}
-                  initial={{ scale: 0.6, rotate: -90, opacity: 0 }}
-                  animate={{ scale: 1, rotate: 0, opacity: 1 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {theme === 'dark' ? <Sun className="w-4 h-4 text-[var(--accent)]" /> : <Moon className="w-4 h-4 text-[var(--text-primary)]" />}
-                </motion.div>
+                {muted ? <VolumeX className="w-4 h-4 text-slate-400" /> : <Volume2 className="w-4 h-4 text-[var(--accent)]" />}
               </button>
 
               {isAuthenticated ? (
@@ -182,7 +173,11 @@ export const Navbar: React.FC = () => {
                     </Button>
                   </Link>
                   <Link to="/register">
-                    <Button variant={isActive('/register') ? 'primary' : 'outline'} size="sm">
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="bg-[var(--accent)] text-slate-950 hover:bg-emerald-400 font-extrabold shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_22px_rgba(34,197,94,0.6)] transition-all transform hover:scale-105"
+                    >
                       Register
                     </Button>
                   </Link>
@@ -192,12 +187,15 @@ export const Navbar: React.FC = () => {
 
             {/* Mobile Actions: Theme Switch & Drawer Toggle */}
             <div className="flex md:hidden items-center gap-1.5">
+
+
               <button
-                onClick={toggleTheme}
+                onClick={handleToggleSound}
+                data-nosound=""
                 className="p-2 rounded-xl border border-[var(--border-color)] text-[var(--text-primary)] bg-[var(--bg-surface)] cursor-pointer flex items-center justify-center"
-                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+                aria-label={muted ? 'Unmute sound effects' : 'Mute sound effects'}
               >
-                {theme === 'dark' ? <Sun className="w-4 h-4 text-[var(--accent)]" /> : <Moon className="w-4 h-4 text-[var(--text-primary)]" />}
+                {muted ? <VolumeX className="w-4 h-4 text-slate-400" /> : <Volume2 className="w-4 h-4 text-[var(--accent)]" />}
               </button>
 
               <button

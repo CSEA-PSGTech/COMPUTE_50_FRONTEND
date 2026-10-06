@@ -10,6 +10,7 @@ import { DecryptText } from '../common/DecryptText';
 import { MOTION_EASE } from '../../lib/motion';
 import psgLogo from '../../assets/logos/psg-logo.png';
 import cseaLogo from '../../assets/logos/csea-logo.png';
+import compute50HeroEmblem from '../../assets/logos/compute-50-hero-emblem.png';
 import { EVENT_CONFIG } from '../../config/event';
 import { home } from '../../data/content';
 
@@ -22,20 +23,20 @@ const InstitutionLogo: React.FC<{ name: string; shortName: string; logoSrc: stri
 
   if (hasError) {
     return (
-      <div className="flex items-center gap-2 px-3 py-1.5 bg-white text-slate-900 border border-slate-200 rounded-lg font-mono text-xs font-semibold shadow-xs">
-        <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
+      <div className="flex items-center gap-2.5 px-3.5 py-2 text-[var(--text-primary)] font-mono text-sm font-bold transition-transform duration-200 hover:scale-105 cursor-pointer">
+        <span className="w-2.5 h-2.5 rounded-full bg-[var(--accent)]" />
         <span>{shortName}</span>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center gap-2.5 px-3 py-1.5 bg-white text-slate-900 border border-slate-200 rounded-xl font-mono text-xs font-semibold shadow-sm">
+    <div className="flex items-center gap-3 px-4 py-2 bg-white/10 hover:bg-white/15 rounded-xl border border-white/15 text-[var(--text-primary)] font-mono text-sm sm:text-base font-bold transition-all duration-200 hover:scale-105 cursor-pointer shadow-md">
       <img
         src={logoSrc}
         alt={name}
         onError={() => setHasError(true)}
-        className="h-6 w-auto object-contain"
+        className="h-10 sm:h-12 w-auto object-contain transition-transform duration-200 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.25)]"
       />
       <span>{shortName}</span>
     </div>
@@ -70,24 +71,6 @@ export const Hero: React.FC = () => {
     },
   };
 
-  const sloganLimitlessVariants = {
-    hidden: shouldReduceMotion
-      ? { opacity: 1 }
-      : { opacity: 0, y: 12, filter: 'blur(6px)' },
-    visible: shouldReduceMotion
-      ? { opacity: 1 }
-      : {
-        opacity: 1,
-        y: 0,
-        filter: 'blur(0px)',
-        transition: {
-          duration: 0.65,
-          ease: MOTION_EASE,
-          delay: 0.25,
-        },
-      },
-  };
-
   return (
     <section id="hero" className="relative py-20 md:py-28 overflow-hidden border-b border-[var(--border-color)] bg-transparent transition-colors">
       <Container size="lg">
@@ -97,6 +80,15 @@ export const Hero: React.FC = () => {
           animate="visible"
           className="flex flex-col items-center text-center space-y-6 max-w-4xl mx-auto"
         >
+          {/* 0. Top Emblem Logo */}
+          <motion.div variants={itemVariants} className="flex items-center justify-center pt-1 pb-1">
+            <img
+              src={compute50HeroEmblem}
+              alt="Compute 50 Emblem"
+              className="w-40 sm:w-56 md:w-64 lg:w-72 h-auto object-contain filter drop-shadow-[0_0_20px_rgba(34,197,94,0.2)] transition-transform duration-300 hover:scale-105 select-none"
+            />
+          </motion.div>
+
           {/* 1. Top Badges (Order: 1) */}
           <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center gap-2">
             <Badge variant="primary" className="px-3 py-1">
@@ -134,12 +126,9 @@ export const Hero: React.FC = () => {
               <span className="inline-block whitespace-nowrap">From</span>{' '}
               <span className="inline-block whitespace-nowrap">Legacy</span>{' '}
               <span className="inline-block whitespace-nowrap">to</span>{' '}
-              <motion.span
-                variants={sloganLimitlessVariants}
-                className="inline-block whitespace-nowrap text-[var(--accent)] font-bold"
-              >
+              <span className="inline-block whitespace-nowrap text-[var(--accent)] font-bold">
                 Limitless
-              </motion.span>
+              </span>
             </span>
           </motion.p>
 
@@ -209,7 +198,13 @@ export const Hero: React.FC = () => {
           {/* 7. Action Buttons (Order: 7) */}
           <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center gap-4 pt-2">
             <Link to="/register">
-              <Button size="lg" variant="primary" leftIcon={<UserPlus className="w-5 h-5" />} rightIcon={<ArrowRight className="w-5 h-5" />}>
+              <Button
+                size="lg"
+                variant="primary"
+                className="bg-[var(--accent)] text-slate-950 hover:bg-emerald-400 font-extrabold shadow-[0_0_20px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(34,197,94,0.6)] transition-all"
+                leftIcon={<UserPlus className="w-5 h-5 text-slate-950" />}
+                rightIcon={<ArrowRight className="w-5 h-5 text-slate-950" />}
+              >
                 Register Now
               </Button>
             </Link>
