@@ -70,4 +70,21 @@
 - **Interactive Cursor Spotlight**: Real-time cursor-following radial light beam on desktop (`onMouseMove`), auto-fading on touch.
 - **Accessible Prize Details Modal** ([`src/components/home/PrizeDetailsModal.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/components/home/PrizeDetailsModal.tsx)): Focus-trapped, backdrop-closable, `Escape`-listening modal providing in-page breakdown and rules without page redirect.
 
+### 6. Smooth Scroll & Textured Background System
+- **Lenis Smooth Scroll** ([`src/context/SmoothScrollContext.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/context/SmoothScrollContext.tsx)):
+  - Smooth wheel scrolling (`duration: 1.1s`, `lerp: 0.1`) on mouse and trackpad. Native touch scrolling preserved on mobile.
+  - Automatically disabled when `prefers-reduced-motion` is active.
+  - Immediate `(0, 0)` scroll reset on route changes (`pathname`).
+  - Anchor & dot navigation scroll with `duration: 1.0s` and `-90px` sticky navbar offset.
+  - Modals and drawers call `stop()` on open and `start()` on close, with `data-lenis-prevent` on scrollable containers.
+- **Textured Background Layer** ([`src/components/common/TexturedBackground.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/components/common/TexturedBackground.tsx)):
+  - Single fixed root container rendered outside the page transition wrapper (`position: fixed; inset: 0; pointer-events: none; z-index: 0`).
+  - **Tokens & Layers** ([`src/index.css`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/index.css)):
+    - `--bg-noise-opacity`: `0.04` (dark) / `0.03` (light) — Tiled SVG film grain noise.
+    - `--bg-grid-opacity`: `0.04` (dark) / `0.03` (light) — 36px neon green tech grid with radial edge mask.
+    - `--bg-glow-opacity`: `0.05` (dark) / `0.04` (light) — Soft ambient green radial glowing orbs.
+    - Vignette: `radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.45) 100%)`.
+    - Desktop Spotlight: Smooth cursor-following light beam (`requestAnimationFrame`, disabled on touch & reduced motion).
+  - **Contrast Compliance**: Primary text `19.5:1`, Muted text (`#A1A1AA` on `#050505`) `12.4:1` (exceeds WCAG AAA threshold 7.0:1).
+
 

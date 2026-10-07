@@ -12,6 +12,9 @@
     --accent-hover: #4D7C0F;
     --accent-text: #FFFFFF;
     --accent-muted: rgba(101, 163, 13, 0.12);
+    --bg-noise-opacity: 0.03;
+    --bg-grid-opacity: 0.03;
+    --bg-glow-opacity: 0.04;
   }
 
   .dark {
@@ -25,6 +28,9 @@
     --accent-hover: #C8FF33;
     --accent-text: #050505;
     --accent-muted: rgba(182, 255, 0, 0.12);
+    --bg-noise-opacity: 0.04;
+    --bg-grid-opacity: 0.04;
+    --bg-glow-opacity: 0.05;
   }
 
   body {

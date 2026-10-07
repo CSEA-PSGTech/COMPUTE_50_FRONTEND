@@ -9,8 +9,11 @@ import { CursorGlow } from '../components/common/CursorGlow';
 import { AnnouncementPopup } from '../components/common/AnnouncementPopup';
 import { SectionDotNav } from '../components/common/SectionDotNav';
 
+import { ScrollProgressBar } from '../components/common/ScrollProgressBar';
 import { ScrollToTop } from '../components/common/ScrollToTop';
 import { IntroLoader } from '../components/common/IntroLoader';
+import { SoundEffects } from '../components/common/SoundEffects';
+import { TexturedBackground } from '../components/common/TexturedBackground';
 
 // Preserves the route element corresponding to the motion.div key so that exiting pages keep rendering their own content during AnimatePresence exit animations
 const FrozenOutlet: React.FC = () => {
@@ -25,6 +28,9 @@ export const MainLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--bg-main)] text-[var(--text-primary)] transition-colors pb-[140px] md:pb-0 relative overflow-x-hidden">
+      <TexturedBackground />
+      <SoundEffects />
+      <ScrollProgressBar />
       <IntroLoader />
       <ScrollToTop />
       {/* Skip to Main Content Link for Keyboard Accessibility */}
@@ -32,10 +38,6 @@ export const MainLayout: React.FC = () => {
         Skip to main content
       </a>
 
-      {/* Subtle Noise / Grain Overlay (3% opacity) */}
-      <div className="fixed inset-0 pointer-events-none z-0 bg-grain" aria-hidden="true" />
-
-      {/* Ambient GPU Floating Accent Orbs */}
       <AnnouncementPopup />
       <CursorGlow />
       <Navbar />

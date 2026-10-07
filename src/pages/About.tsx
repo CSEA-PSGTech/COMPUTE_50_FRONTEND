@@ -5,7 +5,6 @@ import { AboutPsgTech } from '../components/about/AboutPsgTech';
 import { AboutCsea } from '../components/about/AboutCsea';
 import { AboutCompute50 } from '../components/about/AboutCompute50';
 import { EventTheme } from '../components/about/EventTheme';
-import { AffiliatedClubs } from '../components/about/AffiliatedClubs';
 import { AboutStickyNav } from '../components/about/AboutStickyNav';
 import { PhotoStrip } from '../components/about/PhotoStrip';
 
@@ -56,11 +55,6 @@ export const About: React.FC = () => {
               <AboutCsea />
             </section>
           </div>
-
-          {/* Section 05: Affiliated Clubs */}
-          <section id="clubs" className="relative transition-colors pt-4">
-            <AffiliatedClubs />
-          </section>
         </div>
       </Container>
     </div>
