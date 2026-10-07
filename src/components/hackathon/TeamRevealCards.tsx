@@ -439,14 +439,15 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
               onMouseLeave={() => handleMouseLeave(member.id)}
               aria-label={`${member.slotTitle}: ${isFilled ? member.name : 'Tap to reveal'}`}
               aria-expanded={activeCardId === member.id}
+              style={{ transformStyle: 'preserve-3d' }}
               animate={
                 isSpinning && !shouldReduceMotion
-                  ? { rotateY: [0, 810], scale: [1, 1.05, 1], z: [0, 40, 0] }
+                  ? { rotateY: [0, 360, 720], scale: [1, 1.08, 1], z: [0, 50, 0] }
                   : { rotateX: tilt.x, rotateY: tilt.y, scale: 1 }
               }
               transition={
                 isSpinning
-                  ? { duration: 0.95, ease: [0.34, 1.4, 0.64, 1] }
+                  ? { duration: 1.1, ease: [0.25, 1, 0.5, 1] }
                   : { type: 'spring', stiffness: 300, damping: 20 }
               }
               whileHover={{ y: -6, scale: 1.02 }}
