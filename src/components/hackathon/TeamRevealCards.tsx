@@ -1,16 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useReducedMotion, AnimatePresence } from 'framer-motion';
-import { User, HelpCircle, CheckCircle2, Crown, Trash2, Edit3, X, Sparkles, AlertCircle } from 'lucide-react';
+import { User, Crown, Trash2, Edit3, X, Sparkles, AlertCircle, ShieldCheck, Zap } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { User as AuthUser } from '../../types/auth';
+import { soundTap, soundReveal, soundSave, soundTeamComplete } from '../../lib/sound';
 
 export interface MemberData {
   id: string;
+  slotNumber: string;
   slotTitle: string;
   name: string;
   rollNumber: string;
   phone: string;
   email: string;
+  college: string;
+  department: string;
   isRequired: boolean;
   isRevealed: boolean;
   hasSpunOnce: boolean;
@@ -31,48 +35,63 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
 }) => {
   const shouldReduceMotion = useReducedMotion();
 
+  // Team Name state
+  const [teamName, setTeamName] = useState<string>('CyberPunks 50');
+
   // Initial 4 Team Member Slots
   const [members, setMembers] = useState<MemberData[]>([
     {
       id: 'leader-1',
-      slotTitle: 'Team Leader',
-      name: currentUser?.name || '',
-      rollNumber: currentUser?.rollNumber || '',
-      phone: currentUser?.phone || '',
-      email: currentUser?.email || '',
+      slotNumber: '01',
+      slotTitle: 'TEAM LEADER',
+      name: currentUser?.name || 'Alex Rivera',
+      rollNumber: currentUser?.rollNumber || '21MX101',
+      phone: currentUser?.phone || '9876543210',
+      email: currentUser?.email || 'alex.rivera@psgtech.ac.in',
+      college: currentUser?.college || 'PSG College of Technology',
+      department: currentUser?.department || 'CSE',
       isRequired: true,
-      isRevealed: true, // Pre-revealed for Leader
+      isRevealed: true, // Pre-revealed Leader
       hasSpunOnce: true,
     },
     {
       id: 'member-2',
-      slotTitle: 'Member 2',
+      slotNumber: '02',
+      slotTitle: 'MEMBER 2',
       name: '',
       rollNumber: '',
       phone: '',
       email: '',
+      college: 'PSG College of Technology',
+      department: 'CSE',
       isRequired: true,
       isRevealed: false,
       hasSpunOnce: false,
     },
     {
       id: 'member-3',
-      slotTitle: 'Member 3',
+      slotNumber: '03',
+      slotTitle: 'MEMBER 3',
       name: '',
       rollNumber: '',
       phone: '',
       email: '',
+      college: 'PSG College of Technology',
+      department: 'CSE',
       isRequired: false,
       isRevealed: false,
       hasSpunOnce: false,
     },
     {
       id: 'member-4',
-      slotTitle: 'Member 4',
+      slotNumber: '04',
+      slotTitle: 'MEMBER 4',
       name: '',
       rollNumber: '',
       phone: '',
       email: '',
+      college: 'PSG College of Technology',
+      department: 'CSE',
       isRequired: false,
       isRevealed: false,
       hasSpunOnce: false,
@@ -82,6 +101,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
   // Card Animation & Edit Panel State
   const [spinningCardId, setSpinningCardId] = useState<string | null>(null);
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
+  const [cardTilts, setCardTilts] = useState<Record<string, { x: number; y: number }>>({});
 
   // Edit Form State
   const [formData, setFormData] = useState<{
@@ -89,7 +109,8 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
     rollNumber: string;
     phone: string;
     email: string;
-  }>({ name: '', rollNumber: '', phone: '', email: '' });
+    college: string;
+  }>({ name: '', rollNumber: '', phone: '', email: '', college: 'PSG College of Technology' });
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
@@ -98,7 +119,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
   const panelRef = useRef<HTMLDivElement>(null);
   const firstInputRef = useRef<HTMLInputElement>(null);
 
-  // Synchronize leader info when currentUser prop becomes available
+  // Sync current user profile
   useEffect(() => {
     if (currentUser) {
       setMembers((prev) =>
@@ -110,6 +131,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
                 phone: m.phone || currentUser.phone || '',
                 email: m.email || currentUser.email || '',
                 rollNumber: m.rollNumber || currentUser.rollNumber || '',
+                college: m.college || currentUser.college || 'PSG College of Technology',
               }
             : m
         )
@@ -117,7 +139,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
     }
   }, [currentUser]);
 
-  // Validate overall team state (Cards 1 and 2 required)
+  // Check card validity
   const isCardValid = (m: MemberData): boolean => {
     if (!m.isRevealed) return !m.isRequired;
     return (
@@ -137,7 +159,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
     }
   }, [members, requiredCardsValid, onTeamDataChange]);
 
-  // Particle Burst on First Reveal
+  // Particle Burst helper (<20 particles, <700ms)
   const triggerParticleBurst = (cardElement?: HTMLElement | null) => {
     if (shouldReduceMotion) return;
 
@@ -151,39 +173,56 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
     }
 
     confetti({
-      particleCount: 18,
-      spread: 60,
-      startVelocity: 18,
-      ticks: 50,
+      particleCount: 16,
+      spread: 50,
+      startVelocity: 16,
+      ticks: 45,
       gravity: 0.9,
-      colors: ['#B6FF00', '#C8FF33', '#22c55e', '#4ade80'],
+      colors: ['#B6FF00', '#C8FF33', '#22c55e', '#ffffff'],
       origin,
     });
   };
 
-  // Handle Card Click (Spin & Reveal Modal)
+  // Subtle 3D Desktop Card Tilt
+  const handleMouseMove = (id: string, e: React.MouseEvent<HTMLButtonElement>) => {
+    if (shouldReduceMotion) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    setCardTilts((prev) => ({
+      ...prev,
+      [id]: { x: -(y / rect.height) * 10, y: (x / rect.width) * 10 },
+    }));
+  };
+
+  const handleMouseLeave = (id: string) => {
+    setCardTilts((prev) => ({ ...prev, [id]: { x: 0, y: 0 } }));
+  };
+
+  // Handle Card Click / Reveal
   const handleCardClick = (member: MemberData) => {
+    soundTap();
     const isFirstTime = !member.hasSpunOnce;
 
-    // Prefill edit form
     setFormData({
       name: member.name,
       rollNumber: member.rollNumber,
       phone: member.phone,
       email: member.email,
+      college: member.college || 'PSG College of Technology',
     });
     setFormErrors({});
 
     if (isFirstTime && !shouldReduceMotion) {
+      soundReveal();
       setSpinningCardId(member.id);
       setTimeout(() => {
         setSpinningCardId(null);
         setActiveCardId(member.id);
-        // Mark as spun
         setMembers((prev) =>
           prev.map((m) => (m.id === member.id ? { ...m, hasSpunOnce: true } : m))
         );
-      }, 1100);
+      }, 950);
     } else {
       setActiveCardId(member.id);
     }
@@ -198,7 +237,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
     }
   };
 
-  // Panel Keyboard Events (Esc to close, Tab focus trap)
+  // Dialog Accessibility (Esc key & Focus trap)
   useEffect(() => {
     if (!activeCardId) return;
 
@@ -216,28 +255,23 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
         const firstElement = focusableElements[0];
         const lastElement = focusableElements[focusableElements.length - 1];
 
-        if (e.shiftKey) {
-          if (document.activeElement === firstElement) {
-            e.preventDefault();
-            lastElement.focus();
-          }
-        } else {
-          if (document.activeElement === lastElement) {
-            e.preventDefault();
-            firstElement.focus();
-          }
+        if (e.shiftKey && document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        } else if (!e.shiftKey && document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    // Auto focus first input
     setTimeout(() => firstInputRef.current?.focus(), 100);
 
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeCardId]);
 
-  // Form Field Validation
+  // Validate Member Inputs & Duplicate Checks
   const validateFieldValues = () => {
     const errors: Record<string, string> = {};
 
@@ -256,17 +290,17 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
       errors.email = 'Enter a valid email address';
     }
 
-    // Duplicate Checks across team
+    // Duplicate detection across team
     members.forEach((m) => {
       if (m.id !== activeCardId && m.isRevealed) {
         if (formData.email.trim() && m.email.trim().toLowerCase() === formData.email.trim().toLowerCase()) {
-          errors.email = 'This email is already added for another team member';
+          errors.email = 'This email is already registered for another member';
         }
         if (formData.rollNumber.trim() && m.rollNumber.trim().toLowerCase() === formData.rollNumber.trim().toLowerCase()) {
-          errors.rollNumber = 'This roll number is already added for another team member';
+          errors.rollNumber = 'This roll number is already registered for another member';
         }
         if (formData.phone.trim() && m.phone.replace(/\D/g, '') === formData.phone.replace(/\D/g, '')) {
-          errors.phone = 'This mobile number is already added for another team member';
+          errors.phone = 'This mobile number is already registered for another member';
         }
       }
     });
@@ -275,32 +309,39 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
     return Object.keys(errors).length === 0;
   };
 
-  // Save Member Info
+  // Save Member
   const handleSaveMember = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateFieldValues() || !activeCardId) return;
 
+    soundSave();
     const currentMember = members.find((m) => m.id === activeCardId);
     const wasNewlyRevealed = currentMember && !currentMember.isRevealed;
 
-    setMembers((prev) =>
-      prev.map((m) =>
-        m.id === activeCardId
-          ? {
-              ...m,
-              name: formData.name.trim(),
-              rollNumber: formData.rollNumber.trim().toUpperCase(),
-              phone: formData.phone.trim(),
-              email: formData.email.trim(),
-              isRevealed: true,
-              hasSpunOnce: true,
-            }
-          : m
-      )
+    const updatedMembers = members.map((m) =>
+      m.id === activeCardId
+        ? {
+            ...m,
+            name: formData.name.trim(),
+            rollNumber: formData.rollNumber.trim().toUpperCase(),
+            phone: formData.phone.trim(),
+            email: formData.email.trim(),
+            college: formData.college.trim(),
+            isRevealed: true,
+            hasSpunOnce: true,
+          }
+        : m
     );
+
+    setMembers(updatedMembers);
 
     if (wasNewlyRevealed) {
       triggerParticleBurst(cardRefs.current[activeCardId]);
+    }
+
+    const newFilledCount = updatedMembers.filter((m) => m.isRevealed && isCardValid(m)).length;
+    if (newFilledCount === 4) {
+      soundTeamComplete();
     }
 
     closePanel();
@@ -308,6 +349,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
 
   // Remove Optional Member
   const handleRemoveMember = (id: string) => {
+    soundTap();
     setMembers((prev) =>
       prev.map((m) =>
         m.id === id
@@ -325,53 +367,67 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
     closePanel();
   };
 
-  // Initials Helper
-  const getInitials = (name: string) => {
-    if (!name) return '?';
-    const parts = name.trim().split(' ');
-    if (parts.length >= 2) {
-      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    }
-    return parts[0].slice(0, 2).toUpperCase();
-  };
-
   return (
-    <div className="space-y-6">
-      {/* Header & Progress Indicator */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--border-color)] pb-4">
-        <div>
-          <h3 className="text-lg font-bold text-[var(--text-primary)] font-mono flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[var(--accent)]" />
-            Team Member Reveal
-          </h3>
-          <p className="text-xs text-[var(--text-secondary)]">
-            Tap cards to reveal and enter participant details. Leader & Member 2 required.
-          </p>
+    <div className="space-y-8 text-center select-none">
+      {/* 1. CORE EXPERIENCE HEADER */}
+      <div className="space-y-3 max-w-xl mx-auto">
+        <span className="text-[11px] font-mono font-bold tracking-[0.25em] text-[var(--accent)] uppercase flex items-center justify-center gap-2">
+          <Zap className="w-3.5 h-3.5 text-[var(--accent)] animate-pulse" />
+          HACKATHON TEAM FORMATION
+        </span>
+
+        <h2 className="text-3xl sm:text-4xl font-black font-mono text-[var(--text-primary)] tracking-tight uppercase">
+          ASSEMBLE YOUR TEAM
+        </h2>
+
+        {/* Team Name Input */}
+        <div className="flex justify-center items-center">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl font-mono text-xs sm:text-sm text-[var(--text-primary)] font-bold">
+            <span className="text-[var(--text-secondary)]">TEAM:</span>
+            <input
+              type="text"
+              value={teamName}
+              onChange={(e) => setTeamName(e.target.value)}
+              className="bg-transparent text-[var(--accent)] font-bold focus:outline-none w-36 sm:w-48 text-center"
+              placeholder="Enter Team Name"
+            />
+          </div>
         </div>
 
-        {/* Ready Badge */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl text-xs font-mono">
-          <span className="text-[var(--text-secondary)]">Status:</span>
-          <span
-            className={`font-bold ${
-              requiredCardsValid ? 'text-[var(--accent)]' : 'text-amber-400'
-            }`}
-          >
-            {filledCount} / 4 Members Ready
+        {/* Progress Dots Indicator */}
+        <div className="flex items-center justify-center gap-3 pt-2">
+          <div className="flex items-center gap-1.5">
+            {members.map((m) => {
+              const isFilled = m.isRevealed && isCardValid(m);
+              return (
+                <span
+                  key={m.id}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    isFilled
+                      ? 'bg-[var(--accent)] shadow-[0_0_10px_rgba(182,255,0,0.6)] scale-110'
+                      : 'bg-[var(--border-color)]'
+                  }`}
+                  title={`${m.slotTitle}: ${isFilled ? 'Ready' : 'Pending'}`}
+                />
+              );
+            })}
+          </div>
+          <span className="font-mono text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider">
+            {filledCount.toString().padStart(2, '0')} / 04 MEMBERS READY
           </span>
-          {requiredCardsValid && <CheckCircle2 className="w-4 h-4 text-[var(--accent)]" />}
         </div>
       </div>
 
-      {/* 4 Cards Grid (Desktop 4-in-a-row, Mobile 2x2 grid) */}
+      {/* 2. MEMBER CARDS GRID (Desktop 4-in-a-row, Mobile 2x2) */}
       <div
-        className="grid grid-cols-2 lg:grid-cols-4 gap-4"
-        style={{ perspective: '1000px' }}
+        className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pt-2"
+        style={{ perspective: '1200px' }}
       >
         {members.map((member, index) => {
           const isLeader = index === 0;
           const isSpinning = spinningCardId === member.id;
           const isFilled = member.isRevealed && isCardValid(member);
+          const tilt = cardTilts[member.id] || { x: 0, y: 0 };
 
           return (
             <motion.button
@@ -379,96 +435,129 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
               ref={(el) => { cardRefs.current[member.id] = el; }}
               type="button"
               onClick={() => handleCardClick(member)}
+              onMouseMove={(e) => handleMouseMove(member.id, e)}
+              onMouseLeave={() => handleMouseLeave(member.id)}
               aria-label={`${member.slotTitle}: ${isFilled ? member.name : 'Tap to reveal'}`}
               aria-expanded={activeCardId === member.id}
               animate={
                 isSpinning && !shouldReduceMotion
-                  ? { rotateY: [0, 720] }
-                  : { rotateY: 0 }
+                  ? { rotateY: [0, 810], scale: [1, 1.05, 1], z: [0, 40, 0] }
+                  : { rotateX: tilt.x, rotateY: tilt.y, scale: 1 }
               }
               transition={
                 isSpinning
-                  ? { duration: 1.1, ease: [0.34, 1.56, 0.64, 1] }
-                  : { duration: 0.3 }
+                  ? { duration: 0.95, ease: [0.34, 1.4, 0.64, 1] }
+                  : { type: 'spring', stiffness: 300, damping: 20 }
               }
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`relative h-44 sm:h-52 rounded-2xl p-4 flex flex-col justify-between items-center text-center cursor-pointer transition-all duration-300 select-none overflow-hidden outline-none focus:ring-2 focus:ring-[var(--accent)] ${
-                isLeader
-                  ? 'bg-gradient-to-b from-[var(--accent)]/15 via-[var(--bg-surface)] to-[var(--bg-secondary)] border-2 border-[var(--accent)] shadow-[0_0_20px_rgba(182,255,0,0.25)]'
-                  : isFilled
-                  ? 'bg-[var(--bg-surface)] border border-[var(--accent)]/50 shadow-md'
-                  : 'bg-[var(--bg-secondary)]/80 border border-dashed border-[var(--border-color)] hover:border-[var(--accent)]/60'
+              whileHover={{ y: -6, scale: 1.02 }}
+              whileTap={{ scale: 0.96 }}
+              className={`relative aspect-[3/4.3] w-full rounded-2xl p-4 sm:p-5 flex flex-col justify-between text-left cursor-pointer transition-all duration-300 outline-none focus:ring-2 focus:ring-[var(--accent)] overflow-hidden ${
+                isFilled
+                  ? 'bg-gradient-to-b from-[var(--bg-surface)] via-[var(--bg-secondary)] to-[var(--bg-main)] border-2 border-[var(--accent)] shadow-[0_0_20px_rgba(182,255,0,0.25)]'
+                  : 'bg-gradient-to-b from-zinc-900/90 via-black to-zinc-950 border border-dashed border-[var(--border-color)] hover:border-[var(--accent)]/70 shadow-lg'
               }`}
             >
-              {/* Leader Ribbon Badge */}
-              {isLeader && (
-                <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 bg-[var(--accent)] text-slate-950 font-mono text-[10px] font-black rounded-md shadow-xs">
-                  <Crown className="w-3 h-3 text-slate-950" />
-                  <span>LEADER</span>
-                </div>
-              )}
+              {/* Outer Decorative Tech Brackets */}
+              <div className="absolute top-2 left-2 w-2 h-2 border-t-2 border-l-2 border-[var(--accent)]/50 pointer-events-none" />
+              <div className="absolute top-2 right-2 w-2 h-2 border-t-2 border-r-2 border-[var(--accent)]/50 pointer-events-none" />
+              <div className="absolute bottom-2 left-2 w-2 h-2 border-b-2 border-l-2 border-[var(--accent)]/50 pointer-events-none" />
+              <div className="absolute bottom-2 right-2 w-2 h-2 border-b-2 border-r-2 border-[var(--accent)]/50 pointer-events-none" />
 
-              {/* Required / Optional Tag */}
-              {!isLeader && (
-                <span className="absolute top-2 right-2 text-[10px] font-mono text-[var(--text-secondary)] bg-[var(--bg-surface)] px-2 py-0.5 rounded-md border border-[var(--border-color)]">
-                  {member.isRequired ? 'Required' : 'Optional'}
-                </span>
-              )}
+              {/* UNREVEALED STATE */}
+              {!isFilled ? (
+                <div className="h-full flex flex-col justify-between items-center text-center py-2 relative z-10">
+                  {/* Top Slot Header */}
+                  <div className="w-full flex items-center justify-between font-mono text-[10px] text-[var(--text-secondary)] tracking-widest border-b border-[var(--border-color)]/50 pb-2">
+                    <span className="text-[var(--accent)] font-extrabold">{member.slotNumber}</span>
+                    <span>{member.isRequired ? 'REQUIRED' : 'OPTIONAL'}</span>
+                  </div>
 
-              {/* Center Content */}
-              <div className="my-auto space-y-2 flex flex-col items-center">
-                {isFilled ? (
-                  <>
-                    {/* Avatar Initials */}
-                    <div className="w-12 h-12 rounded-full bg-[var(--accent)]/20 border border-[var(--accent)] flex items-center justify-center font-mono font-bold text-[var(--accent)] text-base shadow-inner">
-                      {getInitials(member.name)}
+                  {/* Central Futuristic Tech Emblem */}
+                  <div className="my-auto space-y-3 flex flex-col items-center">
+                    <div className="relative w-16 h-16 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center group-hover:border-[var(--accent)] transition-all">
+                      {/* Technical Circuit Pattern Background */}
+                      <svg className="absolute inset-0 w-full h-full opacity-20 text-[var(--accent)]" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
+                        <path d="M10 10 h80 v80 h-80 z M30 30 h40 v40 h-40 z" />
+                      </svg>
+                      <Sparkles className="w-7 h-7 text-[var(--accent)] animate-pulse" />
                     </div>
-                    <div className="space-y-0.5 max-w-[130px]">
-                      <h4 className="text-xs sm:text-sm font-bold text-[var(--text-primary)] truncate">
+
+                    <div className="space-y-0.5">
+                      <span className="block font-mono text-xs font-black text-[var(--text-primary)] tracking-wider uppercase">
+                        {member.slotTitle}
+                      </span>
+                      <span className="text-[10px] font-mono text-[var(--text-secondary)] block">
+                        COMPUTE 50 MEMBER
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Bottom Reveal Prompt */}
+                  <div className="w-full pt-2 border-t border-[var(--border-color)]/50">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--accent-muted)] border border-[var(--accent)]/40 rounded-full text-[10px] font-mono font-bold text-[var(--accent)] tracking-wider uppercase shadow-xs">
+                      <Sparkles className="w-3 h-3 text-[var(--accent)]" /> TAP TO REVEAL
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                /* REVEALED / COMPLETED COLLECTIBLE CARD STATE */
+                <div className="h-full flex flex-col justify-between py-1 relative z-10">
+                  {/* Top Header */}
+                  <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-2 font-mono text-[10px]">
+                    <span className="font-bold text-[var(--accent)] flex items-center gap-1">
+                      <ShieldCheck className="w-3.5 h-3.5 text-[var(--accent)]" />
+                      {isLeader ? '✓ LEADER' : `✓ ${member.slotTitle}`}
+                    </span>
+                    <span className="text-[var(--text-secondary)] font-bold">{member.slotNumber}</span>
+                  </div>
+
+                  {/* Member Card Information Body */}
+                  <div className="my-auto space-y-3">
+                    <div>
+                      <h4 className="font-mono text-sm sm:text-base font-black text-[var(--text-primary)] tracking-tight uppercase leading-tight truncate">
                         {member.name}
                       </h4>
-                      <p className="text-[11px] font-mono text-[var(--accent)] truncate">
-                        {member.rollNumber}
+                      <p className="text-[10px] font-mono font-bold text-[var(--accent)] tracking-wider uppercase pt-0.5 truncate">
+                        CSE • PSG TECH
                       </p>
                     </div>
-                  </>
-                ) : (
-                  <>
-                    {/* Unrevealed Face-Down State */}
-                    <div className="w-12 h-12 rounded-full bg-[var(--bg-surface)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-secondary)]">
-                      <HelpCircle className="w-6 h-6 animate-pulse text-[var(--text-secondary)]" />
-                    </div>
-                    <span className="text-xs font-mono font-bold text-[var(--text-secondary)] uppercase tracking-wider block">
-                      {member.slotTitle}
-                    </span>
-                  </>
-                )}
-              </div>
 
-              {/* Bottom State Label */}
-              <div className="w-full pt-1 border-t border-[var(--border-color)]/60 flex items-center justify-between text-[11px] font-mono">
-                {isFilled ? (
-                  <>
-                    <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> Ready
+                    <div className="space-y-1.5 font-mono text-[11px] bg-[var(--bg-secondary)]/80 p-2.5 rounded-xl border border-[var(--border-color)]/80">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[var(--text-secondary)] text-[10px]">ROLL NO</span>
+                        <span className="font-bold text-[var(--text-primary)]">{member.rollNumber}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[var(--text-secondary)] text-[10px]">MOBILE</span>
+                        <span className="font-bold text-[var(--text-primary)]">{member.phone}</span>
+                      </div>
+                      <div className="flex items-center justify-between truncate">
+                        <span className="text-[var(--text-secondary)] text-[10px]">EMAIL</span>
+                        <span className="font-bold text-[var(--text-primary)] truncate max-w-[100px]" title={member.email}>
+                          {member.email}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bottom Ready Badge & Edit Trigger */}
+                  <div className="pt-2 border-t border-[var(--border-color)] flex items-center justify-between font-mono text-[10px]">
+                    <span className="text-[var(--accent)] font-extrabold flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" />
+                      MEMBER READY
                     </span>
-                    <span className="text-[var(--text-secondary)] flex items-center gap-0.5 group-hover:text-[var(--text-primary)]">
-                      Edit <Edit3 className="w-3 h-3 ml-0.5" />
+                    <span className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-bold flex items-center gap-0.5">
+                      EDIT <Edit3 className="w-3 h-3 ml-0.5 text-[var(--accent)]" />
                     </span>
-                  </>
-                ) : (
-                  <span className="w-full text-center text-[var(--accent)] font-semibold flex items-center justify-center gap-1">
-                    <Sparkles className="w-3 h-3" /> Tap to reveal
-                  </span>
-                )}
-              </div>
+                  </div>
+                </div>
+              )}
             </motion.button>
           );
         })}
       </div>
 
-      {/* Edit Panel Modal / Mobile Bottom Sheet */}
+      {/* 5. EXPANDED MEMBER EDIT DIALOG / MOBILE BOTTOM SHEET */}
       <AnimatePresence>
         {activeCardId && (
           <div
@@ -493,14 +582,14 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
               }
               transition={{ duration: 0.25, ease: 'easeOut' }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-sm:max-h-[90vh] max-sm:overflow-y-auto sm:max-w-md bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl space-y-5 relative"
+              className="w-full max-sm:max-h-[90vh] max-sm:overflow-y-auto sm:max-w-md bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl space-y-5 relative text-left"
             >
               {/* Header */}
               <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3">
                 <div className="flex items-center gap-2">
                   <User className="w-5 h-5 text-[var(--accent)]" />
                   <h3 id="member-modal-title" className="text-base sm:text-lg font-bold font-mono text-[var(--text-primary)]">
-                    {members.find((m) => m.id === activeCardId)?.slotTitle} Details
+                    Configure {members.find((m) => m.id === activeCardId)?.slotTitle}
                   </h3>
                 </div>
                 <button
@@ -514,7 +603,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
               </div>
 
               {/* Form Body */}
-              <form onSubmit={handleSaveMember} className="space-y-4 text-left">
+              <form onSubmit={handleSaveMember} className="space-y-4">
                 {/* Full Name */}
                 <div className="space-y-1">
                   <label htmlFor="member-name" className="block text-xs font-mono font-bold text-[var(--text-primary)]">
@@ -529,7 +618,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
                     autoComplete="name"
                     value={formData.name}
                     onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition-all"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition-all font-mono"
                   />
                   {formErrors.name && (
                     <p className="text-xs text-red-400 flex items-center gap-1 pt-0.5">
@@ -541,13 +630,13 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
                 {/* Roll Number */}
                 <div className="space-y-1">
                   <label htmlFor="member-roll" className="block text-xs font-mono font-bold text-[var(--text-primary)]">
-                    Roll Number / Student ID <span className="text-red-400">*</span>
+                    Roll Number <span className="text-red-400">*</span>
                   </label>
                   <input
                     id="member-roll"
                     type="text"
                     name="rollNumber"
-                    placeholder="e.g. 21MX104"
+                    placeholder="e.g. 21MX101"
                     value={formData.rollNumber}
                     onChange={(e) => setFormData((prev) => ({ ...prev, rollNumber: e.target.value.toUpperCase() }))}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm font-mono text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition-all uppercase"
@@ -595,7 +684,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
                     autoComplete="email"
                     value={formData.email}
                     onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition-all"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm font-mono text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition-all"
                   />
                   {formErrors.email && (
                     <p className="text-xs text-red-400 flex items-center gap-1 pt-0.5">
@@ -604,9 +693,8 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
                   )}
                 </div>
 
-                {/* Form Buttons */}
+                {/* Buttons */}
                 <div className="pt-3 flex flex-wrap items-center justify-between gap-3">
-                  {/* Remove button for optional member */}
                   {activeCardId !== 'leader-1' && members.find((m) => m.id === activeCardId)?.isRevealed ? (
                     <button
                       type="button"
@@ -639,8 +727,8 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Lock in Team CTA Section */}
-      <div className="pt-2 text-center space-y-3">
+      {/* Lock in Team Submission CTA */}
+      <div className="pt-4 text-center space-y-3">
         {onSubmitTeam && (
           <button
             type="button"
@@ -656,14 +744,14 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
               <span>Submitting Team Registration...</span>
             ) : (
               <>
-                <Sparkles className="w-4 h-4" />
-                <span>Lock in Team & Submit Registration</span>
+                <Crown className="w-4 h-4 text-slate-950" />
+                <span>LOCK IN TEAM & SUBMIT REGISTRATION</span>
               </>
             )}
           </button>
         )}
 
-        <p className="text-[11px] text-[var(--text-secondary)]">
+        <p className="text-[11px] text-[var(--text-secondary)] font-mono">
           Details are used strictly for hackathon coordination & campus check-in.
         </p>
       </div>

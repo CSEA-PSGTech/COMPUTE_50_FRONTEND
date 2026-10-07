@@ -54,3 +54,24 @@ export const tone = (freq: number, duration: number, gain = 0.04, glideTo?: numb
     /* ignore audio errors */
   }
 };
+
+export const soundTap = (): void => {
+  unlockAudio();
+  tone(520, 0.06, 0.03, 780);
+};
+
+export const soundReveal = (): void => {
+  unlockAudio();
+  tone(220, 0.3, 0.05, 880);
+};
+
+export const soundSave = (): void => {
+  unlockAudio();
+  tone(587, 0.12, 0.05, 1174);
+};
+
+export const soundTeamComplete = (): void => {
+  unlockAudio();
+  tone(440, 0.25, 0.06, 880);
+  setTimeout(() => tone(659, 0.35, 0.06, 1318), 120);
+};
