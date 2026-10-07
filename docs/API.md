@@ -13,5 +13,6 @@ Success: `{ "data": {}, "error": null }`
 Error: `{ "data": null, "error": { "code": "INVALID_REQUEST", "message": "..." } }`
 Status codes: 400 validation, 401 unauthenticated, 403 forbidden, 404 not found, 429 rate limit, 500 server.
 ## Endpoints
-### METHOD /path
-Auth: | Request: | Validation: | Response:
+### POST /api/hackathon/register
+Auth: Bearer JWT Token | Request: `RegisterData` (with `teamMembers: Array<TeamMember>`) | Validation: 2-4 members, required rollNumber, phone, valid email | Response: `{ "user": User, "token": string }`
+

@@ -8,6 +8,8 @@ export interface TeamMember {
   id: string;
   name: string;
   email: string;
+  phone?: string;
+  rollNumber?: string;
   role: 'Leader' | 'Member';
   college: string;
 }

@@ -33,7 +33,7 @@
   - Overview, Prize Breakdown, Tracks, Problem Statements, Rules & Guidelines, Schedule, Important Info
 - **Authentication & User Profile**:
   - `/login`: [`src/pages/Login.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/pages/Login.tsx)
-  - `/register`: [`src/pages/Register.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/pages/Register.tsx)
+  - `/register`: [`src/pages/Register.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/pages/Register.tsx) — Features 4 interactive Clash Royale style team reveal cards (`TeamRevealCards.tsx`) with 3D Y-axis flip transforms, particle bursts, focus-trapped edit dialogs / mobile bottom sheets, per-member roll number/phone validation, duplicate detection, and progress indicator (`x / 4 Members Ready`).
   - `/profile`: [`src/pages/Profile.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/pages/Profile.tsx)
 - **Error Page (`*`)**: [`src/pages/NotFound.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/pages/NotFound.tsx)
 

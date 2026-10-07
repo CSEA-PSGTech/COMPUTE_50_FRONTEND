@@ -6,6 +6,7 @@ export interface User {
   college: string;
   department: string;
   year: string;
+  rollNumber?: string;
   teamId?: string;
   role?: 'user' | 'leader' | 'admin';
 }
@@ -22,7 +23,16 @@ export interface RegisterData {
   college: string;
   department: string;
   year: string;
+  rollNumber?: string;
   password?: string;
+  teamMembers?: Array<{
+    name: string;
+    rollNumber: string;
+    email: string;
+    phone: string;
+    college: string;
+    role: 'Leader' | 'Member';
+  }>;
 }
 
 export interface AuthResponse {

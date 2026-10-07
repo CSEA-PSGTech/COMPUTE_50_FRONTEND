@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowRight, Sparkles, Trophy, Medal, Award } from 'lucide-react';
+import { ArrowRight, Sparkles, Trophy } from 'lucide-react';
 import { Container } from '../common/Container';
 import { CountUp } from '../common/CountUp';
 import { prizeData } from '../../data/prizes';
@@ -23,17 +24,6 @@ export const PrizePool: React.FC = () => {
       y: e.clientY - rect.top,
     });
   };
-
-  // Reorder items for Desktop Podium: [2nd Place, 1st Place, 3rd Place]
-  const secondPlace = prizeData.items.find((i) => i.rank.includes('2nd'));
-  const firstPlace = prizeData.items.find((i) => i.rank.includes('1st'));
-  const thirdPlace = prizeData.items.find((i) => i.rank.includes('3rd'));
-
-  const podiumItems = [
-    { item: secondPlace, heightClass: 'h-36 sm:h-44', delay: 0.1, color: 'border-emerald-500/30' },
-    { item: firstPlace, heightClass: 'h-48 sm:h-56', delay: 0.0, isFirst: true, color: 'border-[var(--accent)] shadow-[0_0_25px_rgba(34,197,94,0.25)]' },
-    { item: thirdPlace, heightClass: 'h-28 sm:h-36', delay: 0.2, color: 'border-emerald-500/20' },
-  ];
 
   return (
     <section
@@ -111,7 +101,7 @@ export const PrizePool: React.FC = () => {
                 <div className="pt-2">
                   <button
                     onClick={() => setIsModalOpen(true)}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[var(--bg-secondary)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-xs sm:text-sm font-mono font-bold text-[var(--text-primary)] hover:text-[var(--accent)] rounded-xl transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[var(--bg-secondary)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-xs sm:text-sm font-mono font-bold text-[var(--text-primary)] hover:text-[var(--accent)] rounded-xl transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] cursor-pointer"
                   >
                     <span>View full prize details</span>
                     <ArrowRight className="w-4 h-4 text-[var(--accent)]" />
@@ -119,118 +109,42 @@ export const PrizePool: React.FC = () => {
                 </div>
               </div>
 
-              {/* RIGHT COLUMN: Desktop 3D Podium / Mobile Stacked List */}
-              <div className="lg:col-span-6 w-full">
-                
-                {/* DESKTOP PODIUM (2nd, 1st, 3rd Order) */}
-                <div className="hidden sm:flex items-end justify-center gap-4 h-64 sm:h-72 pb-2">
-                  {podiumItems.map(({ item, heightClass, delay, isFirst, color }, index) => {
-                    if (!item) return null;
-                    return (
-                      <div key={item.id || index} className="flex flex-col items-center flex-1 max-w-[150px]">
-                        
-                        {/* Amount Header Label */}
-                        <motion.div
-                          initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.4, delay: delay + 0.2 }}
-                          className="text-center mb-2"
-                        >
-                          <span className={`block font-mono text-sm sm:text-base font-black ${isFirst ? 'text-[var(--accent)]' : 'text-[var(--text-primary)]'}`}>
-                            {item.amountFormatted}
-                          </span>
-                          <span className="text-[10px] font-mono font-bold text-[var(--text-secondary)] uppercase block">
-                            {item.title}
-                          </span>
-                        </motion.div>
+              {/* RIGHT COLUMN: Interactive Register CTA Card */}
+              <div className="lg:col-span-6 w-full flex flex-col justify-center items-center lg:items-end">
+                <motion.div
+                  initial={shouldReduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="w-full max-w-md p-6 sm:p-8 rounded-2xl bg-gradient-to-b from-[var(--bg-secondary)]/90 to-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)]/60 shadow-xl transition-all group relative overflow-hidden text-center lg:text-left flex flex-col items-center lg:items-start space-y-5"
+                >
+                  {/* Subtle Inner Glow */}
+                  <div className="absolute -right-12 -top-12 w-40 h-40 bg-[var(--accent)]/15 rounded-full blur-2xl pointer-events-none group-hover:bg-[var(--accent)]/25 transition-all duration-500" />
 
-                        {/* Growing Podium Pillar */}
-                        <motion.div
-                          initial={shouldReduceMotion ? { scaleY: 1, opacity: 1 } : { scaleY: 0, opacity: 0 }}
-                          whileInView={{ scaleY: 1, opacity: 1 }}
-                          viewport={{ once: true }}
-                          transition={{
-                            type: 'spring',
-                            stiffness: 180,
-                            damping: 20,
-                            delay: delay,
-                          }}
-                          style={{ originY: 1 }}
-                          className={`w-full ${heightClass} rounded-t-2xl bg-gradient-to-t ${
-                            isFirst
-                              ? 'from-[var(--accent)]/30 via-[var(--accent)]/15 to-[var(--accent)]/40'
-                              : 'from-white/10 via-white/5 to-white/10'
-                          } border-t-2 border-x ${color} p-3 flex flex-col justify-between items-center relative overflow-hidden`}
-                        >
-                          {/* Inner Accent Glow for 1st Place */}
-                          {isFirst && (
-                            <div className="absolute inset-0 bg-gradient-to-b from-[var(--accent)]/20 to-transparent pointer-events-none" />
-                          )}
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--accent-muted)] border border-[var(--accent)]/30 rounded-full text-xs font-mono font-bold text-[var(--accent)]">
+                    <Trophy className="w-3.5 h-3.5 animate-pulse text-[var(--accent)]" />
+                    <span>NATIONAL INNOVATION CHALLENGE</span>
+                  </div>
 
-                          <div className="pt-2 z-10">
-                            {isFirst ? (
-                              <Trophy className="w-8 h-8 text-[var(--accent)] filter drop-shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
-                            ) : item.rank.includes('2nd') ? (
-                              <Medal className="w-7 h-7 text-emerald-300" />
-                            ) : (
-                              <Award className="w-6 h-6 text-emerald-400" />
-                            )}
-                          </div>
+                  <div className="space-y-1.5">
+                    <h3 className="text-xl sm:text-2xl font-bold font-mono text-[var(--text-primary)] tracking-tight">
+                      Ready to Win Big?
+                    </h3>
+                    <p className="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+                      Compete alongside top talent across the nation. Register your team of 2–4 members and turn your engineering vision into reality.
+                    </p>
+                  </div>
 
-                          <span className="font-mono text-xs font-black tracking-wider text-[var(--text-primary)] uppercase z-10 pb-1">
-                            {item.rank}
-                          </span>
-                        </motion.div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* MOBILE STACKED LIST (1st, 2nd, 3rd Order) */}
-                <div className="sm:hidden space-y-3">
-                  {prizeData.items.map((item) => (
-                    <div
-                      key={item.id}
-                      className={`p-3.5 rounded-xl border flex items-center justify-between gap-3 ${
-                        item.isGrandWinner
-                          ? 'bg-[var(--accent)]/10 border-[var(--accent)]/50 shadow-[0_0_12px_rgba(34,197,94,0.15)]'
-                          : 'bg-[var(--bg-secondary)] border-[var(--border-color)]'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        {item.isGrandWinner ? (
-                          <Trophy className="w-6 h-6 text-[var(--accent)] shrink-0" />
-                        ) : item.rank.includes('2nd') ? (
-                          <Medal className="w-6 h-6 text-emerald-300 shrink-0" />
-                        ) : (
-                          <Award className="w-6 h-6 text-emerald-400 shrink-0" />
-                        )}
-                        <div>
-                          <span className="text-xs font-mono font-bold text-[var(--accent)] block uppercase">
-                            {item.rank}
-                          </span>
-                          <span className="text-sm font-bold text-[var(--text-primary)] block leading-tight">
-                            {item.title}
-                          </span>
-                        </div>
-                      </div>
-
-                      <span className="font-mono text-base font-extrabold text-[var(--text-primary)] shrink-0">
-                        {item.amountFormatted}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Track Prizes Chip below podium */}
-                <div className="mt-4 pt-3 border-t border-[var(--border-color)] flex justify-center">
-                  <span className="inline-flex items-center gap-2 px-4 py-1.5 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-full text-xs font-mono font-semibold text-[var(--text-primary)] shadow-xs">
-                    <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" />
-                    {prizeData.trackPrizes.label}: <strong className="text-[var(--accent)]">{prizeData.trackPrizes.amountFormatted}</strong>
-                  </span>
-                </div>
-
+                  {/* Primary Interactive "Participate to Win" Button */}
+                  <Link
+                    to="/register"
+                    className="w-full inline-flex items-center justify-center gap-3 px-8 py-4 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-slate-950 font-mono font-extrabold text-sm sm:text-base rounded-xl shadow-[0_0_25px_rgba(182,255,0,0.35)] hover:shadow-[0_0_35px_rgba(182,255,0,0.55)] transition-all duration-300 transform group-hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                  >
+                    <Sparkles className="w-5 h-5 text-slate-950 animate-bounce" />
+                    <span>Participate to Win</span>
+                    <ArrowRight className="w-5 h-5 text-slate-950 transition-transform duration-300 group-hover:translate-x-1.5" />
+                  </Link>
+                </motion.div>
               </div>
 
             </div>

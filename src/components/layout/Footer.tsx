@@ -8,14 +8,14 @@ import compute50Logo from '../../assets/logos/compute 50 logo.png';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-[var(--bg-secondary)] border-t border-[var(--border-color)] pt-12 pb-8 text-[var(--text-secondary)] text-sm transition-colors">
+    <footer id="contact" className="bg-[var(--bg-secondary)] border-t border-[var(--border-color)] pt-12 pb-8 text-[var(--text-secondary)] text-sm transition-colors">
       <Container size="lg">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-12 border-b border-[var(--border-color)]">
           {/* Brand info */}
           <div className="space-y-4 md:col-span-1">
-            <Link to="/" className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-white border border-[var(--accent)]/50 p-1 flex items-center justify-center overflow-hidden shadow-sm">
-                <img src={compute50Logo} alt="Compute 50" className="w-full h-full object-contain" />
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="w-9 h-9 flex items-center justify-center transition-transform duration-200 group-hover:scale-110 cursor-pointer">
+                <img src={compute50Logo} alt="Compute 50" className="w-full h-full object-contain transition-transform duration-200" />
               </div>
               <span className="font-extrabold text-lg text-[var(--text-primary)] tracking-tight">
                 COMPUTE <span className="text-[var(--accent)]">50</span>

@@ -75,9 +75,9 @@ export const Reveal: React.FC<RevealProps> = ({
         ease: MOTION_EASE,
         ...(staggerChildren
           ? {
-              staggerChildren,
-              delayChildren: delay,
-            }
+            staggerChildren,
+            delayChildren: delay,
+          }
           : {}),
       },
     },

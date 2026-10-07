@@ -21,10 +21,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       if (savedTheme === 'dark' || savedTheme === 'light') {
         return savedTheme;
       }
-      // System preference check
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-        return 'light';
-      }
     }
     return 'dark';
   });
