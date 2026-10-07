@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
+import { useSmoothScroll } from '../../context/SmoothScrollContext';
 
 export const BackToTop: React.FC = () => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const { scrollTo } = useSmoothScroll();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,7 +17,7 @@ export const BackToTop: React.FC = () => {
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollTo(0, { duration: 1.0 });
   };
 
   return (

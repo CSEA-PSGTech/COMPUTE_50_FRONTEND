@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { X, Trophy, Medal, Award, Gift, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { prizeData } from '../../data/prizes';
+import { useSmoothScroll } from '../../context/SmoothScrollContext';
 
 interface PrizeDetailsModalProps {
   isOpen: boolean;
@@ -11,10 +12,14 @@ interface PrizeDetailsModalProps {
 export const PrizeDetailsModal: React.FC<PrizeDetailsModalProps> = ({ isOpen, onClose }) => {
   const shouldReduceMotion = useReducedMotion();
   const modalRef = useRef<HTMLDivElement>(null);
+  const { stop, start } = useSmoothScroll();
 
   // Close on Escape key press & handle focus trap
   useEffect(() => {
     if (!isOpen) return;
+
+    stop();
+    document.body.style.overflow = 'hidden';
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -27,9 +32,11 @@ export const PrizeDetailsModal: React.FC<PrizeDetailsModalProps> = ({ isOpen, on
     modalRef.current?.focus();
 
     return () => {
+      start();
+      document.body.style.overflow = '';
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, stop, start]);
 
   const getRankIcon = (rank: string) => {
     if (rank.includes('1st')) return <Trophy className="w-6 h-6 text-[var(--accent)] shrink-0" />;
@@ -59,6 +66,7 @@ export const PrizeDetailsModal: React.FC<PrizeDetailsModalProps> = ({ isOpen, on
             role="dialog"
             aria-modal="true"
             aria-labelledby="prize-modal-title"
+            data-lenis-prevent
             initial={shouldReduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.95, y: 16 }}

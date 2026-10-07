@@ -1,32 +1,40 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useSmoothScroll } from '../../context/SmoothScrollContext';
 
 export const ScrollToTop: React.FC = () => {
   const { pathname, hash } = useLocation();
+  const { lenis } = useSmoothScroll();
 
   useEffect(() => {
     if (hash) {
-      const scroll = () => {
+      const scrollToHash = () => {
         const element = document.querySelector(hash);
         if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          if (lenis) {
+            lenis.scrollTo(hash, { offset: -90, duration: 1.0 });
+          } else {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
         }
       };
 
-      scroll();
-      const t1 = setTimeout(scroll, 100);
-      const t2 = setTimeout(scroll, 350);
-      const t3 = setTimeout(scroll, 700);
+      scrollToHash();
+      const t1 = setTimeout(scrollToHash, 100);
+      const t2 = setTimeout(scrollToHash, 350);
 
       return () => {
         clearTimeout(t1);
         clearTimeout(t2);
-        clearTimeout(t3);
       };
+    } else {
+      if (lenis) {
+        lenis.scrollTo(0, { immediate: true });
+      } else {
+        window.scrollTo(0, 0);
+      }
     }
-
-    window.scrollTo(0, 0);
-  }, [pathname, hash]);
+  }, [pathname, hash, lenis]);
 
   return null;
 };

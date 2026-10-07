@@ -1,6 +1,7 @@
 import React, { ReactNode, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
+import { useSmoothScroll } from '../../context/SmoothScrollContext';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -17,21 +18,25 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   maxWidth = 'md',
 }) => {
+  const { stop, start } = useSmoothScroll();
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
 
     if (isOpen) {
+      stop();
       document.body.style.overflow = 'hidden';
       window.addEventListener('keydown', handleKeyDown);
     }
 
     return () => {
+      start();
       document.body.style.overflow = 'unset';
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, stop, start]);
 
   const maxWidthClasses = {
     sm: 'max-w-sm',
@@ -61,7 +66,7 @@ export const Modal: React.FC<ModalProps> = ({
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="p-6 max-h-[80vh] overflow-y-auto text-[var(--text-primary)]">{children}</div>
+            <div data-lenis-prevent className="p-6 max-h-[80vh] overflow-y-auto text-[var(--text-primary)]">{children}</div>
           </motion.div>
         </div>
       )}
