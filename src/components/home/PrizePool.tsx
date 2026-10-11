@@ -1,95 +1,162 @@
-import React from 'react';
-import { Trophy, Medal, Award, Gift } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
+import { ArrowRight, Sparkles, Trophy } from 'lucide-react';
 import { Container } from '../common/Container';
-import { SectionHeading } from '../common/SectionHeading';
-import { Card } from '../common/Card';
-import { Reveal } from '../common/Reveal';
 import { CountUp } from '../common/CountUp';
-import { EVENT_CONFIG } from '../../config/event';
+import { prizeData } from '../../data/prizes';
+import { PrizeDetailsModal } from './PrizeDetailsModal';
 
 export const PrizePool: React.FC = () => {
-  const prizes = [
-    {
-      place: '1st Place',
-      title: 'Grand Winner',
-      amountVal: EVENT_CONFIG.prizes.first,
-      icon: <Trophy className="w-10 h-10 text-[var(--accent)]" />,
-      perks: ['Cash Prize', 'Winner Trophy', 'Direct Internship Interviews', 'Swag Kits'],
-      highlight: true,
-    },
-    {
-      place: '2nd Place',
-      title: 'Runner Up',
-      amountVal: EVENT_CONFIG.prizes.second,
-      icon: <Medal className="w-10 h-10 text-[var(--text-secondary)]" />,
-      perks: ['Cash Prize', 'Runner Up Trophy', 'Mentorship Sessions', 'Swag Kits'],
-      highlight: false,
-    },
-    {
-      place: '3rd Place',
-      title: 'Second Runner Up',
-      amountVal: EVENT_CONFIG.prizes.third,
-      icon: <Award className="w-10 h-10 text-[var(--text-secondary)]" />,
-      perks: ['Cash Prize', 'Third Place Trophy', 'Swag Kits'],
-      highlight: false,
-    },
-    {
-      place: 'Category Prizes',
-      title: 'Track Best Hacks',
-      amountVal: EVENT_CONFIG.prizes.categories,
-      suffix: ' Total',
-      icon: <Gift className="w-10 h-10 text-[var(--accent)]" />,
-      perks: ['Best Women Team', 'Best Hardware Innovation', 'Best Web3 Build'],
-      highlight: false,
-    },
-  ];
+  const shouldReduceMotion = useReducedMotion();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Spotlight position state
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (shouldReduceMotion || !containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
 
   return (
-    <section id="prizes" className="py-16 md:py-24 bg-[var(--bg-main)] border-b border-[var(--border-color)] transition-colors">
+    <section
+      id="prizepool-home"
+      className="relative py-12 lg:py-20 bg-[var(--bg-main)] transition-colors overflow-hidden bg-tech-grid"
+    >
+      {/* Background Soft Radial Glow */}
+      <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+        <div className="w-[600px] h-[400px] rounded-full bg-[var(--accent)]/10 blur-[120px]" />
+      </div>
+
       <Container size="lg">
-        <Reveal>
-          <SectionHeading
-            badge="PRIZE POOL"
-            title={`${EVENT_CONFIG.prizes.totalFormatted} in Total Rewards`}
-            subtitle="Compete for substantial cash prizes, trophies, sponsor bounties, and career opportunities."
+        {/* Outer Card with Rotating Border Beam */}
+        <div
+          ref={containerRef}
+          onMouseMove={handleMouseMove}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          className="relative p-[1px] rounded-3xl overflow-hidden shadow-2xl transition-all"
+        >
+          {/* Rotating Border Beam */}
+          {!shouldReduceMotion && (
+            <div
+              className="absolute inset-[-100%] animate-border-beam bg-[conic-gradient(from_0deg,transparent_0_300deg,var(--accent)_360deg)] opacity-70 pointer-events-none"
+              aria-hidden="true"
+            />
+          )}
+
+          {/* Interactive Mouse Spotlight for Desktop / Drift for Mobile */}
+          <div
+            className="absolute inset-0 pointer-events-none transition-opacity duration-500 rounded-3xl z-10"
+            style={{
+              background: isHovered && !shouldReduceMotion
+                ? `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(182, 255, 0, 0.1), transparent 80%)`
+                : `radial-gradient(circle at 50% 50%, rgba(182, 255, 0, 0.05), transparent 70%)`,
+            }}
+            aria-hidden="true"
           />
-        </Reveal>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {prizes.map((p, idx) => (
-            <Reveal key={idx} delay={idx * 0.1}>
-              <Card
-                hoverable
-                className={`flex flex-col justify-between text-center relative h-full ${
-                  p.highlight ? 'border-[var(--accent)] bg-[var(--bg-surface)] ring-1 ring-[var(--accent)]/40' : ''
-                }`}
-              >
-                <div>
-                  <div className="mb-4 inline-flex p-3 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-color)]">
-                    {p.icon}
-                  </div>
-                  <span className="block text-xs font-bold uppercase tracking-wider text-[var(--accent)] mb-1">
-                    {p.place}
+          {/* Inner Content Box */}
+          <div className="relative z-10 bg-[var(--bg-surface)]/90 backdrop-blur-xl rounded-[23px] p-6 sm:p-10 border border-[var(--border-color)]">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+              
+              {/* LEFT COLUMN: Label, Giant Display Number, CTA */}
+              <div className="lg:col-span-6 space-y-6 text-left">
+                <div className="space-y-2">
+                  <span className="font-mono text-xs sm:text-sm font-bold text-[var(--accent)] tracking-widest uppercase flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" />
+                    {prizeData.label}
                   </span>
-                  <h3 className="text-xl font-bold text-[var(--text-primary)] mb-2">{p.title}</h3>
-                  <p className="text-3xl font-extrabold text-[var(--text-primary)] mb-6 font-mono">
-                    <CountUp end={p.amountVal} prefix="₹" suffix={p.suffix || ''} />
+                  <p className="text-xs sm:text-sm text-[var(--text-secondary)] font-medium">
+                    {prizeData.subtitle}
                   </p>
-
-                  <ul className="text-[13px] text-[var(--text-secondary)] space-y-2.5 text-left border-t border-[var(--border-color)] pt-4">
-                    {p.perks.map((perk, i) => (
-                      <li key={i} className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shrink-0" />
-                        <span>{perk}</span>
-                      </li>
-                    ))}
-                  </ul>
                 </div>
-              </Card>
-            </Reveal>
-          ))}
+
+                {/* Huge Display Amount with Odometer CountUp */}
+                <div
+                  className="space-y-1"
+                  aria-label={`Total Prize Pool: ${prizeData.totalAmount} Indian Rupees Plus`}
+                >
+                  <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-mono tracking-tight leading-none select-none">
+                    <span className="bg-gradient-to-r from-white via-slate-100 to-[var(--accent)] bg-clip-text text-transparent filter drop-shadow-[0_0_30px_rgba(34,197,94,0.35)]">
+                      <CountUp end={prizeData.totalAmount} prefix="₹" />
+                    </span>
+                    <span className="inline-block text-[var(--accent)] animate-pulse ml-1">
+                      +
+                    </span>
+                  </div>
+                  <span className="text-xs font-mono text-[var(--text-secondary)] uppercase tracking-wider block pt-1">
+                    Cumulative Cash Rewards & Track Incentives
+                  </span>
+                </div>
+
+                {/* Modal CTA Trigger Button */}
+                <div className="pt-2">
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[var(--bg-secondary)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-xs sm:text-sm font-mono font-bold text-[var(--text-primary)] hover:text-[var(--accent)] rounded-xl transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] cursor-pointer"
+                  >
+                    <span>View full prize details</span>
+                    <ArrowRight className="w-4 h-4 text-[var(--accent)]" />
+                  </button>
+                </div>
+              </div>
+
+              {/* RIGHT COLUMN: Interactive Register CTA Card */}
+              <div className="lg:col-span-6 w-full flex flex-col justify-center items-center lg:items-end">
+                <motion.div
+                  initial={shouldReduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="w-full max-w-md p-6 sm:p-8 rounded-2xl bg-gradient-to-b from-[var(--bg-secondary)]/90 to-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)]/60 shadow-xl transition-all group relative overflow-hidden text-center lg:text-left flex flex-col items-center lg:items-start space-y-5"
+                >
+                  {/* Subtle Inner Glow */}
+                  <div className="absolute -right-12 -top-12 w-40 h-40 bg-[var(--accent)]/15 rounded-full blur-2xl pointer-events-none group-hover:bg-[var(--accent)]/25 transition-all duration-500" />
+
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--accent-muted)] border border-[var(--accent)]/30 rounded-full text-xs font-mono font-bold text-[var(--accent)]">
+                    <Trophy className="w-3.5 h-3.5 animate-pulse text-[var(--accent)]" />
+                    <span>NATIONAL INNOVATION CHALLENGE</span>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <h3 className="text-xl sm:text-2xl font-bold font-mono text-[var(--text-primary)] tracking-tight">
+                      Ready to Win Big?
+                    </h3>
+                    <p className="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
+                      Compete alongside top talent across the nation. Register your team of 2–4 members and turn your engineering vision into reality.
+                    </p>
+                  </div>
+
+                  {/* Primary Interactive "Participate to Win" Button */}
+                  <Link
+                    to="/register"
+                    className="w-full inline-flex items-center justify-center gap-3 px-8 py-4 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-slate-950 font-mono font-extrabold text-sm sm:text-base rounded-xl shadow-[0_0_25px_rgba(182,255,0,0.35)] hover:shadow-[0_0_35px_rgba(182,255,0,0.55)] transition-all duration-300 transform group-hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                  >
+                    <Sparkles className="w-5 h-5 text-slate-950 animate-bounce" />
+                    <span>Participate to Win</span>
+                    <ArrowRight className="w-5 h-5 text-slate-950 transition-transform duration-300 group-hover:translate-x-1.5" />
+                  </Link>
+                </motion.div>
+              </div>
+
+            </div>
+          </div>
         </div>
       </Container>
+
+      {/* Accessible Prize Details Drawer / Modal */}
+      <PrizeDetailsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </section>
   );
 };

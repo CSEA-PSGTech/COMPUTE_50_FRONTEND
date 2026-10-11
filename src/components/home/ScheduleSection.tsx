@@ -57,11 +57,10 @@ export const ScheduleSection: React.FC = () => {
           <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] p-1.5 rounded-xl inline-flex gap-2 relative">
             <button
               onClick={() => switchDay('Day 1')}
-              className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer relative z-10 ${
-                activeDay === 'Day 1'
+              className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer relative z-10 ${activeDay === 'Day 1'
                   ? 'text-[var(--accent-text)] font-bold'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-              }`}
+                }`}
             >
               {activeDay === 'Day 1' && (
                 <motion.div
@@ -74,11 +73,10 @@ export const ScheduleSection: React.FC = () => {
             </button>
             <button
               onClick={() => switchDay('Day 2')}
-              className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer relative z-10 ${
-                activeDay === 'Day 2'
+              className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer relative z-10 ${activeDay === 'Day 2'
                   ? 'text-[var(--accent-text)] font-bold'
                   : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-              }`}
+                }`}
             >
               {activeDay === 'Day 2' && (
                 <motion.div

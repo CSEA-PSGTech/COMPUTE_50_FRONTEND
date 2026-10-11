@@ -3,29 +3,31 @@ import { Container } from '../common/Container';
 import { SectionHeading } from '../common/SectionHeading';
 import { Card } from '../common/Card';
 import { mockTracks } from '../../data/tracks';
-import { Cpu, Shield, Activity, Zap, Lightbulb, ArrowRight } from 'lucide-react';
+import { Cpu, Shield, Activity, Zap, Lightbulb } from 'lucide-react';
 import { Badge } from '../common/Badge';
 import { Reveal } from '../common/Reveal';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 export const TracksSection: React.FC = () => {
+  const shouldReduceMotion = useReducedMotion();
+
   const getIcon = (name: string) => {
     switch (name) {
       case 'Cpu':
-        return <Cpu className="w-7 h-7 text-[var(--accent)]" />;
+        return <Cpu className="w-6 h-6 text-[var(--accent)] transition-transform duration-200 group-hover:scale-110" />;
       case 'Shield':
-        return <Shield className="w-7 h-7 text-[var(--accent)]" />;
+        return <Shield className="w-6 h-6 text-[var(--accent)] transition-transform duration-200 group-hover:scale-110" />;
       case 'Activity':
-        return <Activity className="w-7 h-7 text-[var(--accent)]" />;
+        return <Activity className="w-6 h-6 text-[var(--accent)] transition-transform duration-200 group-hover:scale-110" />;
       case 'Zap':
-        return <Zap className="w-7 h-7 text-[var(--accent)]" />;
+        return <Zap className="w-6 h-6 text-[var(--accent)] transition-transform duration-200 group-hover:scale-110" />;
       default:
-        return <Lightbulb className="w-7 h-7 text-[var(--accent)]" />;
+        return <Lightbulb className="w-6 h-6 text-[var(--accent)] transition-transform duration-200 group-hover:scale-110" />;
     }
   };
 
   return (
-    <section id="tracks" className="py-16 md:py-24 bg-[var(--bg-secondary)] border-b border-[var(--border-color)] transition-colors">
+    <section id="tracks" className="py-14 md:py-20 bg-[var(--bg-secondary)] border-b border-[var(--border-color)] transition-colors">
       <Container size="lg">
         <Reveal>
           <SectionHeading
@@ -35,31 +37,28 @@ export const TracksSection: React.FC = () => {
           />
         </Reveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {mockTracks.map((track, idx) => (
-            <Reveal key={track.id} delay={idx * 0.08}>
-              <Card hoverable className="group flex flex-col justify-between h-full">
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <motion.div
-                      whileHover={{ scale: 1.1, rotate: 3 }}
-                      className="p-3 bg-[var(--bg-main)] rounded-xl border border-[var(--border-color)]"
-                    >
-                      {getIcon(track.iconName)}
-                    </motion.div>
-                    <Badge variant="outline">{track.problemCount} Problem Statements</Badge>
-                  </div>
-                  <h3 className="text-lg font-bold text-[var(--text-primary)] mb-2 group-hover:text-[var(--accent)] transition-colors">
-                    {track.title}
-                  </h3>
-                  <p className="text-[15px] text-[var(--text-secondary)] leading-relaxed mb-4">{track.description}</p>
-                </div>
-                <div className="pt-3 border-t border-[var(--border-color)] flex items-center justify-between text-[13px] font-semibold text-[var(--text-secondary)] group-hover:text-[var(--text-primary)]">
-                  <span>Explore track details</span>
-                  <motion.div initial={{ x: 0 }} whileHover={{ x: 4 }} className="inline-flex items-center text-[var(--accent)]">
-                    <ArrowRight className="w-4 h-4" />
+            <Reveal key={track.id} delay={idx * 0.06}>
+              <Card
+                hoverable
+                className="group flex flex-col justify-between p-5 sm:p-6 transition-all duration-200 hover:shadow-[0_0_20px_rgba(34,197,94,0.12)] hover:border-[var(--accent)]/60"
+              >
+                <div className="flex items-center justify-between mb-5">
+                  <motion.div
+                    whileHover={shouldReduceMotion ? undefined : { scale: 1.05, rotate: 2 }}
+                    transition={{ duration: 0.2 }}
+                    className="p-3 bg-[var(--bg-main)] rounded-xl border border-[var(--border-color)] group-hover:border-[var(--accent)]/40 transition-colors"
+                  >
+                    {getIcon(track.iconName)}
                   </motion.div>
+                  <Badge variant="outline" className="text-xs font-mono font-medium">
+                    {track.problemCount} Problem Statements
+                  </Badge>
                 </div>
+                <h3 className="text-lg font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors tracking-tight">
+                  {track.title}
+                </h3>
               </Card>
             </Reveal>
           ))}
@@ -68,3 +67,4 @@ export const TracksSection: React.FC = () => {
     </section>
   );
 };
+

@@ -1,8 +1,7 @@
 import React from 'react';
 import { Container } from '../components/common/Container';
 import { SectionHeading } from '../components/common/SectionHeading';
-import { HackathonOverview } from '../components/hackathon/HackathonOverview';
-import { ProblemStatements } from '../components/hackathon/ProblemStatements';
+import { PrizeBreakdown } from '../components/hackathon/PrizeBreakdown';
 import { RulesGuidelines } from '../components/hackathon/RulesGuidelines';
 import { ImportantInfo } from '../components/hackathon/ImportantInfo';
 import { TracksSection } from '../components/home/TracksSection';
@@ -19,9 +18,8 @@ export const Hackathon: React.FC = () => {
         />
 
         <div className="space-y-12">
-          <HackathonOverview />
+          <PrizeBreakdown />
           <TracksSection />
-          <ProblemStatements />
           <RulesGuidelines />
           <ScheduleSection />
           <ImportantInfo />

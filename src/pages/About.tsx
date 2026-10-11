@@ -5,16 +5,11 @@ import { AboutPsgTech } from '../components/about/AboutPsgTech';
 import { AboutCsea } from '../components/about/AboutCsea';
 import { AboutCompute50 } from '../components/about/AboutCompute50';
 import { EventTheme } from '../components/about/EventTheme';
-import { AffiliatedClubs } from '../components/about/AffiliatedClubs';
-import { AboutStickyNav } from '../components/about/AboutStickyNav';
 import { PhotoStrip } from '../components/about/PhotoStrip';
 
 export const About: React.FC = () => {
   return (
-    <div className="bg-[var(--bg-main)] min-h-screen transition-colors pb-20">
-      {/* Sticky Sub-Navigation */}
-      <AboutStickyNav />
-
+    <div className="bg-[var(--bg-main)] min-h-screen transition-colors pt-6 sm:pt-10 pb-20">
       <Container size="lg">
         {/* Page Header */}
         <SectionHeading
@@ -56,11 +51,6 @@ export const About: React.FC = () => {
               <AboutCsea />
             </section>
           </div>
-
-          {/* Section 05: Affiliated Clubs */}
-          <section id="clubs" className="relative transition-colors pt-4">
-            <AffiliatedClubs />
-          </section>
         </div>
       </Container>
     </div>

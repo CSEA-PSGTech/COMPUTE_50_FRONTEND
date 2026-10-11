@@ -12,6 +12,9 @@
     --accent-hover: #4D7C0F;
     --accent-text: #FFFFFF;
     --accent-muted: rgba(101, 163, 13, 0.12);
+    --bg-noise-opacity: 0.03;
+    --bg-grid-opacity: 0.03;
+    --bg-glow-opacity: 0.04;
   }
 
   .dark {
@@ -25,6 +28,9 @@
     --accent-hover: #C8FF33;
     --accent-text: #050505;
     --accent-muted: rgba(182, 255, 0, 0.12);
+    --bg-noise-opacity: 0.04;
+    --bg-grid-opacity: 0.04;
+    --bg-glow-opacity: 0.05;
   }
 
   body {
@@ -204,4 +210,47 @@
 
 .border-accent-lime {
   border-color: var(--accent);
+}
+
+/* Border beam rotation & tech grid utilities */
+@keyframes border-beam-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-border-beam {
+  animation: border-beam-rotate 10s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-border-beam {
+    animation: none !important;
+  }
+}
+
+/* Continuous Marquee Animation for Sponsors & Partners */
+@keyframes sponsor-marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-sponsor-marquee {
+  animation: sponsor-marquee 32s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-sponsor-marquee {
+    animation: none !important;
+  }
+}
+
+.bg-tech-grid {
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 28px 28px;
 }

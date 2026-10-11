@@ -298,11 +298,10 @@ export const SpeakersSection: React.FC = () => {
                     {Array.from({ length: confirmedGuests.length + (unconfirmedGuests.length > 0 ? 1 : 0) }).map((_, i) => (
                       <div
                         key={i}
-                        className={`h-2 rounded-full transition-all duration-300 ${
-                          activeMobileIndex === i
+                        className={`h-2 rounded-full transition-all duration-300 ${activeMobileIndex === i
                             ? 'w-6 bg-[var(--accent)]'
                             : 'w-2 bg-[var(--border-color)]'
-                        }`}
+                          }`}
                       />
                     ))}
                   </div>
@@ -394,11 +393,11 @@ export const SpeakersSection: React.FC = () => {
                         shouldReduceMotion
                           ? { duration: 0 }
                           : {
-                              type: 'spring',
-                              stiffness: 180,
-                              damping: 22,
-                              delay: expanded ? idx * 0.07 : 0,
-                            }
+                            type: 'spring',
+                            stiffness: 180,
+                            damping: 22,
+                            delay: expanded ? idx * 0.07 : 0,
+                          }
                       }
                       className="w-full h-full relative z-10"
                       style={{ perspective: 1000 }}
@@ -412,9 +411,9 @@ export const SpeakersSection: React.FC = () => {
                           shouldReduceMotion
                             ? { duration: 0 }
                             : {
-                                duration: 0.5,
-                                delay: expanded ? idx * 0.07 + 0.1 : 0,
-                              }
+                              duration: 0.5,
+                              delay: expanded ? idx * 0.07 + 0.1 : 0,
+                            }
                         }
                         style={{ transformStyle: 'preserve-3d' }}
                         className="relative w-full h-full"

@@ -1,23 +1,14 @@
 import React from 'react';
 import { Card } from '../common/Card';
 import { Badge } from '../common/Badge';
-import { Button } from '../common/Button';
-import { CheckCircle2, CreditCard, Home, Download } from 'lucide-react';
-import { RegistrationStatus, PaymentStatus, AccommodationStatus } from '../../types/user';
+import { CheckCircle2 } from 'lucide-react';
+import { RegistrationStatus } from '../../types/user';
 
 interface StatusCardsProps {
   registrationStatus: RegistrationStatus;
-  paymentStatus: PaymentStatus;
-  accommodationStatus: AccommodationStatus;
-  receiptUrl?: string;
 }
 
-export const StatusCards: React.FC<StatusCardsProps> = ({
-  registrationStatus,
-  paymentStatus,
-  accommodationStatus,
-  receiptUrl,
-}) => {
+export const StatusCards: React.FC<StatusCardsProps> = ({ registrationStatus }) => {
   const getBadgeVariant = (status: string) => {
     if (status === 'Confirmed' || status === 'Paid') return 'success';
     if (status === 'Pending') return 'warning';
@@ -25,53 +16,23 @@ export const StatusCards: React.FC<StatusCardsProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-      {/* Registration Status */}
-      <Card className="flex flex-col justify-between space-y-3">
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <CheckCircle2 className="w-5 h-5 text-[var(--accent)]" />
-            <Badge variant={getBadgeVariant(registrationStatus)}>{registrationStatus}</Badge>
+    <Card className="p-5 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-start sm:items-center gap-3.5">
+          <div className="p-2.5 rounded-xl bg-[var(--accent-muted)] border border-[var(--accent)]/30 text-[var(--accent)] shrink-0">
+            <CheckCircle2 className="w-5 h-5" />
           </div>
-          <h4 className="text-[15px] font-semibold text-[var(--text-primary)]">Registration Status</h4>
-          <p className="text-[13px] text-[var(--text-secondary)] mt-1">Hackathon registration verification status.</p>
-        </div>
-      </Card>
-
-      {/* Payment Status */}
-      <Card className="flex flex-col justify-between space-y-3">
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <CreditCard className="w-5 h-5 text-emerald-500" />
-            <Badge variant={getBadgeVariant(paymentStatus)}>{paymentStatus}</Badge>
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h4 className="text-[15px] font-semibold text-[var(--text-primary)]">Registration Status</h4>
+              <Badge variant={getBadgeVariant(registrationStatus)}>{registrationStatus}</Badge>
+            </div>
+            <p className="text-[13px] text-[var(--text-secondary)] mt-0.5">
+              Hackathon registration verification status.
+            </p>
           </div>
-          <h4 className="text-[15px] font-semibold text-[var(--text-primary)]">Payment Status</h4>
-          <p className="text-[13px] text-[var(--text-secondary)] mt-1">Registration fee status.</p>
         </div>
-        {receiptUrl && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full text-[13px]"
-            leftIcon={<Download className="w-3.5 h-3.5" />}
-            onClick={() => alert('Downloading registration fee receipt...')}
-          >
-            Receipt Placeholder
-          </Button>
-        )}
-      </Card>
-
-      {/* Accommodation Status */}
-      <Card className="flex flex-col justify-between space-y-3">
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <Home className="w-5 h-5 text-purple-400" />
-            <Badge variant={getBadgeVariant(accommodationStatus)}>{accommodationStatus}</Badge>
-          </div>
-          <h4 className="text-[15px] font-semibold text-[var(--text-primary)]">Accommodation Status</h4>
-          <p className="text-[13px] text-[var(--text-secondary)] mt-1">Hostel stay status for outstation teams.</p>
-        </div>
-      </Card>
-    </div>
+      </div>
+    </Card>
   );
 };

@@ -11,7 +11,6 @@ const navItems: NavItem[] = [
   { id: 'event', label: 'Event' },
   { id: 'psg-tech', label: 'PSG Tech' },
   { id: 'csea', label: 'CSEA' },
-  { id: 'clubs', label: 'Clubs' },
 ];
 
 export const AboutStickyNav: React.FC = () => {

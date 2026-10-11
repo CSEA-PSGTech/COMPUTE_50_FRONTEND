@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, MapPin, ArrowRight, UserPlus, LogIn, Sparkles } from 'lucide-react';
+import { Calendar, MapPin, ArrowRight, UserPlus, LogIn, Sparkles, Laptop, AlertCircle } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Container } from '../common/Container';
 import { Button } from '../common/Button';
@@ -8,9 +8,9 @@ import { Badge } from '../common/Badge';
 import { useCountdown } from '../../hooks/useCountdown';
 import { DecryptText } from '../common/DecryptText';
 import { MOTION_EASE } from '../../lib/motion';
-import compute50Logo from '../../assets/logos/compute 50 logo.png';
 import psgLogo from '../../assets/logos/psg-logo.png';
 import cseaLogo from '../../assets/logos/csea-logo.png';
+import compute50HeroEmblem from '../../assets/logos/compute-50-hero-emblem.png';
 import { EVENT_CONFIG } from '../../config/event';
 import { home } from '../../data/content';
 
@@ -23,20 +23,20 @@ const InstitutionLogo: React.FC<{ name: string; shortName: string; logoSrc: stri
 
   if (hasError) {
     return (
-      <div className="flex items-center gap-2 px-3 py-1.5 bg-white text-slate-900 border border-slate-200 rounded-lg font-mono text-xs font-semibold shadow-xs">
-        <span className="w-2 h-2 rounded-full bg-[var(--accent)]" />
+      <div className="flex items-center gap-2.5 px-3.5 py-2 text-[var(--text-primary)] font-mono text-sm font-bold transition-transform duration-200 hover:scale-105 cursor-pointer">
+        <span className="w-2.5 h-2.5 rounded-full bg-[var(--accent)]" />
         <span>{shortName}</span>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center gap-2.5 px-3 py-1.5 bg-white text-slate-900 border border-slate-200 rounded-xl font-mono text-xs font-semibold shadow-sm">
+    <div className="flex items-center gap-3 px-4 py-2 bg-white/10 hover:bg-white/15 rounded-xl border border-white/15 text-[var(--text-primary)] font-mono text-sm sm:text-base font-bold transition-all duration-200 hover:scale-105 cursor-pointer shadow-md">
       <img
         src={logoSrc}
         alt={name}
         onError={() => setHasError(true)}
-        className="h-6 w-auto object-contain"
+        className="h-10 sm:h-12 w-auto object-contain transition-transform duration-200 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.25)]"
       />
       <span>{shortName}</span>
     </div>
@@ -71,24 +71,6 @@ export const Hero: React.FC = () => {
     },
   };
 
-  const sloganLimitlessVariants = {
-    hidden: shouldReduceMotion
-      ? { opacity: 1 }
-      : { opacity: 0, y: 12, filter: 'blur(6px)' },
-    visible: shouldReduceMotion
-      ? { opacity: 1 }
-      : {
-        opacity: 1,
-        y: 0,
-        filter: 'blur(0px)',
-        transition: {
-          duration: 0.65,
-          ease: MOTION_EASE,
-          delay: 0.25,
-        },
-      },
-  };
-
   return (
     <section id="hero" className="relative py-20 md:py-28 overflow-hidden border-b border-[var(--border-color)] bg-transparent transition-colors">
       <Container size="lg">
@@ -98,6 +80,15 @@ export const Hero: React.FC = () => {
           animate="visible"
           className="flex flex-col items-center text-center space-y-6 max-w-4xl mx-auto"
         >
+          {/* 0. Top Emblem Logo */}
+          <motion.div variants={itemVariants} className="flex items-center justify-center pt-1 pb-1">
+            <img
+              src={compute50HeroEmblem}
+              alt="Compute 50 Emblem"
+              className="w-40 sm:w-56 md:w-64 lg:w-72 h-auto object-contain filter drop-shadow-[0_0_20px_rgba(34,197,94,0.2)] transition-transform duration-300 hover:scale-105 select-none"
+            />
+          </motion.div>
+
           {/* 1. Top Badges (Order: 1) */}
           <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center gap-2">
             <Badge variant="primary" className="px-3 py-1">
@@ -135,12 +126,9 @@ export const Hero: React.FC = () => {
               <span className="inline-block whitespace-nowrap">From</span>{' '}
               <span className="inline-block whitespace-nowrap">Legacy</span>{' '}
               <span className="inline-block whitespace-nowrap">to</span>{' '}
-              <motion.span
-                variants={sloganLimitlessVariants}
-                className="inline-block whitespace-nowrap text-[var(--accent)] font-bold"
-              >
+              <span className="inline-block whitespace-nowrap text-[var(--accent)] font-bold">
                 Limitless
-              </motion.span>
+              </span>
             </span>
           </motion.p>
 
@@ -160,20 +148,71 @@ export const Hero: React.FC = () => {
             </span>
           </motion.p>
 
-          {/* 5. Date & Venue (Order: 5) */}
-          <motion.div variants={itemVariants} className="w-full max-w-xl space-y-6 pt-2">
-            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-[var(--text-secondary)] font-medium">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-[var(--accent)] shrink-0" />
-                <span className="inline-block whitespace-nowrap">{EVENT_CONFIG.dates}</span>
+          {/* 5. Two-Round Format & Important Notice */}
+          <motion.div variants={itemVariants} className="w-full max-w-xl sm:max-w-2xl space-y-4 pt-2">
+            {/* Event Dates */}
+            <div className="flex items-center justify-center gap-2 text-sm text-[var(--text-secondary)] font-medium">
+              <Calendar className="w-4 h-4 text-[var(--accent)] shrink-0" />
+              <span className="inline-block whitespace-nowrap font-mono">{EVENT_CONFIG.dates}</span>
+            </div>
+
+            {/* Separate Round Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-left">
+              {/* Round 1 — Online */}
+              <div className="p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)]/50 transition-colors flex items-start gap-3.5 shadow-sm">
+                <div className="w-9 h-9 rounded-lg bg-[var(--accent-muted)] border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] shrink-0 mt-0.5">
+                  <Laptop className="w-4.5 h-4.5" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-mono text-xs font-bold text-[var(--text-primary)] tracking-wide">
+                      ROUND 1
+                    </span>
+                    <span className="px-2 py-0.5 rounded-md bg-[var(--accent)] text-slate-950 font-mono text-[10px] font-extrabold uppercase tracking-wider">
+                      ONLINE
+                    </span>
+                  </div>
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                    Participate remotely from your location.
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-[var(--accent)] shrink-0" />
-                <span className="inline-block whitespace-nowrap">{EVENT_CONFIG.venue}</span>
+
+              {/* Round 2 — On Campus */}
+              <div className="p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-emerald-400/50 transition-colors flex items-start gap-3.5 shadow-sm">
+                <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
+                  <MapPin className="w-4.5 h-4.5" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-mono text-xs font-bold text-[var(--text-primary)] tracking-wide">
+                      ROUND 2
+                    </span>
+                    <span className="px-2 py-0.5 rounded-md bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-primary)] font-mono text-[10px] font-bold uppercase tracking-wider">
+                      ON CAMPUS
+                    </span>
+                  </div>
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                    PSG College of Technology, Coimbatore.
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* 6. Countdown (Order: 6) */}
+            {/* Notice Strip */}
+            <div className="w-full p-3 sm:py-3 sm:px-4 rounded-xl bg-[var(--accent-muted)]/50 border border-[var(--accent)]/30 text-left flex items-start gap-2.5 sm:gap-3">
+              <AlertCircle className="w-4 h-4 text-[var(--accent)] shrink-0 mt-0.5" />
+              <p className="text-xs text-[var(--text-primary)] leading-relaxed">
+                <strong className="text-[var(--accent)] font-mono font-bold uppercase tracking-wider mr-1.5">
+                  IMPORTANT:
+                </strong>
+                Round 1 is conducted entirely online. Only shortlisted teams will attend the on-campus final round at PSG Tech.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* 6. Countdown (Order: 6) */}
+          <motion.div variants={itemVariants} className="w-full max-w-xl sm:max-w-2xl">
             <div className="w-full p-4 sm:p-6 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-lg">
               <p className="text-xs uppercase font-semibold text-[var(--text-secondary)] tracking-wider mb-4 font-mono">
                 Hackathon starts in
@@ -210,7 +249,13 @@ export const Hero: React.FC = () => {
           {/* 7. Action Buttons (Order: 7) */}
           <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center gap-4 pt-2">
             <Link to="/register">
-              <Button size="lg" variant="primary" leftIcon={<UserPlus className="w-5 h-5" />} rightIcon={<ArrowRight className="w-5 h-5" />}>
+              <Button
+                size="lg"
+                variant="primary"
+                className="bg-[var(--accent)] text-slate-950 hover:bg-emerald-400 font-extrabold shadow-[0_0_20px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(34,197,94,0.6)] transition-all"
+                leftIcon={<UserPlus className="w-5 h-5 text-slate-950" />}
+                rightIcon={<ArrowRight className="w-5 h-5 text-slate-950" />}
+              >
                 Register Now
               </Button>
             </Link>

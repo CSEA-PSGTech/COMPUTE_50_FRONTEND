@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './context/ToastContext';
+import { SmoothScrollProvider } from './context/SmoothScrollContext';
 import { ToastContainer } from './components/common/ToastContainer';
 import { AppRouter } from './routes/AppRouter';
 
@@ -24,7 +25,9 @@ export const App: React.FC = () => {
         <AuthProvider>
           <ToastProvider>
             <BrowserRouter>
-              <AppRouter />
+              <SmoothScrollProvider>
+                <AppRouter />
+              </SmoothScrollProvider>
             </BrowserRouter>
             <ToastContainer />
           </ToastProvider>
