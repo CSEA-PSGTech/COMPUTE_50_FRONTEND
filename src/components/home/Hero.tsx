@@ -13,6 +13,7 @@ import cseaLogo from '../../assets/logos/csea-logo.png';
 import compute50HeroEmblem from '../../assets/logos/compute-50-hero-emblem.png';
 import { EVENT_CONFIG } from '../../config/event';
 import { home } from '../../data/content';
+import { ParticleBackground } from './ParticleBackground';
 
 const InstitutionLogo: React.FC<{ name: string; shortName: string; logoSrc: string }> = ({
   name,
@@ -73,7 +74,8 @@ export const Hero: React.FC = () => {
 
   return (
     <section id="hero" className="relative py-20 md:py-28 overflow-hidden border-b border-[var(--border-color)] bg-transparent transition-colors">
-      <Container size="lg">
+      <ParticleBackground />
+      <Container size="lg" className="relative z-10">
         <motion.div
           variants={containerVariants}
           initial="hidden"
