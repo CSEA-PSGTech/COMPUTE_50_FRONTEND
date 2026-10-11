@@ -1,39 +1,68 @@
 import React, { useEffect } from 'react';
-import { tone, unlockAudio } from '../../lib/sound';
+import { isMuted, tone, unlockAudio } from '../../lib/sound';
 
 const HOVER_TARGETS = 'button, a[href], [class*="hover:border-"], [role="button"]';
 
-/** Global, subtle futuristic hover and click sound ticks */
+/** Global, futuristic hover and click sound ticks */
 export const SoundEffects: React.FC = () => {
   useEffect(() => {
     let last: Element | null = null;
 
-    const over = (e: PointerEvent) => {
+    // Unlock Web Audio on first user gesture if not muted
+    const handleFirstGesture = () => {
+      if (!isMuted()) {
+        unlockAudio();
+      }
+    };
+
+    window.addEventListener('pointerdown', handleFirstGesture, { once: true, passive: true });
+    window.addEventListener('keydown', handleFirstGesture, { once: true, passive: true });
+    window.addEventListener('touchstart', handleFirstGesture, { once: true, passive: true });
+
+    const isNoSound = (target: EventTarget | null): boolean => {
+      if (!target || !(target instanceof Element)) return false;
+      return Boolean(target.closest('[data-nosound]'));
+    };
+
+    const handlePointerOver = (e: PointerEvent) => {
+      if (isMuted()) return;
       if (e.pointerType === 'touch') return;
-      const el = (e.target as HTMLElement).closest?.(HOVER_TARGETS) ?? null;
+      if (isNoSound(e.target)) {
+        last = null;
+        return;
+      }
+
+      const el = (e.target as Element).closest?.(HOVER_TARGETS) ?? null;
       if (el && !el.closest('[data-nosound]')) {
         if (el !== last) {
           last = el;
-          tone(900, 0.04, 0.015);
+          tone(980, 0.04, 0.06);
         }
       } else {
         last = null;
       }
     };
 
-    const down = (e: PointerEvent) => {
-      unlockAudio();
-      const el = (e.target as HTMLElement).closest?.('button, a[href], [role="button"]') ?? null;
+    const handlePointerDown = (e: PointerEvent) => {
+      if (isMuted()) return;
+      if (isNoSound(e.target)) return;
+
+      const el = (e.target as Element).closest?.('button, a[href], [role="button"]') ?? null;
       if (el && !el.closest('[data-nosound]')) {
-        tone(600, 0.07, 0.035);
+        unlockAudio();
+        tone(640, 0.08, 0.12, 920);
       }
     };
 
-    window.addEventListener('pointerover', over, { passive: true });
-    window.addEventListener('pointerdown', down, { passive: true });
+    window.addEventListener('pointerover', handlePointerOver, { passive: true });
+    window.addEventListener('pointerdown', handlePointerDown, { passive: true });
+
     return () => {
-      window.removeEventListener('pointerover', over);
-      window.removeEventListener('pointerdown', down);
+      window.removeEventListener('pointerdown', handleFirstGesture);
+      window.removeEventListener('keydown', handleFirstGesture);
+      window.removeEventListener('touchstart', handleFirstGesture);
+      window.removeEventListener('pointerover', handlePointerOver);
+      window.removeEventListener('pointerdown', handlePointerDown);
     };
   }, []);
 

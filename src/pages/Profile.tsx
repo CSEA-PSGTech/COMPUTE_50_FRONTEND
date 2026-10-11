@@ -109,12 +109,7 @@ export const Profile: React.FC = () => {
 
         <div className="space-y-8">
           <PersonalDetails user={profile.user} onEdit={() => setIsEditModalOpen(true)} />
-          <StatusCards
-            registrationStatus={profile.registrationStatus}
-            paymentStatus={profile.paymentStatus}
-            accommodationStatus={profile.accommodationStatus}
-            receiptUrl={profile.receiptUrl}
-          />
+          <StatusCards registrationStatus={profile.registrationStatus} />
           <TeamSection team={profile.team} onCreateTeam={handleCreateTeam} />
         </div>
 

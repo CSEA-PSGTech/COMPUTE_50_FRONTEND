@@ -76,18 +76,15 @@ export const ProfileSkeleton: React.FC = () => (
           </div>
         </div>
 
-        {/* Status Cards skeleton */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div
-              key={i}
-              className="bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-xl p-6 space-y-3"
-            >
-              <Skeleton variant="circle" height="40px" />
-              <Skeleton variant="text" width="100px" height="14px" />
-              <Skeleton variant="text" width="70px" height="20px" />
+        {/* Status Card skeleton */}
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-xl p-6">
+          <div className="flex items-center gap-3.5">
+            <Skeleton variant="circle" height="40px" width="40px" />
+            <div className="space-y-2">
+              <Skeleton variant="text" width="140px" height="16px" />
+              <Skeleton variant="text" width="240px" height="14px" />
             </div>
-          ))}
+          </div>
         </div>
 
         {/* Team Section skeleton */}

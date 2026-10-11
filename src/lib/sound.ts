@@ -1,77 +1,149 @@
 // Web Audio helper for futuristic UI interaction tones.
-// Handles browser autoplay restrictions via unlockAudio() on user gesture.
+// Handles browser autoplay restrictions via auto-resume and user gestures.
 const KEY = 'compute50_muted';
 
 let ctx: AudioContext | undefined;
-let muted = (() => {
-  try {
-    return localStorage.getItem(KEY) === '1';
-  } catch {
-    return false;
-  }
-})();
+let inMemoryMuted = false;
 
-export const isMuted = (): boolean => muted;
+// Initialize in-memory mute state from localStorage safely
+try {
+  const stored = localStorage.getItem(KEY);
+  if (stored !== null) {
+    inMemoryMuted = stored === '1';
+  }
+} catch {
+  inMemoryMuted = false;
+}
+
+export const isMuted = (): boolean => {
+  try {
+    const stored = localStorage.getItem(KEY);
+    if (stored !== null) {
+      return stored === '1';
+    }
+  } catch {
+    /* localStorage unavailable */
+  }
+  return inMemoryMuted;
+};
 
 export const setMuted = (value: boolean): void => {
-  muted = value;
+  inMemoryMuted = value;
   try {
     localStorage.setItem(KEY, value ? '1' : '0');
+    // Notify all listeners and components in real time
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('compute50_sound_toggle', { detail: { muted: value } })
+      );
+    }
   } catch {
     /* localStorage unavailable */
   }
 };
 
-export const unlockAudio = (): void => {
+export const getAudioContext = (): AudioContext | undefined => {
+  if (isMuted()) return undefined;
+
   try {
-    ctx ??= new (window.AudioContext || (window as any).webkitAudioContext)();
-    if (ctx.state === 'suspended') {
+    if (!ctx && typeof window !== 'undefined') {
+      const AudioCtx =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (AudioCtx) {
+        ctx = new AudioCtx();
+      }
+    }
+    if (ctx && ctx.state === 'suspended') {
       void ctx.resume();
     }
+    return ctx;
   } catch {
-    /* audio unavailable */
+    return undefined;
   }
 };
 
-export const tone = (freq: number, duration: number, gain = 0.04, glideTo?: number): void => {
-  if (muted || !ctx) return;
-  try {
-    const osc = ctx.createOscillator();
-    const amp = ctx.createGain();
-    const t = ctx.currentTime;
-    osc.frequency.value = freq;
-    if (glideTo) {
-      osc.frequency.exponentialRampToValueAtTime(glideTo, t + duration);
+export const unlockAudio = (): void => {
+  if (!isMuted()) {
+    getAudioContext();
+  }
+};
+
+export const tone = (
+  freq: number,
+  duration = 0.08,
+  gain = 0.1,
+  glideTo?: number,
+  type: OscillatorType = 'sine'
+): void => {
+  // Hard early exit if muted
+  if (isMuted()) return;
+
+  const audio = getAudioContext();
+  if (!audio) return;
+
+  const play = () => {
+    // Double check mute status before playing scheduled audio
+    if (isMuted()) return;
+
+    try {
+      const osc = audio.createOscillator();
+      const amp = audio.createGain();
+      const now = audio.currentTime;
+
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, now);
+      if (glideTo) {
+        osc.frequency.exponentialRampToValueAtTime(Math.max(1, glideTo), now + duration);
+      }
+
+      // Smooth attack & decay using linear ramps
+      amp.gain.setValueAtTime(0, now);
+      amp.gain.linearRampToValueAtTime(gain, now + 0.008);
+      amp.gain.linearRampToValueAtTime(0, now + duration);
+
+      osc.connect(amp);
+      amp.connect(audio.destination);
+
+      osc.start(now);
+      osc.stop(now + duration + 0.05);
+    } catch {
+      /* ignore audio errors */
     }
-    amp.gain.setValueAtTime(0.0001, t);
-    amp.gain.exponentialRampToValueAtTime(gain, t + 0.008);
-    amp.gain.exponentialRampToValueAtTime(0.0001, t + duration);
-    osc.connect(amp);
-    amp.connect(ctx.destination);
-    osc.start(t);
-    osc.stop(t + duration + 0.03);
-  } catch {
-    /* ignore audio errors */
+  };
+
+  if (audio.state === 'suspended') {
+    audio.resume().then(play).catch(() => {});
+  } else {
+    play();
   }
 };
 
 export const soundTap = (): void => {
-  unlockAudio();
-  tone(520, 0.06, 0.03, 780);
+  if (!isMuted()) {
+    tone(580, 0.08, 0.12, 880);
+  }
 };
 
 export const soundReveal = (): void => {
-  unlockAudio();
-  tone(220, 0.3, 0.05, 880);
+  if (!isMuted()) {
+    tone(320, 0.22, 0.14, 960);
+  }
 };
 
 export const soundSave = (): void => {
-  unlockAudio();
-  tone(587, 0.12, 0.05, 1174);
+  if (!isMuted()) {
+    tone(620, 0.12, 0.14, 1240);
+  }
 };
 
 export const soundTeamComplete = (): void => {
-  unlockAudio();
-  tone(440, 0.25, 0.06, 880);
-  setTimeout(() => tone(659, 0.35, 0.06, 1318), 120);
+  if (!isMuted()) {
+    tone(520, 0.2, 0.14, 880);
+    setTimeout(() => {
+      if (!isMuted()) {
+        tone(780, 0.3, 0.14, 1400);
+      }
+    }, 100);
+  }
 };

@@ -96,11 +96,7 @@ export const TexturedBackground: React.FC = () => {
         />
       )}
 
-      {/* 5. Soft Ambient Neon Radial Glow Orbs */}
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-[var(--accent)] opacity-[var(--bg-glow-opacity,0.05)] blur-[120px]" />
-      <div className="absolute bottom-1/3 right-1/4 w-[600px] h-[600px] rounded-full bg-[var(--accent)] opacity-[var(--bg-glow-opacity,0.04)] blur-[140px]" />
-
-      {/* 6. Subtle Edge Vignette Layer */}
+      {/* 5. Subtle Edge Vignette Layer */}
       <div
         className="absolute inset-0"
         style={{

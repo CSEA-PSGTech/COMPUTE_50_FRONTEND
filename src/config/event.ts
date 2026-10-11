@@ -11,6 +11,7 @@ export const EVENT_CONFIG = {
   duration: '50 Years of M.E. CSE Legacy',
   venue: 'Round 1 Online · Finals at PSG Tech',
   venueFull: 'Department of CSE, PSG College of Technology, Peelamedu, Coimbatore - 641004',
+  venueMapsUrl: 'https://maps.google.com/?q=PSG+College+of+Technology,+Peelamedu,+Coimbatore',
   prizePool: '₹2,50,000+',
   prizePoolNumeric: 250000,
   prizes: {
@@ -34,13 +35,68 @@ export const EVENT_CONFIG = {
   teamSize: '2 - 4 Members',
   contactEmail: 'csea@psgtech.ac.in',
   contactPhone: '+91 98765 43210 / +91 91234 56789',
+  contactPhones: {
+    general: '+91 98765 43210',
+    registration: '+91 91234 56789',
+    event: '+91 98765 43210',
+  },
   whatsappLink: 'https://chat.whatsapp.com/compute50-official',
+  instagramUrl: 'https://instagram.com/csea_psgtech',
   organizerFull: 'CSEA – Computer Science and Engineering Association',
   organizerShort: 'CSEA',
   organizerWebsite: 'https://csea.psgtech.ac.in/',
   college: 'PSG College of Technology',
   collegeShort: 'PSG Tech',
+  collegeWebsite: 'https://psgtech.edu',
   footerCopyright: '© 2026 Compute 50 · CSEA, PSG College of Technology',
 } as const;
+
+export interface SupportContact {
+  id: string;
+  category: string;
+  contactName: string;
+  role: string;
+  phone?: string;
+  email: string;
+  description: string;
+}
+
+export const SUPPORT_CONTACTS: SupportContact[] = [
+  {
+    id: 'general',
+    category: 'GENERAL QUERIES',
+    contactName: 'CSEA Secretariat',
+    role: 'Convenor & Helpdesk',
+    phone: '+91 98765 43210',
+    email: 'csea@psgtech.ac.in',
+    description: 'General enquiries, schedule info, and event coordination',
+  },
+  {
+    id: 'registration',
+    category: 'REGISTRATION SUPPORT',
+    contactName: 'Registration Committee',
+    role: 'Participant Coordination',
+    phone: '+91 91234 56789',
+    email: 'csea@psgtech.ac.in',
+    description: 'Account signup, team formation, and roster updates',
+  },
+  {
+    id: 'event',
+    category: 'EVENT SUPPORT',
+    contactName: 'Hackathon Operations',
+    role: 'Track & Logistics Lead',
+    phone: '+91 98765 43210',
+    email: 'csea@psgtech.ac.in',
+    description: 'Track rules, challenge guidelines, and venue check-in',
+  },
+  {
+    id: 'technical',
+    category: 'TECHNICAL SUPPORT',
+    contactName: 'Tech & Platform Team',
+    role: 'Portal Administration',
+    email: 'csea@psgtech.ac.in',
+    description: 'Website issues, authentication, and technical problems',
+  },
+];
 
 export default EVENT_CONFIG;

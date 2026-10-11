@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import confetti from 'canvas-confetti';
-import { Card } from '../common/Card';
 import { TeamRevealCards, MemberData } from '../hackathon/TeamRevealCards';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
@@ -37,7 +36,7 @@ export const RegisterForm: React.FC = () => {
     setError('');
 
     try {
-      const activeMembers = members.filter((m) => m.isRevealed && m.name.trim().length > 0);
+      const activeMembers = members.filter((m) => m.isCompleted && m.name.trim().length > 0);
 
       // Simulate sending team registration request
       await new Promise((resolve) => setTimeout(resolve, 600));
@@ -54,48 +53,37 @@ export const RegisterForm: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl sm:text-3xl font-bold font-mono text-[var(--text-primary)]">
-          Hackathon Team Registration
-        </h2>
-        <p className="text-xs sm:text-sm text-[var(--text-secondary)] max-w-lg mx-auto">
-          Tap each card below to reveal and configure your team members for Compute 50 National Innovation Challenge.
-        </p>
-      </div>
-
+    <div className="w-full max-w-4xl mx-auto space-y-6">
       {error && (
         <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-xs font-medium text-red-600 dark:text-red-400 text-center">
           {error}
         </div>
       )}
 
-      {/* 4 Interactive Team Reveal Cards */}
-      <div className="pt-2">
-        <TeamRevealCards
-          currentUser={
-            user || {
-              id: 'usr_leader',
-              name: 'Alex Rivera',
-              email: 'alex.rivera@psgtech.ac.in',
-              phone: '+91 9876543210',
-              college: 'PSG College of Technology',
-              department: 'Computer Science & Engineering',
-              year: '3rd Year',
-              rollNumber: '21MX101',
-            }
+      {/* Interactive Deck of Cards Registration */}
+      <TeamRevealCards
+        currentUser={
+          user || {
+            id: 'usr_leader',
+            name: 'Alex Rivera',
+            email: 'alex.rivera@psgtech.ac.in',
+            phone: '+91 9876543210',
+            college: 'PSG College of Technology',
+            department: 'Computer Science & Engineering',
+            year: '3rd Year',
+            rollNumber: '21MX101',
           }
-          onSubmitTeam={handleTeamSubmit}
-          isLoading={loading}
-        />
-      </div>
+        }
+        onSubmitTeam={handleTeamSubmit}
+        isLoading={loading}
+      />
 
-      <p className="text-xs text-[var(--text-secondary)] text-center pt-2 border-t border-[var(--border-color)]">
+      <p className="text-xs text-[var(--text-secondary)] text-center pt-6 border-t border-[var(--border-color)]">
         Already registered?{' '}
         <Link to="/login" className="text-lime-800 dark:text-[var(--accent)] hover:underline font-bold">
           Login here
         </Link>
       </p>
-    </Card>
+    </div>
   );
 };

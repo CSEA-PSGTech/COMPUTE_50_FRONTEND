@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, MapPin, ArrowRight, UserPlus, LogIn, Sparkles } from 'lucide-react';
+import { Calendar, MapPin, ArrowRight, UserPlus, LogIn, Sparkles, Laptop, AlertCircle } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Container } from '../common/Container';
 import { Button } from '../common/Button';
@@ -148,20 +148,71 @@ export const Hero: React.FC = () => {
             </span>
           </motion.p>
 
-          {/* 5. Date & Venue (Order: 5) */}
-          <motion.div variants={itemVariants} className="w-full max-w-xl space-y-6 pt-2">
-            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-[var(--text-secondary)] font-medium">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-[var(--accent)] shrink-0" />
-                <span className="inline-block whitespace-nowrap">{EVENT_CONFIG.dates}</span>
+          {/* 5. Two-Round Format & Important Notice */}
+          <motion.div variants={itemVariants} className="w-full max-w-xl sm:max-w-2xl space-y-4 pt-2">
+            {/* Event Dates */}
+            <div className="flex items-center justify-center gap-2 text-sm text-[var(--text-secondary)] font-medium">
+              <Calendar className="w-4 h-4 text-[var(--accent)] shrink-0" />
+              <span className="inline-block whitespace-nowrap font-mono">{EVENT_CONFIG.dates}</span>
+            </div>
+
+            {/* Separate Round Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-left">
+              {/* Round 1 — Online */}
+              <div className="p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)]/50 transition-colors flex items-start gap-3.5 shadow-sm">
+                <div className="w-9 h-9 rounded-lg bg-[var(--accent-muted)] border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] shrink-0 mt-0.5">
+                  <Laptop className="w-4.5 h-4.5" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-mono text-xs font-bold text-[var(--text-primary)] tracking-wide">
+                      ROUND 1
+                    </span>
+                    <span className="px-2 py-0.5 rounded-md bg-[var(--accent)] text-slate-950 font-mono text-[10px] font-extrabold uppercase tracking-wider">
+                      ONLINE
+                    </span>
+                  </div>
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                    Participate remotely from your location.
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-[var(--accent)] shrink-0" />
-                <span className="inline-block whitespace-nowrap">{EVENT_CONFIG.venue}</span>
+
+              {/* Round 2 — On Campus */}
+              <div className="p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-emerald-400/50 transition-colors flex items-start gap-3.5 shadow-sm">
+                <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
+                  <MapPin className="w-4.5 h-4.5" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-mono text-xs font-bold text-[var(--text-primary)] tracking-wide">
+                      ROUND 2
+                    </span>
+                    <span className="px-2 py-0.5 rounded-md bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-primary)] font-mono text-[10px] font-bold uppercase tracking-wider">
+                      ON CAMPUS
+                    </span>
+                  </div>
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                    PSG College of Technology, Coimbatore.
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* 6. Countdown (Order: 6) */}
+            {/* Notice Strip */}
+            <div className="w-full p-3 sm:py-3 sm:px-4 rounded-xl bg-[var(--accent-muted)]/50 border border-[var(--accent)]/30 text-left flex items-start gap-2.5 sm:gap-3">
+              <AlertCircle className="w-4 h-4 text-[var(--accent)] shrink-0 mt-0.5" />
+              <p className="text-xs text-[var(--text-primary)] leading-relaxed">
+                <strong className="text-[var(--accent)] font-mono font-bold uppercase tracking-wider mr-1.5">
+                  IMPORTANT:
+                </strong>
+                Round 1 is conducted entirely online. Only shortlisted teams will attend the on-campus final round at PSG Tech.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* 6. Countdown (Order: 6) */}
+          <motion.div variants={itemVariants} className="w-full max-w-xl sm:max-w-2xl">
             <div className="w-full p-4 sm:p-6 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-lg">
               <p className="text-xs uppercase font-semibold text-[var(--text-secondary)] tracking-wider mb-4 font-mono">
                 Hackathon starts in

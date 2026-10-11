@@ -1,137 +1,199 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, useReducedMotion, AnimatePresence } from 'framer-motion';
-import { User, Crown, Trash2, Edit3, X, Sparkles, AlertCircle, ShieldCheck, Zap } from 'lucide-react';
-import confetti from 'canvas-confetti';
+import { motion, useReducedMotion } from 'framer-motion';
+import {
+  Crown,
+  User as UserIcon,
+  CheckCircle2,
+  AlertCircle,
+  ArrowLeft,
+  Edit2,
+  Trash2,
+  Check,
+  ChevronRight,
+  ShieldCheck,
+} from 'lucide-react';
 import { User as AuthUser } from '../../types/auth';
-import { soundTap, soundReveal, soundSave, soundTeamComplete } from '../../lib/sound';
+import { soundTap, soundSave, soundTeamComplete } from '../../lib/sound';
 
 export interface MemberData {
   id: string;
   slotNumber: string;
   slotTitle: string;
+  role: 'Leader' | 'Member';
   name: string;
-  rollNumber: string;
-  phone: string;
   email: string;
+  phone: string;
   college: string;
   department: string;
+  year: string;
+  rollNumber: string;
   isRequired: boolean;
-  isRevealed: boolean;
-  hasSpunOnce: boolean;
+  isCompleted: boolean;
+  isRevealed?: boolean;
 }
 
 interface TeamRevealCardsProps {
   currentUser?: AuthUser | null;
+  initialTeamName?: string;
   onTeamDataChange?: (members: MemberData[], isValid: boolean) => void;
-  onSubmitTeam?: (members: MemberData[]) => void;
+  onSubmitTeam?: (members: MemberData[], teamName?: string) => void;
   isLoading?: boolean;
 }
 
+const YEAR_OPTIONS = [
+  '1st Year',
+  '2nd Year',
+  '3rd Year',
+  '4th Year',
+  'Postgraduate (M.E. / M.Tech / MCA)',
+];
+
 export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
   currentUser,
+  initialTeamName,
   onTeamDataChange,
   onSubmitTeam,
   isLoading = false,
 }) => {
   const shouldReduceMotion = useReducedMotion();
 
-  // Team Name state
-  const [teamName, setTeamName] = useState<string>('CyberPunks 50');
+  // Screen size detection for stable mobile rendering
+  const [isMobile, setIsMobile] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 640;
+    }
+    return false;
+  });
 
-  // Initial 4 Team Member Slots
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Team Name state
+  const [teamName, setTeamName] = useState<string>(initialTeamName || 'CyberPunks 50');
+  const [isEditingTeamName, setIsEditingTeamName] = useState<boolean>(false);
+
+  // Active view: 'deck' | 'flip-form' | 'review'
+  const [activeCardId, setActiveCardId] = useState<string | null>(null);
+  const [isFlipped, setIsFlipped] = useState<boolean>(false);
+  const [showReview, setShowReview] = useState<boolean>(false);
+
+  // Team Member Slots (Leader + 3 Members = 4 max, 2 min required)
   const [members, setMembers] = useState<MemberData[]>([
     {
-      id: 'leader-1',
+      id: 'member-1',
       slotNumber: '01',
       slotTitle: 'TEAM LEADER',
+      role: 'Leader',
       name: currentUser?.name || 'Alex Rivera',
-      rollNumber: currentUser?.rollNumber || '21MX101',
-      phone: currentUser?.phone || '9876543210',
       email: currentUser?.email || 'alex.rivera@psgtech.ac.in',
+      phone: currentUser?.phone || '9876543210',
       college: currentUser?.college || 'PSG College of Technology',
-      department: currentUser?.department || 'CSE',
+      department: currentUser?.department || 'Computer Science & Engineering',
+      year: currentUser?.year || '3rd Year',
+      rollNumber: currentUser?.rollNumber || '21MX101',
       isRequired: true,
-      isRevealed: true, // Pre-revealed Leader
-      hasSpunOnce: true,
+      isCompleted: true,
+      isRevealed: true,
     },
     {
       id: 'member-2',
       slotNumber: '02',
-      slotTitle: 'MEMBER 2',
+      slotTitle: 'TEAM MEMBER',
+      role: 'Member',
       name: '',
-      rollNumber: '',
-      phone: '',
       email: '',
+      phone: '',
       college: 'PSG College of Technology',
-      department: 'CSE',
+      department: 'Computer Science & Engineering',
+      year: '3rd Year',
+      rollNumber: '',
       isRequired: true,
+      isCompleted: false,
       isRevealed: false,
-      hasSpunOnce: false,
     },
     {
       id: 'member-3',
       slotNumber: '03',
-      slotTitle: 'MEMBER 3',
+      slotTitle: 'TEAM MEMBER',
+      role: 'Member',
       name: '',
-      rollNumber: '',
-      phone: '',
       email: '',
+      phone: '',
       college: 'PSG College of Technology',
-      department: 'CSE',
+      department: 'Computer Science & Engineering',
+      year: '3rd Year',
+      rollNumber: '',
       isRequired: false,
+      isCompleted: false,
       isRevealed: false,
-      hasSpunOnce: false,
     },
     {
       id: 'member-4',
       slotNumber: '04',
-      slotTitle: 'MEMBER 4',
+      slotTitle: 'TEAM MEMBER',
+      role: 'Member',
       name: '',
-      rollNumber: '',
-      phone: '',
       email: '',
+      phone: '',
       college: 'PSG College of Technology',
-      department: 'CSE',
+      department: 'Computer Science & Engineering',
+      year: '3rd Year',
+      rollNumber: '',
       isRequired: false,
+      isCompleted: false,
       isRevealed: false,
-      hasSpunOnce: false,
     },
   ]);
 
-  // Card Animation & Edit Panel State
-  const [spinningCardId, setSpinningCardId] = useState<string | null>(null);
-  const [activeCardId, setActiveCardId] = useState<string | null>(null);
-  const [cardTilts, setCardTilts] = useState<Record<string, { x: number; y: number }>>({});
-
-  // Edit Form State
+  // Form State for Active Card
   const [formData, setFormData] = useState<{
     name: string;
-    rollNumber: string;
-    phone: string;
     email: string;
+    phone: string;
     college: string;
-  }>({ name: '', rollNumber: '', phone: '', email: '', college: 'PSG College of Technology' });
+    department: string;
+    year: string;
+    rollNumber: string;
+  }>({
+    name: '',
+    email: '',
+    phone: '',
+    college: 'PSG College of Technology',
+    department: 'Computer Science & Engineering',
+    year: '3rd Year',
+    rollNumber: '',
+  });
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  // Focus Trap Refs
-  const cardRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const panelRef = useRef<HTMLDivElement>(null);
+  // Accessibility refs
   const firstInputRef = useRef<HTMLInputElement>(null);
+  const cardRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
-  // Sync current user profile
+  // Sync with currentUser when it updates
+  const prevUserRef = useRef(currentUser);
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser && currentUser !== prevUserRef.current) {
+      prevUserRef.current = currentUser;
       setMembers((prev) =>
         prev.map((m, index) =>
           index === 0
             ? {
                 ...m,
-                name: m.name || currentUser.name || '',
-                phone: m.phone || currentUser.phone || '',
-                email: m.email || currentUser.email || '',
-                rollNumber: m.rollNumber || currentUser.rollNumber || '',
-                college: m.college || currentUser.college || 'PSG College of Technology',
+                name: currentUser.name || m.name,
+                email: currentUser.email || m.email,
+                phone: currentUser.phone || m.phone,
+                college: currentUser.college || m.college,
+                department: currentUser.department || m.department,
+                year: currentUser.year || m.year,
+                rollNumber: currentUser.rollNumber || m.rollNumber,
+                isCompleted: true,
+                isRevealed: true,
               }
             : m
         )
@@ -139,149 +201,108 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
     }
   }, [currentUser]);
 
-  // Check card validity
-  const isCardValid = (m: MemberData): boolean => {
-    if (!m.isRevealed) return !m.isRequired;
+  // Member validity helper
+  const isMemberDataValid = (m: MemberData): boolean => {
     return (
-      m.name.trim().length > 0 &&
-      m.rollNumber.trim().length > 0 &&
+      m.name.trim().length >= 2 &&
+      /\S+@\S+\.\S+/.test(m.email.trim()) &&
       m.phone.replace(/\D/g, '').length === 10 &&
-      /\S+@\S+\.\S+/.test(m.email.trim())
+      m.college.trim().length >= 2 &&
+      m.department.trim().length >= 2 &&
+      m.year.trim().length > 0
     );
   };
 
-  const requiredCardsValid = isCardValid(members[0]) && isCardValid(members[1]);
-  const filledCount = members.filter((m) => m.isRevealed && isCardValid(m)).length;
+  // Required cards (0 and 1) must be valid; any completed optional cards must also be valid
+  const requiredValid =
+    isMemberDataValid(members[0]) &&
+    members[1].isCompleted &&
+    isMemberDataValid(members[1]);
 
+  const allFilledValid =
+    requiredValid &&
+    (!members[2].isCompleted || isMemberDataValid(members[2])) &&
+    (!members[3].isCompleted || isMemberDataValid(members[3]));
+
+  const completedCount = members.filter((m) => m.isCompleted).length;
+
+  // Find next incomplete required card
+  const nextRequiredIndex = members.findIndex((m) => m.isRequired && !m.isCompleted);
+
+  // Notify parent of changes
   useEffect(() => {
     if (onTeamDataChange) {
-      onTeamDataChange(members, requiredCardsValid);
+      onTeamDataChange(members, allFilledValid);
     }
-  }, [members, requiredCardsValid, onTeamDataChange]);
+  }, [members, allFilledValid, onTeamDataChange]);
 
-  // Particle Burst helper (<20 particles, <700ms)
-  const triggerParticleBurst = (cardElement?: HTMLElement | null) => {
-    if (shouldReduceMotion) return;
-
-    let origin = { x: 0.5, y: 0.5 };
-    if (cardElement) {
-      const rect = cardElement.getBoundingClientRect();
-      origin = {
-        x: (rect.left + rect.width / 2) / window.innerWidth,
-        y: (rect.top + rect.height / 2) / window.innerHeight,
-      };
-    }
-
-    confetti({
-      particleCount: 16,
-      spread: 50,
-      startVelocity: 16,
-      ticks: 45,
-      gravity: 0.9,
-      colors: ['#B6FF00', '#C8FF33', '#22c55e', '#ffffff'],
-      origin,
-    });
-  };
-
-  // Subtle 3D Desktop Card Tilt
-  const handleMouseMove = (id: string, e: React.MouseEvent<HTMLButtonElement>) => {
-    if (shouldReduceMotion) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    setCardTilts((prev) => ({
-      ...prev,
-      [id]: { x: -(y / rect.height) * 10, y: (x / rect.width) * 10 },
-    }));
-  };
-
-  const handleMouseLeave = (id: string) => {
-    setCardTilts((prev) => ({ ...prev, [id]: { x: 0, y: 0 } }));
-  };
-
-  // Handle Card Click / Reveal
-  const handleCardClick = (member: MemberData) => {
+  // Open a card to flip and edit
+  const handleOpenCard = (member: MemberData) => {
     soundTap();
-    const isFirstTime = !member.hasSpunOnce;
-
     setFormData({
       name: member.name,
-      rollNumber: member.rollNumber,
-      phone: member.phone,
       email: member.email,
+      phone: member.phone,
       college: member.college || 'PSG College of Technology',
+      department: member.department || 'Computer Science & Engineering',
+      year: member.year || '3rd Year',
+      rollNumber: member.rollNumber || '',
     });
     setFormErrors({});
+    setActiveCardId(member.id);
+    setShowReview(false);
 
-    if (isFirstTime && !shouldReduceMotion) {
-      soundReveal();
-      setSpinningCardId(member.id);
-      setTimeout(() => {
-        setSpinningCardId(null);
-        setActiveCardId(member.id);
-        setMembers((prev) =>
-          prev.map((m) => (m.id === member.id ? { ...m, hasSpunOnce: true } : m))
-        );
-      }, 950);
-    } else {
-      setActiveCardId(member.id);
+    // Smoothly scroll mobile viewport to the card form
+    if (typeof window !== 'undefined' && window.innerWidth < 640) {
+      window.scrollTo({ top: 30, behavior: 'smooth' });
     }
+
+    // Trigger smooth 3D flip for desktop
+    setIsFlipped(false);
+    requestAnimationFrame(() => {
+      setIsFlipped(true);
+    });
+
+    setTimeout(() => {
+      firstInputRef.current?.focus();
+    }, shouldReduceMotion ? 50 : 450);
   };
 
-  const closePanel = () => {
-    const closedId = activeCardId;
-    setActiveCardId(null);
-    setFormErrors({});
-    if (closedId && cardRefs.current[closedId]) {
-      cardRefs.current[closedId]?.focus();
-    }
-  };
+  // Return from form back to deck
+  const handleBackToDeck = React.useCallback(() => {
+    soundTap();
+    setIsFlipped(false);
+    setTimeout(() => {
+      const closedId = activeCardId;
+      setActiveCardId(null);
+      setFormErrors({});
+      if (closedId && cardRefs.current[closedId]) {
+        cardRefs.current[closedId]?.focus();
+      }
+    }, shouldReduceMotion ? 0 : 420);
+  }, [activeCardId, shouldReduceMotion]);
 
-  // Dialog Accessibility (Esc key & Focus trap)
+  // Escape key listener for modal/flip view
   useEffect(() => {
-    if (!activeCardId) return;
-
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        closePanel();
-      }
-
-      if (e.key === 'Tab' && panelRef.current) {
-        const focusableElements = panelRef.current.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusableElements.length === 0) return;
-
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
-
-        if (e.shiftKey && document.activeElement === firstElement) {
-          e.preventDefault();
-          lastElement.focus();
-        } else if (!e.shiftKey && document.activeElement === lastElement) {
-          e.preventDefault();
-          firstElement.focus();
+        if (activeCardId) {
+          handleBackToDeck();
+        } else if (showReview) {
+          setShowReview(false);
         }
       }
     };
-
     window.addEventListener('keydown', handleKeyDown);
-    setTimeout(() => firstInputRef.current?.focus(), 100);
-
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeCardId]);
+  }, [activeCardId, showReview, handleBackToDeck]);
 
-  // Validate Member Inputs & Duplicate Checks
-  const validateFieldValues = () => {
+  // Validate form fields
+  const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
 
-    if (!formData.name.trim()) errors.name = 'Full name is required';
-    if (!formData.rollNumber.trim()) errors.rollNumber = 'Roll number is required';
-
-    if (!formData.phone.trim()) {
-      errors.phone = 'Mobile number is required';
-    } else if (formData.phone.replace(/\D/g, '').length !== 10) {
-      errors.phone = 'Enter a valid 10-digit Indian mobile number';
+    if (!formData.name.trim() || formData.name.trim().length < 2) {
+      errors.name = 'Full name is required (minimum 2 characters)';
     }
 
     if (!formData.email.trim()) {
@@ -290,17 +311,46 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
       errors.email = 'Enter a valid email address';
     }
 
-    // Duplicate detection across team
+    const cleanPhone = formData.phone.replace(/\D/g, '');
+    if (!formData.phone.trim()) {
+      errors.phone = 'Mobile number is required';
+    } else if (cleanPhone.length !== 10) {
+      errors.phone = 'Enter a valid 10-digit mobile number';
+    }
+
+    if (!formData.college.trim()) {
+      errors.college = 'College or institution is required';
+    }
+
+    if (!formData.department.trim()) {
+      errors.department = 'Department is required';
+    }
+
+    if (!formData.year.trim()) {
+      errors.year = 'Year of study is required';
+    }
+
+    // Duplicate checks across team members
     members.forEach((m) => {
-      if (m.id !== activeCardId && m.isRevealed) {
-        if (formData.email.trim() && m.email.trim().toLowerCase() === formData.email.trim().toLowerCase()) {
-          errors.email = 'This email is already registered for another member';
+      if (m.id !== activeCardId && m.isCompleted) {
+        if (
+          formData.email.trim() &&
+          m.email.trim().toLowerCase() === formData.email.trim().toLowerCase()
+        ) {
+          errors.email = 'This email is already added for another member';
         }
-        if (formData.rollNumber.trim() && m.rollNumber.trim().toLowerCase() === formData.rollNumber.trim().toLowerCase()) {
-          errors.rollNumber = 'This roll number is already registered for another member';
+        if (
+          formData.phone.trim() &&
+          m.phone.replace(/\D/g, '') === cleanPhone
+        ) {
+          errors.phone = 'This mobile number is already used for another member';
         }
-        if (formData.phone.trim() && m.phone.replace(/\D/g, '') === formData.phone.replace(/\D/g, '')) {
-          errors.phone = 'This mobile number is already registered for another member';
+        if (
+          formData.rollNumber.trim() &&
+          m.rollNumber.trim().toUpperCase() ===
+            formData.rollNumber.trim().toUpperCase()
+        ) {
+          errors.rollNumber = 'This roll number is already used for another member';
         }
       }
     });
@@ -309,46 +359,47 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
     return Object.keys(errors).length === 0;
   };
 
-  // Save Member
+  // Save member form
   const handleSaveMember = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateFieldValues() || !activeCardId) return;
+    if (!validateForm() || !activeCardId) return;
 
     soundSave();
-    const currentMember = members.find((m) => m.id === activeCardId);
-    const wasNewlyRevealed = currentMember && !currentMember.isRevealed;
 
     const updatedMembers = members.map((m) =>
       m.id === activeCardId
         ? {
             ...m,
             name: formData.name.trim(),
-            rollNumber: formData.rollNumber.trim().toUpperCase(),
-            phone: formData.phone.trim(),
             email: formData.email.trim(),
+            phone: formData.phone.trim(),
             college: formData.college.trim(),
+            department: formData.department.trim(),
+            year: formData.year.trim(),
+            rollNumber: formData.rollNumber.trim().toUpperCase(),
+            isCompleted: true,
             isRevealed: true,
-            hasSpunOnce: true,
           }
         : m
     );
 
     setMembers(updatedMembers);
 
-    if (wasNewlyRevealed) {
-      triggerParticleBurst(cardRefs.current[activeCardId]);
-    }
-
-    const newFilledCount = updatedMembers.filter((m) => m.isRevealed && isCardValid(m)).length;
-    if (newFilledCount === 4) {
+    const newCompletedCount = updatedMembers.filter((m) => m.isCompleted).length;
+    if (newCompletedCount === 4) {
       soundTeamComplete();
     }
 
-    closePanel();
+    // Flip card back into the deck
+    setIsFlipped(false);
+    setTimeout(() => {
+      setActiveCardId(null);
+      setFormErrors({});
+    }, shouldReduceMotion ? 0 : 450);
   };
 
-  // Remove Optional Member
-  const handleRemoveMember = (id: string) => {
+  // Remove optional member
+  const handleRemoveOptionalMember = (id: string) => {
     soundTap();
     setMembers((prev) =>
       prev.map((m) =>
@@ -356,405 +407,828 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
           ? {
               ...m,
               name: '',
-              rollNumber: '',
-              phone: '',
               email: '',
+              phone: '',
+              rollNumber: '',
+              isCompleted: false,
               isRevealed: false,
             }
           : m
       )
     );
-    closePanel();
+    handleBackToDeck();
   };
 
-  return (
-    <div className="space-y-8 text-center select-none">
-      {/* 1. CORE EXPERIENCE HEADER */}
-      <div className="space-y-3 max-w-xl mx-auto">
-        <span className="text-[11px] font-mono font-bold tracking-[0.25em] text-[var(--accent)] uppercase flex items-center justify-center gap-2">
-          <Zap className="w-3.5 h-3.5 text-[var(--accent)] animate-pulse" />
-          HACKATHON TEAM FORMATION
-        </span>
+  const activeMember = members.find((m) => m.id === activeCardId);
 
-        <h2 className="text-3xl sm:text-4xl font-black font-mono text-[var(--text-primary)] tracking-tight uppercase">
-          ASSEMBLE YOUR TEAM
-        </h2>
+  // -------------------------------------------------------------
+  // SHARED MEMBER FORM CONTENT (Crisp, Solid, Box-Sized)
+  // -------------------------------------------------------------
+  const renderMemberFormContent = () => {
+    if (!activeMember) return null;
 
-        {/* Team Name Input */}
-        <div className="flex justify-center items-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl font-mono text-xs sm:text-sm text-[var(--text-primary)] font-bold">
-            <span className="text-[var(--text-secondary)]">TEAM:</span>
+    return (
+      <div className="w-full min-w-0 box-border space-y-5 sm:space-y-6">
+        {/* Form Header */}
+        <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3.5 gap-2">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-xl bg-[var(--accent-muted)] border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] shrink-0">
+              {activeMember.role === 'Leader' ? (
+                <Crown className="w-4 h-4" />
+              ) : (
+                <UserIcon className="w-4 h-4" />
+              )}
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[10px] font-mono font-bold tracking-wider text-[var(--accent)] uppercase">
+                  CARD {activeMember.slotNumber}
+                </span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--bg-secondary)] text-[var(--text-secondary)] border border-[var(--border-color)]">
+                  {activeMember.isRequired ? 'REQUIRED' : 'OPTIONAL'}
+                </span>
+              </div>
+              <h3 className="font-mono font-bold text-sm sm:text-base text-[var(--text-primary)] truncate">
+                {activeMember.role === 'Leader'
+                  ? 'Team Leader Details'
+                  : `Teammate ${activeMember.slotNumber} Details`}
+              </h3>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleBackToDeck}
+            className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-xl border border-[var(--border-color)] hover:border-[var(--accent)] text-xs font-mono text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-secondary)] transition-colors cursor-pointer shrink-0 min-h-[36px]"
+            aria-label="Back to deck"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Back to Deck</span>
+          </button>
+        </div>
+
+        {/* Form Content */}
+        <form onSubmit={handleSaveMember} className="w-full min-w-0 box-border space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Full Name */}
+            <div className="space-y-1.5 min-w-0">
+              <label
+                htmlFor="member-name-input"
+                className="block text-xs font-mono font-semibold text-[var(--text-primary)]"
+              >
+                Full Name <span className="text-red-400">*</span>
+              </label>
+              <input
+                ref={firstInputRef}
+                id="member-name-input"
+                type="text"
+                name="name"
+                placeholder="e.g. Alex Rivera"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, name: e.target.value }))
+                }
+                className="w-full min-w-0 box-border h-11 px-3.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm font-mono text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--accent)] focus:border-[var(--accent)] transition-all"
+              />
+              {formErrors.name && (
+                <p role="alert" className="text-xs text-red-400 flex items-center gap-1 break-words">
+                  <AlertCircle className="w-3 h-3 shrink-0" /> {formErrors.name}
+                </p>
+              )}
+            </div>
+
+            {/* College Email */}
+            <div className="space-y-1.5 min-w-0">
+              <label
+                htmlFor="member-email-input"
+                className="block text-xs font-mono font-semibold text-[var(--text-primary)]"
+              >
+                College Email <span className="text-red-400">*</span>
+              </label>
+              <input
+                id="member-email-input"
+                type="email"
+                name="email"
+                placeholder="e.g. student@psgtech.ac.in"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, email: e.target.value }))
+                }
+                className="w-full min-w-0 box-border h-11 px-3.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm font-mono text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--accent)] focus:border-[var(--accent)] transition-all"
+              />
+              {formErrors.email && (
+                <p role="alert" className="text-xs text-red-400 flex items-center gap-1 break-words">
+                  <AlertCircle className="w-3 h-3 shrink-0" /> {formErrors.email}
+                </p>
+              )}
+            </div>
+
+            {/* Mobile Number */}
+            <div className="space-y-1.5 min-w-0">
+              <label
+                htmlFor="member-phone-input"
+                className="block text-xs font-mono font-semibold text-[var(--text-primary)]"
+              >
+                Phone Number <span className="text-red-400">*</span>
+              </label>
+              <input
+                id="member-phone-input"
+                type="tel"
+                inputMode="numeric"
+                name="phone"
+                placeholder="10-digit mobile number"
+                value={formData.phone}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, phone: e.target.value }))
+                }
+                className="w-full min-w-0 box-border h-11 px-3.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm font-mono text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--accent)] focus:border-[var(--accent)] transition-all"
+              />
+              {formErrors.phone && (
+                <p role="alert" className="text-xs text-red-400 flex items-center gap-1 break-words">
+                  <AlertCircle className="w-3 h-3 shrink-0" /> {formErrors.phone}
+                </p>
+              )}
+            </div>
+
+            {/* Year of Study */}
+            <div className="space-y-1.5 min-w-0">
+              <label
+                htmlFor="member-year-select"
+                className="block text-xs font-mono font-semibold text-[var(--text-primary)]"
+              >
+                Year of Study <span className="text-red-400">*</span>
+              </label>
+              <select
+                id="member-year-select"
+                name="year"
+                value={formData.year}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, year: e.target.value }))
+                }
+                className="w-full min-w-0 box-border h-11 px-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm font-mono text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent)] focus:border-[var(--accent)] transition-all cursor-pointer"
+              >
+                {YEAR_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt} className="bg-[var(--bg-surface)]">
+                    {opt}
+                  </option>
+                ))}
+              </select>
+              {formErrors.year && (
+                <p role="alert" className="text-xs text-red-400 flex items-center gap-1 break-words">
+                  <AlertCircle className="w-3 h-3 shrink-0" /> {formErrors.year}
+                </p>
+              )}
+            </div>
+
+            {/* College / Institution */}
+            <div className="space-y-1.5 min-w-0">
+              <label
+                htmlFor="member-college-input"
+                className="block text-xs font-mono font-semibold text-[var(--text-primary)]"
+              >
+                College / Institution <span className="text-red-400">*</span>
+              </label>
+              <input
+                id="member-college-input"
+                type="text"
+                name="college"
+                placeholder="e.g. PSG College of Technology"
+                value={formData.college}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, college: e.target.value }))
+                }
+                className="w-full min-w-0 box-border h-11 px-3.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm font-mono text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--accent)] focus:border-[var(--accent)] transition-all"
+              />
+              {formErrors.college && (
+                <p role="alert" className="text-xs text-red-400 flex items-center gap-1 break-words">
+                  <AlertCircle className="w-3 h-3 shrink-0" /> {formErrors.college}
+                </p>
+              )}
+            </div>
+
+            {/* Department */}
+            <div className="space-y-1.5 min-w-0">
+              <label
+                htmlFor="member-dept-input"
+                className="block text-xs font-mono font-semibold text-[var(--text-primary)]"
+              >
+                Department <span className="text-red-400">*</span>
+              </label>
+              <input
+                id="member-dept-input"
+                type="text"
+                name="department"
+                placeholder="e.g. Computer Science & Engineering"
+                value={formData.department}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, department: e.target.value }))
+                }
+                className="w-full min-w-0 box-border h-11 px-3.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm font-mono text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--accent)] focus:border-[var(--accent)] transition-all"
+              />
+              {formErrors.department && (
+                <p role="alert" className="text-xs text-red-400 flex items-center gap-1 break-words">
+                  <AlertCircle className="w-3 h-3 shrink-0" /> {formErrors.department}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Roll Number (Optional) */}
+          <div className="space-y-1.5 min-w-0">
+            <label
+              htmlFor="member-roll-input"
+              className="block text-xs font-mono font-semibold text-[var(--text-secondary)]"
+            >
+              Roll Number / Student ID <span className="text-zinc-500">(Optional)</span>
+            </label>
             <input
+              id="member-roll-input"
               type="text"
-              value={teamName}
-              onChange={(e) => setTeamName(e.target.value)}
-              className="bg-transparent text-[var(--accent)] font-bold focus:outline-none w-36 sm:w-48 text-center"
-              placeholder="Enter Team Name"
+              name="rollNumber"
+              placeholder="e.g. 21MX101"
+              value={formData.rollNumber}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  rollNumber: e.target.value.toUpperCase(),
+                }))
+              }
+              className="w-full sm:w-1/2 min-w-0 box-border h-11 px-3.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm font-mono text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 focus:outline-none focus:ring-1 focus:ring-[var(--accent)] focus:border-[var(--accent)] transition-all uppercase"
             />
+            {formErrors.rollNumber && (
+              <p role="alert" className="text-xs text-red-400 flex items-center gap-1 break-words">
+                <AlertCircle className="w-3 h-3 shrink-0" /> {formErrors.rollNumber}
+              </p>
+            )}
+          </div>
+
+          {/* Action Buttons: Stacks cleanly on mobile, side-by-side on desktop */}
+          <div className="pt-3 border-t border-[var(--border-color)] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <div>
+              {!activeMember.isRequired && activeMember.isCompleted && (
+                <button
+                  type="button"
+                  onClick={() => handleRemoveOptionalMember(activeMember.id)}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-mono font-bold text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-red-500/20 transition-all cursor-pointer min-h-[44px]"
+                >
+                  <Trash2 className="w-3.5 h-3.5" /> Remove Member
+                </button>
+              )}
+            </div>
+
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-2.5 sm:ml-auto w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={handleBackToDeck}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[var(--bg-secondary)] hover:bg-[var(--border-color)] text-xs font-mono font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-color)] text-center transition-all cursor-pointer min-h-[44px]"
+              >
+                Cancel / Back to Deck
+              </button>
+              <button
+                type="submit"
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-slate-950 text-xs font-mono font-extrabold shadow-sm text-center transition-all cursor-pointer min-h-[44px]"
+              >
+                Save Member
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    );
+  };
+
+  // -------------------------------------------------------------
+  // REVIEW TEAM SCREEN
+  // -------------------------------------------------------------
+  if (showReview) {
+    return (
+      <div className="w-full max-w-3xl mx-auto space-y-6 text-left pb-8 sm:pb-2">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--border-color)] pb-4">
+          <div>
+            <span className="text-[11px] font-mono font-bold tracking-widest text-[var(--accent)] uppercase">
+              FINAL VERIFICATION
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-bold font-mono text-[var(--text-primary)]">
+              Review Your Team
+            </h2>
+            <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
+              Verify your team roster before final submission. Minimum 2 members required.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowReview(false)}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] text-xs font-mono font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--accent)]/50 transition-colors cursor-pointer self-start sm:self-auto min-h-[38px]"
+          >
+            <ArrowLeft className="w-4 h-4" /> Back to Deck
+          </button>
+        </div>
+
+        {/* Team Name Card */}
+        <div className="p-4 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--text-secondary)]">
+              TEAM NAME
+            </span>
+            <h3 className="text-lg font-bold font-mono text-[var(--text-primary)]">
+              {teamName}
+            </h3>
+          </div>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-[var(--accent-muted)] text-[var(--accent)] border border-[var(--accent)]/30">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            {completedCount} / 4 Members Ready
+          </span>
+        </div>
+
+        {/* Members Roster List */}
+        <div className="space-y-3">
+          <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+            TEAM ROSTER
+          </h4>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {members.map((member) => {
+              if (member.isCompleted && member.name.trim()) {
+                return (
+                  <div
+                    key={member.id}
+                    className="p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)]/60 transition-all flex flex-col justify-between space-y-3"
+                  >
+                    <div className="flex items-start justify-between gap-2 border-b border-[var(--border-color)] pb-2.5">
+                      <div className="flex items-center gap-2">
+                        {member.role === 'Leader' ? (
+                          <div className="w-7 h-7 rounded-lg bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center justify-center">
+                            <Crown className="w-4 h-4 text-[var(--accent)]" />
+                          </div>
+                        ) : (
+                          <div className="w-7 h-7 rounded-lg bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center">
+                            <UserIcon className="w-4 h-4 text-[var(--text-secondary)]" />
+                          </div>
+                        )}
+                        <div>
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-[var(--accent)]">
+                            CARD {member.slotNumber} · {member.role === 'Leader' ? 'LEADER' : 'MEMBER'}
+                          </span>
+                          <h5 className="font-mono font-bold text-sm text-[var(--text-primary)] leading-tight">
+                            {member.name}
+                          </h5>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleOpenCard(member)}
+                        className="p-2 rounded-lg border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors cursor-pointer min-h-[36px]"
+                        title="Edit member"
+                        aria-label={`Edit ${member.name}`}
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <div className="space-y-1 text-xs font-mono text-[var(--text-secondary)]">
+                      <p className="truncate">
+                        <span className="text-[10px] text-[var(--text-secondary)]/70">Email:</span>{' '}
+                        <span className="text-[var(--text-primary)]">{member.email}</span>
+                      </p>
+                      <p>
+                        <span className="text-[10px] text-[var(--text-secondary)]/70">Phone:</span>{' '}
+                        <span className="text-[var(--text-primary)]">{member.phone}</span>
+                      </p>
+                      <p className="truncate">
+                        <span className="text-[10px] text-[var(--text-secondary)]/70">College:</span>{' '}
+                        <span className="text-[var(--text-primary)]">{member.college}</span>
+                      </p>
+                      <p className="truncate">
+                        <span className="text-[10px] text-[var(--text-secondary)]/70">Dept:</span>{' '}
+                        <span className="text-[var(--text-primary)]">
+                          {member.department} ({member.year})
+                        </span>
+                      </p>
+                      {member.rollNumber && (
+                        <p>
+                          <span className="text-[10px] text-[var(--text-secondary)]/70">Roll:</span>{' '}
+                          <span className="text-[var(--text-primary)]">{member.rollNumber}</span>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                );
+              }
+
+              // Incomplete optional slot
+              return (
+                <div
+                  key={member.id}
+                  className="p-4 rounded-xl bg-[var(--bg-secondary)]/60 border border-dashed border-[var(--border-color)] flex items-center justify-between"
+                >
+                  <div className="space-y-0.5">
+                    <span className="text-[10px] font-mono tracking-widest text-[var(--text-secondary)]">
+                      CARD {member.slotNumber} · OPTIONAL
+                    </span>
+                    <p className="text-xs font-mono text-[var(--text-secondary)]">
+                      Slot is empty
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenCard(member)}
+                    className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-[var(--border-color)] hover:border-[var(--accent)] text-xs font-mono font-bold text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors cursor-pointer min-h-[38px]"
+                  >
+                    + Add Member
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Submit Actions: Stacks cleanly on mobile, side-by-side on desktop */}
+        <div className="pt-4 border-t border-[var(--border-color)] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={() => setShowReview(false)}
+            className="w-full sm:w-auto px-5 py-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] text-xs font-mono font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all cursor-pointer min-h-[44px] text-center"
+          >
+            ← Back to Deck
+          </button>
+
+          {onSubmitTeam && (
+            <button
+              type="button"
+              disabled={!allFilledValid || isLoading}
+              onClick={() => onSubmitTeam(members, teamName)}
+              className={`w-full sm:w-auto px-8 py-3.5 rounded-xl font-mono font-extrabold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer min-h-[44px] ${
+                allFilledValid && !isLoading
+                  ? 'bg-[var(--accent)] text-slate-950 shadow-[0_0_20px_rgba(182,255,0,0.35)] hover:shadow-[0_0_30px_rgba(182,255,0,0.5)] hover:scale-[1.01]'
+                  : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]/50 border border-[var(--border-color)] cursor-not-allowed'
+              }`}
+            >
+              {isLoading ? (
+                <span>Submitting Registration...</span>
+              ) : (
+                <>
+                  <Crown className="w-4 h-4" />
+                  <span>Submit Hackathon Registration</span>
+                </>
+              )}
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // -------------------------------------------------------------
+  // ACTIVE CARD FORM VIEW (Desktop 3D Flip & Mobile Crisp Solid View)
+  // -------------------------------------------------------------
+  if (activeCardId && activeMember) {
+    return (
+      <div className="w-full max-w-2xl mx-auto py-2">
+        {isMobile ? (
+          /* MOBILE VIEW: Solid, opaque, crisp surface without 3D transforms on inputs */
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.28, ease: 'easeOut' }}
+            className="w-full min-w-0 box-border rounded-2xl bg-[#121216] border border-[#24242A] shadow-2xl p-4 sm:p-6 text-left"
+          >
+            {renderMemberFormContent()}
+          </motion.div>
+        ) : (
+          /* DESKTOP VIEW: Full 3D vertical-axis flip animation */
+          <div style={{ perspective: '1200px' }} className="w-full">
+            <motion.div
+              initial={shouldReduceMotion ? false : { rotateY: 0 }}
+              animate={
+                shouldReduceMotion
+                  ? { opacity: 1 }
+                  : { rotateY: isFlipped ? 180 : 0 }
+              }
+              transition={{
+                duration: shouldReduceMotion ? 0.2 : 0.48,
+                ease: [0.25, 1, 0.5, 1],
+              }}
+              style={{ transformStyle: 'preserve-3d' }}
+              className="w-full relative min-h-0"
+            >
+              {/* FRONT FACE (Visible during flip, hidden when turned) */}
+              <div
+                style={{
+                  backfaceVisibility: 'hidden',
+                  WebkitBackfaceVisibility: 'hidden',
+                }}
+                className={`absolute inset-0 w-full h-full rounded-2xl bg-[#121216] border border-[#24242A] flex flex-col items-center justify-center p-6 text-center space-y-3 z-10 ${
+                  isFlipped ? 'pointer-events-none' : ''
+                }`}
+              >
+                <div className="w-14 h-14 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center text-[var(--accent)]">
+                  {activeMember.role === 'Leader' ? (
+                    <Crown className="w-7 h-7" />
+                  ) : (
+                    <UserIcon className="w-7 h-7" />
+                  )}
+                </div>
+                <span className="font-mono text-xs font-bold tracking-widest text-[var(--accent)]">
+                  CARD {activeMember.slotNumber}
+                </span>
+                <h3 className="font-mono text-lg font-bold text-[var(--text-primary)] uppercase">
+                  {activeMember.slotTitle}
+                </h3>
+              </div>
+
+              {/* BACK FACE: EXPANDED MEMBER REGISTRATION FORM (In-flow relative element) */}
+              <div
+                style={{
+                  backfaceVisibility: 'hidden',
+                  WebkitBackfaceVisibility: 'hidden',
+                  transform: 'rotateY(180deg)',
+                }}
+                className="relative w-full rounded-2xl bg-[#121216] border border-[#24242A] shadow-2xl p-6 sm:p-7 text-left space-y-6"
+              >
+                {renderMemberFormContent()}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // -------------------------------------------------------------
+  // INITIAL VIEW: COMPACT STACKED DECK OF CARDS
+  // -------------------------------------------------------------
+  return (
+    <div className="w-full space-y-6 select-none">
+      {/* 1. Deck Heading & Subtitle */}
+      <div className="text-center space-y-1.5 max-w-lg mx-auto">
+        <h2 className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[var(--text-primary)]">
+          Build Your Team
+        </h2>
+        <p className="text-xs sm:text-sm text-[var(--text-secondary)]">
+          Select a card to add a teammate.
+        </p>
+
+        {/* Team Name Inline Bar */}
+        <div className="pt-1 flex items-center justify-center">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-xl font-mono text-xs text-[var(--text-secondary)]">
+            <span className="font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+              TEAM:
+            </span>
+            {isEditingTeamName ? (
+              <input
+                type="text"
+                value={teamName}
+                autoFocus
+                onBlur={() => setIsEditingTeamName(false)}
+                onKeyDown={(e) => e.key === 'Enter' && setIsEditingTeamName(false)}
+                onChange={(e) => setTeamName(e.target.value)}
+                className="bg-transparent border-b border-[var(--accent)] text-[var(--accent)] font-bold focus:outline-none w-36 text-center"
+              />
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsEditingTeamName(true)}
+                className="font-bold text-[var(--accent)] hover:underline inline-flex items-center gap-1 cursor-pointer"
+                title="Click to rename team"
+              >
+                <span>{teamName}</span>
+                <Edit2 className="w-3 h-3 text-[var(--text-secondary)] hover:text-[var(--accent)]" />
+              </button>
+            )}
           </div>
         </div>
 
         {/* Progress Dots Indicator */}
-        <div className="flex items-center justify-center gap-3 pt-2">
+        <div className="flex items-center justify-center gap-2.5 pt-1">
           <div className="flex items-center gap-1.5">
-            {members.map((m) => {
-              const isFilled = m.isRevealed && isCardValid(m);
-              return (
-                <span
-                  key={m.id}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    isFilled
-                      ? 'bg-[var(--accent)] shadow-[0_0_10px_rgba(182,255,0,0.6)] scale-110'
-                      : 'bg-[var(--border-color)]'
-                  }`}
-                  title={`${m.slotTitle}: ${isFilled ? 'Ready' : 'Pending'}`}
-                />
-              );
-            })}
+            {members.map((m) => (
+              <span
+                key={m.id}
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                  m.isCompleted
+                    ? 'bg-[var(--accent)] shadow-[0_0_8px_rgba(182,255,0,0.6)] scale-110'
+                    : 'bg-[var(--border-color)]'
+                }`}
+                title={`${m.slotTitle} (${m.isRequired ? 'Required' : 'Optional'}): ${
+                  m.isCompleted ? 'Completed' : 'Pending'
+                }`}
+              />
+            ))}
           </div>
-          <span className="font-mono text-xs font-bold text-[var(--text-primary)] uppercase tracking-wider">
-            {filledCount.toString().padStart(2, '0')} / 04 MEMBERS READY
+          <span className="font-mono text-xs font-semibold text-[var(--text-secondary)]">
+            {completedCount} / 4 Members Ready
+            {completedCount < 2 ? ' (Min 2 Required)' : ''}
           </span>
         </div>
       </div>
 
-      {/* 2. MEMBER CARDS GRID (Desktop 4-in-a-row, Mobile 2x2) */}
-      <div
-        className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 pt-2"
-        style={{ perspective: '1200px' }}
-      >
-        {members.map((member, index) => {
-          const isLeader = index === 0;
-          const isSpinning = spinningCardId === member.id;
-          const isFilled = member.isRevealed && isCardValid(member);
-          const tilt = cardTilts[member.id] || { x: 0, y: 0 };
+      {/* 2. Interactive Stacked Deck View */}
+      {/* Container provides comfortable spacing without squeezing */}
+      <div className="w-full py-4 flex flex-col items-center justify-center">
+        {/* Desktop & Tablet Stacked Deck (Overlapping Layered Deck) */}
+        <div className="hidden sm:flex items-center justify-center -space-x-12 md:-space-x-16 hover:-space-x-8 transition-all duration-300 py-6 px-4">
+          {members.map((member, index) => {
+            const isCompleted = member.isCompleted;
+            const isNext = index === nextRequiredIndex;
+            const zIndex = 10 + index * 5;
 
-          return (
-            <motion.button
-              key={member.id}
-              ref={(el) => { cardRefs.current[member.id] = el; }}
-              type="button"
-              onClick={() => handleCardClick(member)}
-              onMouseMove={(e) => handleMouseMove(member.id, e)}
-              onMouseLeave={() => handleMouseLeave(member.id)}
-              aria-label={`${member.slotTitle}: ${isFilled ? member.name : 'Tap to reveal'}`}
-              aria-expanded={activeCardId === member.id}
-              style={{ transformStyle: 'preserve-3d' }}
-              animate={
-                isSpinning && !shouldReduceMotion
-                  ? { rotateY: [0, 360, 720], scale: [1, 1.08, 1], z: [0, 50, 0] }
-                  : { rotateX: tilt.x, rotateY: tilt.y, scale: 1 }
-              }
-              transition={
-                isSpinning
-                  ? { duration: 1.1, ease: [0.25, 1, 0.5, 1] }
-                  : { type: 'spring', stiffness: 300, damping: 20 }
-              }
-              whileHover={{ y: -6, scale: 1.02 }}
-              whileTap={{ scale: 0.96 }}
-              className={`relative aspect-[3/4.3] w-full rounded-2xl p-4 sm:p-5 flex flex-col justify-between text-left cursor-pointer transition-all duration-300 outline-none focus:ring-2 focus:ring-[var(--accent)] overflow-hidden ${
-                isFilled
-                  ? 'bg-gradient-to-b from-[var(--bg-surface)] via-[var(--bg-secondary)] to-[var(--bg-main)] border-2 border-[var(--accent)] shadow-[0_0_20px_rgba(182,255,0,0.25)]'
-                  : 'bg-gradient-to-b from-zinc-900/90 via-black to-zinc-950 border border-dashed border-[var(--border-color)] hover:border-[var(--accent)]/70 shadow-lg'
-              }`}
-            >
-              {/* Outer Decorative Tech Brackets */}
-              <div className="absolute top-2 left-2 w-2 h-2 border-t-2 border-l-2 border-[var(--accent)]/50 pointer-events-none" />
-              <div className="absolute top-2 right-2 w-2 h-2 border-t-2 border-r-2 border-[var(--accent)]/50 pointer-events-none" />
-              <div className="absolute bottom-2 left-2 w-2 h-2 border-b-2 border-l-2 border-[var(--accent)]/50 pointer-events-none" />
-              <div className="absolute bottom-2 right-2 w-2 h-2 border-b-2 border-r-2 border-[var(--accent)]/50 pointer-events-none" />
-
-              {/* UNREVEALED STATE */}
-              {!isFilled ? (
-                <div className="h-full flex flex-col justify-between items-center text-center py-2 relative z-10">
-                  {/* Top Slot Header */}
-                  <div className="w-full flex items-center justify-between font-mono text-[10px] text-[var(--text-secondary)] tracking-widest border-b border-[var(--border-color)]/50 pb-2">
-                    <span className="text-[var(--accent)] font-extrabold">{member.slotNumber}</span>
-                    <span>{member.isRequired ? 'REQUIRED' : 'OPTIONAL'}</span>
+            return (
+              <motion.button
+                key={member.id}
+                ref={(el) => {
+                  cardRefs.current[member.id] = el;
+                }}
+                type="button"
+                onClick={() => handleOpenCard(member)}
+                whileHover={
+                  shouldReduceMotion
+                    ? {}
+                    : {
+                        y: -24,
+                        scale: 1.04,
+                        zIndex: 60,
+                        transition: { duration: 0.2 },
+                      }
+                }
+                whileTap={{ scale: 0.98 }}
+                style={{ zIndex }}
+                aria-label={`Card ${member.slotNumber}: ${member.slotTitle}. ${
+                  isCompleted ? `Completed - ${member.name}` : member.isRequired ? 'Required' : 'Optional'
+                }`}
+                className={`group relative w-56 md:w-64 h-80 rounded-2xl p-5 flex flex-col justify-between text-left cursor-pointer transition-all duration-300 outline-none focus:ring-2 focus:ring-[var(--accent)] shadow-xl ${
+                  isCompleted
+                    ? 'bg-[var(--bg-surface)] border-2 border-[var(--accent)]/80 shadow-[0_10px_30px_rgba(0,0,0,0.5)]'
+                    : isNext
+                    ? 'bg-[var(--bg-surface)] border-2 border-[var(--accent)] shadow-[0_0_20px_rgba(182,255,0,0.25)] ring-1 ring-[var(--accent)]/40'
+                    : 'bg-[#121216] border border-[#24242A] hover:border-[var(--accent)]/60'
+                }`}
+              >
+                {/* Top Card Badge / Meta */}
+                <div className="flex items-center justify-between border-b border-[var(--border-color)]/70 pb-2.5">
+                  <div className="flex items-center gap-1.5 font-mono text-[11px] font-bold">
+                    <span className="text-[var(--accent)]">{member.slotNumber}</span>
+                    <span className="text-[var(--text-secondary)]">·</span>
+                    <span className="text-[var(--text-secondary)] text-[10px]">
+                      {member.role === 'Leader' ? 'LEADER' : member.isRequired ? 'REQUIRED' : 'OPTIONAL'}
+                    </span>
                   </div>
 
-                  {/* Central Futuristic Tech Emblem */}
-                  <div className="my-auto space-y-3 flex flex-col items-center">
-                    <div className="relative w-16 h-16 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center group-hover:border-[var(--accent)] transition-all">
-                      {/* Technical Circuit Pattern Background */}
-                      <svg className="absolute inset-0 w-full h-full opacity-20 text-[var(--accent)]" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path d="M10 10 h80 v80 h-80 z M30 30 h40 v40 h-40 z" />
-                      </svg>
-                      <Sparkles className="w-7 h-7 text-[var(--accent)] animate-pulse" />
-                    </div>
+                  {isCompleted ? (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-[var(--accent)]">
+                      <Check className="w-3 h-3 text-[var(--accent)]" />
+                      DONE
+                    </span>
+                  ) : isNext ? (
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono font-black uppercase tracking-wider bg-[var(--accent)] text-slate-950 animate-pulse">
+                      NEXT
+                    </span>
+                  ) : null}
+                </div>
 
+                {/* Card Artwork / Center Content */}
+                <div className="my-auto py-2 space-y-2.5 text-center">
+                  <div
+                    className={`w-14 h-14 mx-auto rounded-2xl flex items-center justify-center border transition-all ${
+                      isCompleted
+                        ? 'bg-[var(--accent-muted)] border-[var(--accent)]/40 text-[var(--accent)]'
+                        : isNext
+                        ? 'bg-[var(--bg-secondary)] border-[var(--accent)] text-[var(--accent)]'
+                        : 'bg-[var(--bg-secondary)] border-[var(--border-color)] text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] group-hover:border-[var(--border-color)]'
+                    }`}
+                  >
+                    {member.role === 'Leader' ? (
+                      <Crown className="w-7 h-7" />
+                    ) : isCompleted ? (
+                      <ShieldCheck className="w-7 h-7" />
+                    ) : (
+                      <UserIcon className="w-7 h-7" />
+                    )}
+                  </div>
+
+                  {isCompleted ? (
+                    <div className="space-y-0.5 px-1">
+                      <h4 className="font-mono text-sm font-bold text-[var(--text-primary)] truncate">
+                        {member.name}
+                      </h4>
+                      <p className="text-[10px] font-mono text-[var(--text-secondary)] truncate">
+                        {member.department}
+                      </p>
+                    </div>
+                  ) : (
                     <div className="space-y-0.5">
-                      <span className="block font-mono text-xs font-black text-[var(--text-primary)] tracking-wider uppercase">
+                      <span className="block font-mono text-xs font-bold text-[var(--text-primary)]">
                         {member.slotTitle}
                       </span>
                       <span className="text-[10px] font-mono text-[var(--text-secondary)] block">
-                        COMPUTE 50 MEMBER
+                        {member.isRequired ? 'Required slot' : 'Optional slot'}
                       </span>
                     </div>
-                  </div>
-
-                  {/* Bottom Reveal Prompt */}
-                  <div className="w-full pt-2 border-t border-[var(--border-color)]/50">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--accent-muted)] border border-[var(--accent)]/40 rounded-full text-[10px] font-mono font-bold text-[var(--accent)] tracking-wider uppercase shadow-xs">
-                      <Sparkles className="w-3 h-3 text-[var(--accent)]" /> TAP TO REVEAL
-                    </span>
-                  </div>
+                  )}
                 </div>
-              ) : (
-                /* REVEALED / COMPLETED COLLECTIBLE CARD STATE */
-                <div className="h-full flex flex-col justify-between py-1 relative z-10">
-                  {/* Top Header */}
-                  <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-2 font-mono text-[10px]">
-                    <span className="font-bold text-[var(--accent)] flex items-center gap-1">
-                      <ShieldCheck className="w-3.5 h-3.5 text-[var(--accent)]" />
-                      {isLeader ? '✓ LEADER' : `✓ ${member.slotTitle}`}
-                    </span>
-                    <span className="text-[var(--text-secondary)] font-bold">{member.slotNumber}</span>
-                  </div>
 
-                  {/* Member Card Information Body */}
-                  <div className="my-auto space-y-3">
-                    <div>
-                      <h4 className="font-mono text-sm sm:text-base font-black text-[var(--text-primary)] tracking-tight uppercase leading-tight truncate">
-                        {member.name}
-                      </h4>
-                      <p className="text-[10px] font-mono font-bold text-[var(--accent)] tracking-wider uppercase pt-0.5 truncate">
-                        CSE • PSG TECH
-                      </p>
-                    </div>
-
-                    <div className="space-y-1.5 font-mono text-[11px] bg-[var(--bg-secondary)]/80 p-2.5 rounded-xl border border-[var(--border-color)]/80">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[var(--text-secondary)] text-[10px]">ROLL NO</span>
-                        <span className="font-bold text-[var(--text-primary)]">{member.rollNumber}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[var(--text-secondary)] text-[10px]">MOBILE</span>
-                        <span className="font-bold text-[var(--text-primary)]">{member.phone}</span>
-                      </div>
-                      <div className="flex items-center justify-between truncate">
-                        <span className="text-[var(--text-secondary)] text-[10px]">EMAIL</span>
-                        <span className="font-bold text-[var(--text-primary)] truncate max-w-[100px]" title={member.email}>
-                          {member.email}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Bottom Ready Badge & Edit Trigger */}
-                  <div className="pt-2 border-t border-[var(--border-color)] flex items-center justify-between font-mono text-[10px]">
-                    <span className="text-[var(--accent)] font-extrabold flex items-center gap-1">
-                      <span className="w-2 h-2 rounded-full bg-[var(--accent)] animate-pulse" />
-                      MEMBER READY
-                    </span>
-                    <span className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-bold flex items-center gap-0.5">
-                      EDIT <Edit3 className="w-3 h-3 ml-0.5 text-[var(--accent)]" />
-                    </span>
-                  </div>
+                {/* Bottom Status / Action Prompt */}
+                <div className="pt-2.5 border-t border-[var(--border-color)]/70 flex items-center justify-between text-[11px] font-mono">
+                  {isCompleted ? (
+                    <>
+                      <span className="text-[10px] text-[var(--accent)] font-bold flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-[var(--accent)]" /> Completed
+                      </span>
+                      <span className="text-[10px] text-[var(--text-secondary)] group-hover:text-[var(--accent)] transition-colors">
+                        Edit →
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-[10px] text-[var(--text-secondary)]">
+                        {member.isRequired ? 'Must be added' : 'Can leave empty'}
+                      </span>
+                      <span className="text-[10px] text-[var(--accent)] font-bold">
+                        Add +
+                      </span>
+                    </>
+                  )}
                 </div>
-              )}
-            </motion.button>
-          );
-        })}
+              </motion.button>
+            );
+          })}
+        </div>
+
+        {/* Mobile View: Clean Touch Cards Grid (Prevents any horizontal overflow) */}
+        <div className="sm:hidden w-full grid grid-cols-2 gap-3 px-1">
+          {members.map((member, index) => {
+            const isCompleted = member.isCompleted;
+            const isNext = index === nextRequiredIndex;
+
+            return (
+              <button
+                key={member.id}
+                type="button"
+                onClick={() => handleOpenCard(member)}
+                className={`relative w-full aspect-[3/4.2] rounded-2xl p-3.5 flex flex-col justify-between text-left cursor-pointer transition-all outline-none focus:ring-2 focus:ring-[var(--accent)] ${
+                  isCompleted
+                    ? 'bg-[var(--bg-surface)] border-2 border-[var(--accent)] shadow-md'
+                    : isNext
+                    ? 'bg-[var(--bg-surface)] border-2 border-[var(--accent)] ring-1 ring-[var(--accent)]/50'
+                    : 'bg-[#121216] border border-[#24242A]'
+                }`}
+              >
+                <div className="flex items-center justify-between font-mono text-[10px]">
+                  <span className="text-[var(--accent)] font-bold">{member.slotNumber}</span>
+                  <span className="text-[var(--text-secondary)] text-[9px]">
+                    {member.role === 'Leader' ? 'LEADER' : member.isRequired ? 'REQ' : 'OPT'}
+                  </span>
+                </div>
+
+                <div className="my-auto text-center space-y-1.5 py-1">
+                  <div className="w-10 h-10 mx-auto rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center text-[var(--accent)]">
+                    {member.role === 'Leader' ? (
+                      <Crown className="w-5 h-5" />
+                    ) : isCompleted ? (
+                      <Check className="w-5 h-5" />
+                    ) : (
+                      <UserIcon className="w-5 h-5" />
+                    )}
+                  </div>
+                  <h4 className="font-mono text-xs font-bold text-[var(--text-primary)] truncate">
+                    {isCompleted ? member.name : member.slotTitle}
+                  </h4>
+                </div>
+
+                <div className="pt-1.5 border-t border-[var(--border-color)] text-[10px] font-mono text-center">
+                  <span className={isCompleted ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-secondary)]'}>
+                    {isCompleted ? '✓ Completed' : '+ Add Info'}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* 5. EXPANDED MEMBER EDIT DIALOG / MOBILE BOTTOM SHEET */}
-      <AnimatePresence>
-        {activeCardId && (
-          <div
-            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-xs transition-opacity"
-            onClick={closePanel}
-          >
-            <motion.div
-              ref={panelRef}
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="member-modal-title"
-              initial={
-                shouldReduceMotion
-                  ? { opacity: 0 }
-                  : { opacity: 0, y: 50, scale: 0.95 }
-              }
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={
-                shouldReduceMotion
-                  ? { opacity: 0 }
-                  : { opacity: 0, y: 30, scale: 0.95 }
-              }
-              transition={{ duration: 0.25, ease: 'easeOut' }}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full max-sm:max-h-[90vh] max-sm:overflow-y-auto sm:max-w-md bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-t-3xl sm:rounded-2xl p-6 shadow-2xl space-y-5 relative text-left"
-            >
-              {/* Header */}
-              <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3">
-                <div className="flex items-center gap-2">
-                  <User className="w-5 h-5 text-[var(--accent)]" />
-                  <h3 id="member-modal-title" className="text-base sm:text-lg font-bold font-mono text-[var(--text-primary)]">
-                    Configure {members.find((m) => m.id === activeCardId)?.slotTitle}
-                  </h3>
-                </div>
-                <button
-                  type="button"
-                  onClick={closePanel}
-                  className="p-1 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer"
-                  aria-label="Close dialog"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+      {/* 3. Review Team / Submission CTA */}
+      <div className="pt-2 flex flex-col items-center justify-center space-y-2">
+        <button
+          type="button"
+          disabled={!requiredValid}
+          onClick={() => setShowReview(true)}
+          className={`w-full sm:w-auto px-8 py-3.5 rounded-xl font-mono font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer min-h-[44px] ${
+            requiredValid
+              ? 'bg-[var(--accent)] text-slate-950 shadow-[0_0_20px_rgba(182,255,0,0.3)] hover:shadow-[0_0_28px_rgba(182,255,0,0.45)] hover:scale-[1.01]'
+              : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]/50 border border-[var(--border-color)] cursor-not-allowed'
+          }`}
+        >
+          <span>Review Team ({completedCount} / 4 Members Ready)</span>
+          <ChevronRight className="w-4 h-4" />
+        </button>
 
-              {/* Form Body */}
-              <form onSubmit={handleSaveMember} className="space-y-4">
-                {/* Full Name */}
-                <div className="space-y-1">
-                  <label htmlFor="member-name" className="block text-xs font-mono font-bold text-[var(--text-primary)]">
-                    Full Name <span className="text-red-400">*</span>
-                  </label>
-                  <input
-                    ref={firstInputRef}
-                    id="member-name"
-                    type="text"
-                    name="name"
-                    placeholder="e.g. Alex Rivera"
-                    autoComplete="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition-all font-mono"
-                  />
-                  {formErrors.name && (
-                    <p className="text-xs text-red-400 flex items-center gap-1 pt-0.5">
-                      <AlertCircle className="w-3 h-3" /> {formErrors.name}
-                    </p>
-                  )}
-                </div>
-
-                {/* Roll Number */}
-                <div className="space-y-1">
-                  <label htmlFor="member-roll" className="block text-xs font-mono font-bold text-[var(--text-primary)]">
-                    Roll Number <span className="text-red-400">*</span>
-                  </label>
-                  <input
-                    id="member-roll"
-                    type="text"
-                    name="rollNumber"
-                    placeholder="e.g. 21MX101"
-                    value={formData.rollNumber}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, rollNumber: e.target.value.toUpperCase() }))}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm font-mono text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition-all uppercase"
-                  />
-                  {formErrors.rollNumber && (
-                    <p className="text-xs text-red-400 flex items-center gap-1 pt-0.5">
-                      <AlertCircle className="w-3 h-3" /> {formErrors.rollNumber}
-                    </p>
-                  )}
-                </div>
-
-                {/* Mobile Number */}
-                <div className="space-y-1">
-                  <label htmlFor="member-phone" className="block text-xs font-mono font-bold text-[var(--text-primary)]">
-                    Mobile Number <span className="text-red-400">*</span>
-                  </label>
-                  <input
-                    id="member-phone"
-                    type="tel"
-                    inputMode="numeric"
-                    name="phone"
-                    placeholder="10-digit mobile number"
-                    autoComplete="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm font-mono text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition-all"
-                  />
-                  {formErrors.phone && (
-                    <p className="text-xs text-red-400 flex items-center gap-1 pt-0.5">
-                      <AlertCircle className="w-3 h-3" /> {formErrors.phone}
-                    </p>
-                  )}
-                </div>
-
-                {/* College Email */}
-                <div className="space-y-1">
-                  <label htmlFor="member-email" className="block text-xs font-mono font-bold text-[var(--text-primary)]">
-                    College Email <span className="text-red-400">*</span>
-                  </label>
-                  <input
-                    id="member-email"
-                    type="email"
-                    name="email"
-                    placeholder="student@college.edu"
-                    autoComplete="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-sm font-mono text-[var(--text-primary)] placeholder-[var(--text-secondary)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] transition-all"
-                  />
-                  {formErrors.email && (
-                    <p className="text-xs text-red-400 flex items-center gap-1 pt-0.5">
-                      <AlertCircle className="w-3 h-3" /> {formErrors.email}
-                    </p>
-                  )}
-                </div>
-
-                {/* Buttons */}
-                <div className="pt-3 flex flex-wrap items-center justify-between gap-3">
-                  {activeCardId !== 'leader-1' && members.find((m) => m.id === activeCardId)?.isRevealed ? (
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveMember(activeCardId)}
-                      className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-mono font-bold rounded-xl border border-red-500/30 transition-all flex items-center gap-1 cursor-pointer"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" /> Remove Member
-                    </button>
-                  ) : <div />}
-
-                  <div className="flex items-center gap-2 ml-auto">
-                    <button
-                      type="button"
-                      onClick={closePanel}
-                      className="px-4 py-2 bg-[var(--bg-secondary)] hover:bg-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] text-xs font-mono font-bold rounded-xl border border-[var(--border-color)] transition-all cursor-pointer"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-5 py-2 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-slate-950 text-xs font-mono font-extrabold rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer"
-                    >
-                      Save Member
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </motion.div>
-          </div>
+        {!requiredValid && (
+          <p className="text-[11px] font-mono text-[var(--text-secondary)] text-center">
+            Complete Card 02 (required teammate) to unlock team review.
+          </p>
         )}
-      </AnimatePresence>
-
-      {/* Lock in Team Submission CTA */}
-      <div className="pt-4 text-center space-y-3">
-        {onSubmitTeam && (
-          <button
-            type="button"
-            disabled={!requiredCardsValid || isLoading}
-            onClick={() => onSubmitTeam(members)}
-            className={`w-full py-4 px-8 rounded-xl font-mono font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 transition-all cursor-pointer ${
-              requiredCardsValid && !isLoading
-                ? 'bg-[var(--accent)] text-slate-950 shadow-[0_0_25px_rgba(182,255,0,0.35)] hover:shadow-[0_0_35px_rgba(182,255,0,0.55)] hover:scale-[1.01] active:scale-[0.99]'
-                : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]/50 border border-[var(--border-color)] cursor-not-allowed'
-            }`}
-          >
-            {isLoading ? (
-              <span>Submitting Team Registration...</span>
-            ) : (
-              <>
-                <Crown className="w-4 h-4 text-slate-950" />
-                <span>LOCK IN TEAM & SUBMIT REGISTRATION</span>
-              </>
-            )}
-          </button>
-        )}
-
-        <p className="text-[11px] text-[var(--text-secondary)] font-mono">
-          Details are used strictly for hackathon coordination & campus check-in.
-        </p>
       </div>
     </div>
   );

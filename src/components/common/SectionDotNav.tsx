@@ -11,10 +11,8 @@ interface SectionItem {
 const HOME_SECTIONS: SectionItem[] = [
   { id: 'hero', label: 'Top' },
   { id: 'prizepool-home', label: 'Prizes' },
-  { id: 'tracks', label: 'Tracks' },
   { id: 'speakers', label: 'Speakers' },
   { id: 'sponsors', label: 'Sponsors' },
-  { id: 'events', label: 'Events' },
   { id: 'contact', label: 'Contact' },
 ];
 
