@@ -147,7 +147,7 @@ export const AffiliatedClubs: React.FC = () => {
                     </button>
                   </div>
 
-                  <p className="text-[14px] text-[var(--text-primary)]/85 dark:text-zinc-300 leading-relaxed font-medium">
+                  <p className="text-[14px] text-[var(--text-secondary)] leading-relaxed font-medium">
                     {expandedClubObj.description}
                   </p>
 

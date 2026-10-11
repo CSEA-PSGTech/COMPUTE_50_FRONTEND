@@ -2,21 +2,26 @@
 
 @layer base {
   :root {
-    --bg-main: #FFFCF8;
-    --bg-secondary: #F5F2EA;
+    --bg-main: #FFFFFF;
+    --bg-secondary: #F8F9FA;
     --bg-surface: #FFFFFF;
-    --border-color: #E5E0D8;
-    --text-primary: #1C1917;
-    --text-secondary: #57534E;
-    --accent: #D97706;
-    /* Golden Amber */
-    --accent-hover: #B45309;
-    --accent-text: #FFFFFF;
-    --accent-muted: rgba(217, 119, 6, 0.12);
-    --accent-rgb: 217, 119, 6;
-    --bg-noise-opacity: 0.03;
-    --bg-grid-opacity: 0.03;
-    --bg-glow-opacity: 0.04;
+    --border-color: #E5E7EB;
+    --text-primary: #18181B;
+    --text-secondary: #52525B;
+
+    /* Updated to Gold from image */
+    --accent: #EFBF04;
+    /*[cite: 1] */
+    --accent-hover: #D4A903;
+    --accent-text: #18181B;
+    --accent-muted: rgba(239, 191, 4, 0.12);
+    /*[cite: 1] */
+    --accent-rgb: 239, 191, 4;
+    /*[cite: 1] */
+
+    --bg-noise-opacity: 0;
+    --bg-grid-opacity: 0.02;
+    --bg-glow-opacity: 0;
   }
 
   .dark {

@@ -48,7 +48,7 @@ export const AboutPsgTech: React.FC = () => {
         </div>
 
         {/* Collapsible Paragraphs */}
-        <div className="space-y-4 text-[14px] sm:text-[15px] text-[var(--text-primary)]/85 dark:text-zinc-300 leading-[1.7]">
+        <div className="space-y-4 text-[14px] sm:text-[15px] text-[var(--text-secondary)] leading-[1.7]">
           <p>{psgParagraphs[0]}</p>
           <p>{psgParagraphs[1]}</p>
 

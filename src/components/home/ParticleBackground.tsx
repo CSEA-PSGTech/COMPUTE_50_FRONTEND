@@ -4,11 +4,19 @@ import { useReducedMotion } from 'framer-motion';
 interface Particle {
   x: number;
   y: number;
+  baseVx: number;
+  baseVy: number;
   vx: number;
   vy: number;
   size: number;
-  alpha: number;
+  baseAlpha: number;
   char: string;
+  depth: number;
+  phase: number;
+  freq: number;
+  amplitude: number;
+  pulsePhase: number;
+  pulseSpeed: number;
 }
 
 const CODE_CHARS = ['0', '1', '{', '}', '<', '>', '/', '#', '$', '%', '*', '+', '=', '5', '0', '_', '~'];
@@ -40,17 +48,32 @@ export const ParticleBackground: React.FC = () => {
 
     const initParticles = (w: number, h: number) => {
       const isMobile = w < 768 || (typeof navigator !== 'undefined' && navigator.hardwareConcurrency <= 4);
-      const count = isMobile ? 32 : 68;
+      const count = isMobile ? 36 : 72;
 
-      particlesRef.current = Array.from({ length: count }, () => ({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.45,
-        vy: (Math.random() - 0.5) * 0.45,
-        size: Math.random() * 6 + 11, // 11px to 17px
-        alpha: Math.random() * 0.4 + 0.35, // 0.35 to 0.75
-        char: CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)],
-      }));
+      particlesRef.current = Array.from({ length: count }, () => {
+        const depth = Math.random() * 0.7 + 0.65; // 0.65 to 1.35
+        // Constant gentle cruising drift
+        const baseSpeed = (Math.random() * 0.35 + 0.15) * (Math.random() > 0.5 ? 1 : -1);
+        const baseSpeedY = (Math.random() * 0.35 + 0.15) * (Math.random() > 0.5 ? 1 : -1);
+
+        return {
+          x: Math.random() * w,
+          y: Math.random() * h,
+          baseVx: baseSpeed * depth,
+          baseVy: baseSpeedY * depth,
+          vx: baseSpeed * depth,
+          vy: baseSpeedY * depth,
+          size: Math.round((Math.random() * 5 + 11) * depth), // 11px to 18px scaled by depth
+          baseAlpha: Math.random() * 0.35 + 0.35, // 0.35 to 0.70
+          char: CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)],
+          depth,
+          phase: Math.random() * Math.PI * 2,
+          freq: Math.random() * 0.0012 + 0.0008,
+          amplitude: Math.random() * 0.35 + 0.25,
+          pulsePhase: Math.random() * Math.PI * 2,
+          pulseSpeed: Math.random() * 0.002 + 0.0015,
+        };
+      });
     };
 
     const handleResize = () => {
@@ -106,60 +129,83 @@ export const ParticleBackground: React.FC = () => {
           document.documentElement.classList.contains('dark') ||
           !document.documentElement.classList.contains('light');
 
-        // Color & Glow Tokens
-        const textColor = isDark ? '251, 191, 36' : '147, 51, 234';
-        const glowColor = isDark ? 'rgba(255, 221, 0, 0.92)' : 'rgba(13, 204, 234, 0.4)';
+        // Dynamic theme token fallback
+        const cssAccentRgb = getComputedStyle(document.documentElement).getPropertyValue('--accent-rgb').trim();
+        const textColor = cssAccentRgb || (isDark ? '251, 191, 36' : '217, 119, 6');
+        const glowColor = isDark
+          ? `rgba(${textColor}, 0.65)`
+          : `rgba(${textColor}, 0.35)`;
 
         const particles = particlesRef.current;
         const count = particles.length;
         const mouse = mouseRef.current;
 
-        // 1. Update and draw particles
+        // 1. Update and draw particles with fluid wave motion & aerodynamic swirl
         for (let i = 0; i < count; i++) {
           const p = particles[i];
 
-          // Mouse repulsion interaction
+          // Harmonic floating buoyancy wave
+          const waveX = Math.cos(now * p.freq + p.phase) * p.amplitude * p.depth;
+          const waveY = Math.sin(now * (p.freq * 0.85) + p.phase) * p.amplitude * p.depth;
+
+          // Interactive aerodynamic swirl & repulsion around cursor
           const dx = p.x - mouse.x;
           const dy = p.y - mouse.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          const repulsionRadius = 120;
+          const repulsionRadius = 135;
 
           if (dist < repulsionRadius && dist > 0) {
             const force = (repulsionRadius - dist) / repulsionRadius;
-            p.vx += (dx / dist) * force * 0.4;
-            p.vy += (dy / dist) * force * 0.4;
+            const angle = Math.atan2(dy, dx);
+
+            // Radial repulsion push
+            const pushX = Math.cos(angle) * force * 0.65 * p.depth;
+            const pushY = Math.sin(angle) * force * 0.65 * p.depth;
+
+            // Tangential aerodynamic swirl (vortex)
+            const swirlX = -Math.sin(angle) * force * 0.4 * p.depth;
+            const swirlY = Math.cos(angle) * force * 0.4 * p.depth;
+
+            p.vx += pushX + swirlX;
+            p.vy += pushY + swirlY;
           }
 
-          // Inertia damping
-          p.vx *= 0.98;
-          p.vy *= 0.98;
+          // Smooth velocity relaxation back to base cruising speed (never stops)
+          p.vx += (p.baseVx - p.vx) * 0.035;
+          p.vy += (p.baseVy - p.vy) * 0.035;
 
-          p.x += p.vx;
-          p.y += p.vy;
+          p.x += p.vx + waveX;
+          p.y += p.vy + waveY;
 
           // Wrap boundaries smoothly
-          if (p.x < -20) p.x = width + 20;
-          if (p.x > width + 20) p.x = -20;
-          if (p.y < -20) p.y = height + 20;
-          if (p.y > height + 20) p.y = -20;
+          if (p.x < -30) p.x = width + 30;
+          if (p.x > width + 30) p.x = -30;
+          if (p.y < -30) p.y = height + 30;
+          if (p.y > height + 30) p.y = -30;
 
           // Occasional subtle matrix glyph shift
-          if (Math.random() < 0.004) {
+          if (Math.random() < 0.003) {
             p.char = CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)];
           }
 
-          // Draw code glyph
+          // Breathing opacity pulse
+          const breathingAlpha = Math.min(
+            0.88,
+            Math.max(0.18, p.baseAlpha + Math.sin(now * p.pulseSpeed + p.pulsePhase) * 0.18)
+          );
+
+          // Draw code glyph with depth-scaled glow
           ctx.save();
           ctx.font = `bold ${p.size}px 'JetBrains Mono', 'Courier New', monospace`;
-          ctx.fillStyle = `rgba(${textColor}, ${p.alpha})`;
-          ctx.shadowBlur = isDark ? 6 : 3;
+          ctx.fillStyle = `rgba(${textColor}, ${breathingAlpha})`;
+          ctx.shadowBlur = (isDark ? 8 : 4) * p.depth;
           ctx.shadowColor = glowColor;
           ctx.fillText(p.char, p.x, p.y);
           ctx.restore();
         }
 
         // 2. Connecting plexus constellation lines
-        const maxLineDist = 110;
+        const maxLineDist = 115;
         for (let i = 0; i < count; i++) {
           for (let j = i + 1; j < count; j++) {
             const a = particles[i];
@@ -169,7 +215,7 @@ export const ParticleBackground: React.FC = () => {
             const dist = Math.sqrt(dx * dx + dy * dy);
 
             if (dist < maxLineDist) {
-              const lineAlpha = (1 - dist / maxLineDist) * 0.22;
+              const lineAlpha = (1 - dist / maxLineDist) * 0.22 * Math.min(a.baseAlpha, b.baseAlpha);
               ctx.strokeStyle = `rgba(${textColor}, ${lineAlpha})`;
               ctx.lineWidth = 0.75;
               ctx.beginPath();
