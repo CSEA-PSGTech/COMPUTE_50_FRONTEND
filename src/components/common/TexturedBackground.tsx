@@ -96,13 +96,6 @@ export const TexturedBackground: React.FC = () => {
         />
       )}
 
-      {/* 5. Subtle Edge Vignette Layer */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: 'radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.45) 100%)',
-        }}
-      />
     </div>
   );
 };

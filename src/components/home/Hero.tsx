@@ -13,6 +13,7 @@ import cseaLogo from '../../assets/logos/csea-logo.png';
 import compute50HeroEmblem from '../../assets/logos/compute-50-hero-emblem.png';
 import { EVENT_CONFIG } from '../../config/event';
 import { home } from '../../data/content';
+import { ParticleBackground } from './ParticleBackground';
 
 const InstitutionLogo: React.FC<{ name: string; shortName: string; logoSrc: string }> = ({
   name,
@@ -31,12 +32,12 @@ const InstitutionLogo: React.FC<{ name: string; shortName: string; logoSrc: stri
   }
 
   return (
-    <div className="flex items-center gap-3 px-4 py-2 bg-white/10 hover:bg-white/15 rounded-xl border border-white/15 text-[var(--text-primary)] font-mono text-sm sm:text-base font-bold transition-all duration-200 hover:scale-105 cursor-pointer shadow-md">
+    <div className="flex items-center gap-3 px-4 py-2 bg-[var(--bg-secondary)] hover:bg-[var(--border-color)]/60 rounded-xl border border-[var(--border-color)] text-[var(--text-primary)] font-mono text-sm sm:text-base font-bold transition-all duration-200 hover:scale-105 cursor-pointer shadow-xs">
       <img
         src={logoSrc}
         alt={name}
         onError={() => setHasError(true)}
-        className="h-10 sm:h-12 w-auto object-contain transition-transform duration-200 filter drop-shadow-[0_0_10px_rgba(255,255,255,0.25)]"
+        className="h-10 sm:h-12 w-auto object-contain transition-transform duration-200 dark:filter dark:drop-shadow-[0_0_10px_rgba(255,255,255,0.25)]"
       />
       <span>{shortName}</span>
     </div>
@@ -73,7 +74,8 @@ export const Hero: React.FC = () => {
 
   return (
     <section id="hero" className="relative py-20 md:py-28 overflow-hidden border-b border-[var(--border-color)] bg-transparent transition-colors">
-      <Container size="lg">
+      <ParticleBackground />
+      <Container size="lg" className="relative z-10">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -85,7 +87,7 @@ export const Hero: React.FC = () => {
             <img
               src={compute50HeroEmblem}
               alt="Compute 50 Emblem"
-              className="w-40 sm:w-56 md:w-64 lg:w-72 h-auto object-contain filter drop-shadow-[0_0_20px_rgba(34,197,94,0.2)] transition-transform duration-300 hover:scale-105 select-none"
+              className="animate-hero-emblem w-40 sm:w-56 md:w-64 lg:w-72 h-auto object-contain filter drop-shadow-[0_0_20px_rgba(34,197,94,0.2)] transition-transform duration-300 hover:scale-105 select-none"
             />
           </motion.div>
 
@@ -150,10 +152,14 @@ export const Hero: React.FC = () => {
 
           {/* 5. Two-Round Format & Important Notice */}
           <motion.div variants={itemVariants} className="w-full max-w-xl sm:max-w-2xl space-y-4 pt-2">
-            {/* Event Dates */}
-            <div className="flex items-center justify-center gap-2 text-sm text-[var(--text-secondary)] font-medium">
-              <Calendar className="w-4 h-4 text-[var(--accent)] shrink-0" />
-              <span className="inline-block whitespace-nowrap font-mono">{EVENT_CONFIG.dates}</span>
+            {/* Event Dates — Prominent highlighted badge */}
+            <div className="flex items-center justify-center">
+              <div className="animate-hero-date-glow inline-flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-[var(--accent-muted)] border border-[var(--accent)]/40">
+                <Calendar className="w-5 h-5 text-[var(--accent)] shrink-0" />
+                <span className="text-base sm:text-lg md:text-xl font-bold font-mono text-[var(--accent)] tracking-wide whitespace-nowrap">
+                  {EVENT_CONFIG.dates}
+                </span>
+              </div>
             </div>
 
             {/* Separate Round Cards */}
@@ -237,7 +243,7 @@ export const Hero: React.FC = () => {
                   <span className="text-[10px] sm:text-xs text-[var(--text-secondary)] uppercase">Mins</span>
                 </div>
                 <div className="bg-[var(--bg-secondary)] p-3 rounded-xl border border-[var(--border-color)]">
-                  <span className="block text-2xl sm:text-4xl font-extrabold text-[var(--accent)] font-mono">
+                  <span className="animate-countdown-tick block text-2xl sm:text-4xl font-extrabold text-[var(--accent)] font-mono">
                     {String(countdown.seconds).padStart(2, '0')}
                   </span>
                   <span className="text-[10px] sm:text-xs text-[var(--text-secondary)] uppercase">Secs</span>

@@ -27,7 +27,7 @@ export const AboutCompute50: React.FC = () => {
         </div>
 
         {/* Right Column: 3 Short Paragraphs */}
-        <div className="md:col-span-7 space-y-4 text-[15px] text-[var(--text-primary)]/85 dark:text-zinc-300 leading-[1.7] max-w-[70ch]">
+        <div className="md:col-span-7 space-y-4 text-[15px] text-[var(--text-secondary)] leading-[1.7] max-w-[70ch]">
           <p>
             COMPUTE 50 HACKATHON is a two-day technical innovation event organised by the Computer Science & Engineering Association (CSEA) as part of the celebrations commemorating 50 years of the M.E. Computer Science and Engineering programme at PSG College of Technology.
           </p>

@@ -57,8 +57,8 @@ export const PrizePool: React.FC = () => {
             className="absolute inset-0 pointer-events-none transition-opacity duration-500 rounded-3xl z-10"
             style={{
               background: isHovered && !shouldReduceMotion
-                ? `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(182, 255, 0, 0.1), transparent 80%)`
-                : `radial-gradient(circle at 50% 50%, rgba(182, 255, 0, 0.05), transparent 70%)`,
+                ? `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(var(--accent-rgb), 0.1), transparent 80%)`
+                : `radial-gradient(circle at 50% 50%, rgba(var(--accent-rgb), 0.05), transparent 70%)`,
             }}
             aria-hidden="true"
           />
@@ -84,11 +84,11 @@ export const PrizePool: React.FC = () => {
                   className="space-y-1"
                   aria-label={`Total Prize Pool: ${prizeData.totalAmount} Indian Rupees Plus`}
                 >
-                  <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-mono tracking-tight leading-none select-none">
-                    <span className="bg-gradient-to-r from-white via-slate-100 to-[var(--accent)] bg-clip-text text-transparent filter drop-shadow-[0_0_30px_rgba(34,197,94,0.35)]">
+                  <div className="flex items-baseline flex-nowrap whitespace-nowrap text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black font-mono tracking-tight leading-none select-none">
+                    <span className="bg-gradient-to-r from-[var(--text-primary)] via-[var(--text-primary)] to-[var(--accent)] bg-clip-text text-transparent filter drop-shadow-[0_0_30px_rgba(var(--accent-rgb),0.35)]">
                       <CountUp end={prizeData.totalAmount} prefix="₹" />
                     </span>
-                    <span className="inline-block text-[var(--accent)] animate-pulse ml-1">
+                    <span className="inline-block text-[var(--accent)] animate-pulse ml-1 shrink-0">
                       +
                     </span>
                   </div>
@@ -138,11 +138,11 @@ export const PrizePool: React.FC = () => {
                   {/* Primary Interactive "Participate to Win" Button */}
                   <Link
                     to="/register"
-                    className="w-full inline-flex items-center justify-center gap-3 px-8 py-4 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-slate-950 font-mono font-extrabold text-sm sm:text-base rounded-xl shadow-[0_0_25px_rgba(182,255,0,0.35)] hover:shadow-[0_0_35px_rgba(182,255,0,0.55)] transition-all duration-300 transform group-hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                    className="w-full inline-flex items-center justify-center gap-3 px-8 py-4 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-text)] font-mono font-extrabold text-sm sm:text-base rounded-xl shadow-[0_0_25px_rgba(var(--accent-rgb),0.35)] hover:shadow-[0_0_35px_rgba(var(--accent-rgb),0.55)] transition-all duration-300 transform group-hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                   >
-                    <Sparkles className="w-5 h-5 text-slate-950 animate-bounce" />
+                    <Sparkles className="w-5 h-5 text-[var(--accent-text)] animate-bounce" />
                     <span>Participate to Win</span>
-                    <ArrowRight className="w-5 h-5 text-slate-950 transition-transform duration-300 group-hover:translate-x-1.5" />
+                    <ArrowRight className="w-5 h-5 text-[var(--accent-text)] transition-transform duration-300 group-hover:translate-x-1.5" />
                   </Link>
                 </motion.div>
               </div>
