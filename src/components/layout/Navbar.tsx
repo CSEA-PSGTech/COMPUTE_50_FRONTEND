@@ -278,13 +278,27 @@ export const Navbar: React.FC = () => {
               )}
             </div>
 
-            {/* Mobile Actions: Drawer Toggle Button */}
+            {/* Mobile Actions: Theme, Sound & Drawer Toggle Buttons */}
             <div className="flex md:hidden items-center gap-1.5">
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="min-h-[40px] min-w-[40px] p-2 rounded-xl border border-[var(--border-color)] text-[var(--text-primary)] bg-[var(--bg-surface)] hover:border-[var(--accent)]/60 transition-colors cursor-pointer flex items-center justify-center"
+                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+              >
+                {theme === 'dark' ? (
+                  <Sun className="w-4 h-4 text-amber-400" />
+                ) : (
+                  <Moon className="w-4 h-4 text-slate-700" />
+                )}
+              </button>
+
               <button
                 type="button"
                 onClick={handleToggleSound}
                 data-nosound="true"
-                className="min-h-[40px] min-w-[40px] p-2 rounded-xl border border-[var(--border-color)] text-[var(--text-primary)] bg-[var(--bg-surface)] cursor-pointer flex items-center justify-center"
+                className="min-h-[40px] min-w-[40px] p-2 rounded-xl border border-[var(--border-color)] text-[var(--text-primary)] bg-[var(--bg-surface)] hover:border-[var(--accent)]/60 transition-colors cursor-pointer flex items-center justify-center"
                 aria-label={muted ? 'Unmute sound effects' : 'Mute sound effects'}
                 title={muted ? 'Unmute sound effects' : 'Mute sound effects'}
               >
