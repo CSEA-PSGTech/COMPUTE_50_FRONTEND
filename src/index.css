@@ -2,35 +2,43 @@
 
 @layer base {
   :root {
-    --bg-main: #FAFAFA;
-    --bg-secondary: #F4F4F5;
-    --bg-surface: #FFFFFF;
-    --border-color: #E4E4E7;
-    --text-primary: #09090B;
-    --text-secondary: #52525B;
-    --accent: #65A30D;
-    --accent-hover: #4D7C0F;
-    --accent-text: #FFFFFF;
-    --accent-muted: rgba(101, 163, 13, 0.12);
+    --bg-main: #F9F0E0;
+    --bg-secondary: #f9f6f1;
+    --bg-surface: #fffdf9;
+    --border-color: #e7dfd5;
+    --text-primary: #1b1a17;
+    --text-secondary: #5d564f;
+    --accent: #EFBF04;
+    --accent-hover: #5da3b8;
+    --accent-text: #fffdf9;
+    --accent-muted: rgba(13, 115, 163, 0.12);
+    --spotlight-color: rgba(190, 133, 0, 0.14);
     --bg-noise-opacity: 0.03;
     --bg-grid-opacity: 0.03;
     --bg-glow-opacity: 0.04;
   }
 
   .dark {
-    --bg-main: #050505;
+    --bg-main: #050505b4;
     --bg-secondary: #0D0D0F;
     --bg-surface: #121216;
     --border-color: #24242A;
     --text-primary: #F5F5F5;
     --text-secondary: #A1A1AA;
-    --accent: #B6FF00;
-    --accent-hover: #C8FF33;
-    --accent-text: #050505;
-    --accent-muted: rgba(182, 255, 0, 0.12);
+    --accent: #FFC425;
+    --accent-hover: #5da3b8;
+    --accent-text: #050505b4;
+    --accent-muted: rgb(93 163 184 / 45%);
+    --spotlight-color: rgba(112, 177, 223, 0.1);
     --bg-noise-opacity: 0.04;
     --bg-grid-opacity: 0.04;
     --bg-glow-opacity: 0.05;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition: background-color 300ms ease, border-color 300ms ease, color 300ms ease, fill 300ms ease, stroke 300ms ease;
   }
 
   body {
@@ -52,6 +60,14 @@
 
   .font-mono {
     font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
   }
 }
 
@@ -202,6 +218,24 @@
 
 .bg-accent-lime:hover {
   background-color: var(--accent-hover);
+}
+
+.register-cta:hover {
+  background-color: #34d399;
+  background-image: none;
+}
+
+.signin-button:hover {
+  background-color: #34d399;
+  color: #052e16;
+}
+
+.navbar-login-button {
+  border: 1px solid transparent;
+}
+
+.navbar-login-button:hover {
+  border-color: var(--accent);
 }
 
 .text-accent-lime {
