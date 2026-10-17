@@ -45,6 +45,43 @@
     --bg-glow-opacity: 0.05;
   }
 
+  /* Branded Custom Selection matching Theme Accent */
+  ::selection {
+    background-color: var(--accent);
+    color: var(--accent-text);
+  }
+
+  ::-moz-selection {
+    background-color: var(--accent);
+    color: var(--accent-text);
+  }
+
+  /* Standard Scrollbar styling (Firefox & modern browsers) */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) var(--bg-main);
+  }
+
+  /* WebKit / Chromium custom scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: var(--bg-main);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border: 2px solid var(--bg-main);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--accent);
+  }
+
   body {
     min-height: 100vh;
     background-color: var(--bg-main);
