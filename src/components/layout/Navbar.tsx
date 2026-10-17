@@ -24,7 +24,8 @@ import { Container } from '../common/Container';
 import { Button } from '../common/Button';
 import { EVENT_CONFIG } from '../../config/event';
 import compute50Logo from '../../assets/logos/compute 50 logo.png';
-import psgLogo from '../../assets/logos/psg-logo.png';
+import psgLogo from '../../assets/logos/PSGCT-Coimbatore-Logo.png';
+import psgDarkLogo from '../../assets/logos/PSG_College_of_Technology_logo.png';
 import cseaLogo from '../../assets/logos/csea-logo.png';
 import psg100Logo from '../../assets/logos/psg-100years-logo.png';
 
@@ -136,15 +137,15 @@ export const Navbar: React.FC = () => {
           : 'bg-[var(--bg-main)]/80 backdrop-blur-xs border-b border-[var(--border-color)]/60'
       }`}
     >
-      <Container size="lg">
-        <div className="flex items-center justify-between h-16 sm:h-20 gap-2">
+      <Container size="lg" className="max-[360px]:px-2">
+        <div className="flex items-center justify-between h-16 sm:h-20 gap-2 max-[360px]:gap-1">
           {/* Top Left: Compute 50 Logo & Brand */}
           <Link
             to="/"
-            className="flex items-center gap-2.5 sm:gap-3 group focus:outline-none focus:ring-2 focus:ring-[var(--accent)] rounded-xl p-1 shrink-0"
+            className="flex items-center gap-2.5 sm:gap-3 max-[360px]:gap-1.5 group focus:outline-none focus:ring-2 focus:ring-[var(--accent)] rounded-xl p-1 max-[360px]:p-0.5 shrink-0"
             aria-label="Compute 50 Homepage"
           >
-            <div className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center transition-transform duration-200 group-hover:scale-110 cursor-pointer">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 max-[360px]:w-9 max-[360px]:h-9 flex items-center justify-center transition-transform duration-200 group-hover:scale-110 cursor-pointer">
               <img
                 src={compute50Logo}
                 alt="Compute 50"
@@ -152,10 +153,10 @@ export const Navbar: React.FC = () => {
               />
             </div>
             <div>
-              <span className="font-black text-lg sm:text-xl text-[var(--text-primary)] tracking-tight block font-mono leading-none">
+              <span className="font-black text-lg sm:text-xl max-[360px]:text-base text-[var(--text-primary)] tracking-tight block font-mono leading-none">
                 COMPUTE <span className="text-[var(--accent)]">50</span>
               </span>
-              <span className="text-[10px] text-[var(--text-secondary)] block mt-0.5 tracking-wider uppercase font-semibold">
+              <span className="text-[10px] text-[var(--text-secondary)] block mt-0.5 tracking-wider uppercase font-semibold max-[360px]:hidden">
                 CSEA · PSG Tech
               </span>
             </div>
@@ -164,7 +165,7 @@ export const Navbar: React.FC = () => {
           {/* Center: Desktop Navigation Links */}
           <nav
             aria-label="Desktop primary navigation"
-            className="hidden lg:flex items-center gap-1 bg-[var(--bg-surface)] border border-[var(--border-color)] px-3 py-1.5 rounded-full shadow-xs"
+            className="hidden xl:flex items-center gap-1 bg-[var(--bg-surface)] border border-[var(--border-color)] px-3 py-1.5 rounded-full shadow-xs"
           >
             {navLinks.map((link) => {
               const active = isActive(link.path);
@@ -192,13 +193,13 @@ export const Navbar: React.FC = () => {
           </nav>
 
           {/* Top Right: Institutional Logos & Actions */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 max-[360px]:gap-1 shrink-0">
             {/* Institutional Logos Row */}
-            <div className="flex items-center gap-3 px-2 py-1">
+            <div className="hidden xl:flex items-center gap-3 px-2 py-1">
               <img
-                src={psgLogo}
+                src={theme === 'light' ? psgLogo : psgDarkLogo}
                 alt="PSG Tech"
-                className="h-9 sm:h-10 w-auto object-contain transition-transform duration-200 hover:scale-110 cursor-pointer filter drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]"
+                className={`h-9 sm:h-10 w-auto object-contain transition-transform duration-200 hover:scale-110 cursor-pointer filter drop-shadow-[0_0_6px_rgba(255,255,255,0.25)] ${theme === 'dark' ? 'invert' : ''}`}
                 title="PSG College of Technology"
               />
               <div className="h-5 w-[1px] bg-[var(--border-color)]" />
@@ -218,7 +219,7 @@ export const Navbar: React.FC = () => {
             </div>
 
             {/* Desktop Theme Switch & Auth Buttons */}
-            <div className="hidden md:flex items-center gap-2">
+            <div className="hidden xl:flex items-center gap-2">
               <button
                 type="button"
                 onClick={toggleTheme}
@@ -261,7 +262,11 @@ export const Navbar: React.FC = () => {
               ) : (
                 <>
                   <Link to="/login">
-                    <Button variant={isActive('/login') ? 'primary' : 'ghost'} size="sm">
+                    <Button
+                      variant={isActive('/login') ? 'primary' : 'ghost'}
+                      size="sm"
+                      className="navbar-login-button"
+                    >
                       Login
                     </Button>
                   </Link>
@@ -269,7 +274,7 @@ export const Navbar: React.FC = () => {
                     <Button
                       variant="primary"
                       size="sm"
-                      className="bg-[var(--accent)] text-slate-950 hover:bg-emerald-400 font-extrabold shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_22px_rgba(34,197,94,0.6)] transition-all transform hover:scale-105"
+                      className="register-cta bg-[var(--accent)] text-slate-950 font-extrabold shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_22px_rgba(34,197,94,0.6)] transition-all transform hover:scale-105"
                     >
                       Register
                     </Button>
@@ -278,22 +283,8 @@ export const Navbar: React.FC = () => {
               )}
             </div>
 
-            {/* Mobile Actions: Theme, Sound & Drawer Toggle Buttons */}
+            {/* Mobile Actions: Drawer Toggle Button */}
             <div className="flex md:hidden items-center gap-1.5">
-              <button
-                type="button"
-                onClick={toggleTheme}
-                className="min-h-[40px] min-w-[40px] p-2 rounded-xl border border-[var(--border-color)] text-[var(--text-primary)] bg-[var(--bg-surface)] hover:border-[var(--accent)]/60 transition-colors cursor-pointer flex items-center justify-center"
-                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-                title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-              >
-                {theme === 'dark' ? (
-                  <Sun className="w-4 h-4 text-amber-400" />
-                ) : (
-                  <Moon className="w-4 h-4 text-slate-700" />
-                )}
-              </button>
-
               <button
                 type="button"
                 onClick={handleToggleSound}
@@ -338,7 +329,7 @@ export const Navbar: React.FC = () => {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={handleCloseDrawer}
-              className="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 md:hidden"
+              className="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 xl:hidden"
               aria-hidden="true"
             />
 
@@ -356,10 +347,10 @@ export const Navbar: React.FC = () => {
                   ? { duration: 0.15 }
                   : { type: 'spring', stiffness: 350, damping: 32 }
               }
-              className="fixed top-0 right-0 bottom-0 w-[85vw] sm:w-[360px] max-w-[380px] bg-[var(--bg-surface)] border-l border-[var(--border-color)] z-50 flex flex-col justify-between pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(1.25rem,env(safe-area-inset-bottom))] px-5 sm:px-6 shadow-2xl md:hidden overflow-y-auto"
+              className="fixed inset-y-0 right-0 h-dvh w-[85vw] sm:w-[360px] max-w-[380px] bg-[var(--bg-surface)] border-l border-[var(--border-color)] z-50 flex flex-col gap-5 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(1.25rem,env(safe-area-inset-bottom))] px-5 sm:px-6 shadow-2xl xl:hidden overflow-hidden"
             >
               {/* Drawer Top / Header */}
-              <div className="space-y-6">
+              <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain touch-pan-y space-y-6">
                 <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3.5">
                   <div className="flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-lg bg-[var(--bg-surface)] border border-[var(--accent)]/40 p-1 flex items-center justify-center overflow-hidden shrink-0">
@@ -447,9 +438,9 @@ export const Navbar: React.FC = () => {
                     >
                       <div className="flex items-center gap-2.5">
                         <img
-                          src={psgLogo}
+                          src={theme === 'light' ? psgLogo : psgDarkLogo}
                           alt="PSG Tech Logo"
-                          className="w-5 h-5 object-contain shrink-0"
+                          className={`w-5 h-5 object-contain shrink-0 ${theme === 'dark' ? 'invert' : ''}`}
                         />
                         <span className="text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors font-medium">
                           PSG College of Technology
@@ -540,7 +531,7 @@ export const Navbar: React.FC = () => {
               </div>
 
               {/* Drawer Bottom / Auth Buttons & Attribution */}
-              <div className="pt-5 border-t border-[var(--border-color)] space-y-3">
+              <div className="shrink-0 pt-5 border-t border-[var(--border-color)] space-y-3">
                 {isAuthenticated ? (
                   <div className="space-y-2">
                     <div className="p-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-between">
@@ -582,7 +573,7 @@ export const Navbar: React.FC = () => {
                         fullWidth
                         size="sm"
                         leftIcon={<UserPlus className="w-3.5 h-3.5" />}
-                        className="bg-[var(--accent)] text-slate-950 font-bold"
+                        className="register-cta bg-[var(--accent)] text-slate-950 font-bold"
                       >
                         Register
                       </Button>

@@ -2,44 +2,41 @@
 
 @layer base {
   :root {
-    --bg-main: #FFFFFF;
-    --bg-secondary: #F8F9FA;
+    --bg-main: #FAFAFA;
+    --bg-secondary: #F4F4F5;
     --bg-surface: #FFFFFF;
-    --border-color: #E5E7EB;
-    --text-primary: #18181B;
+    --border-color: #E4E4E7;
+    --text-primary: #09090B;
     --text-secondary: #52525B;
-
-    /* Updated to Gold from image */
-    --accent: #EFBF04;
-    /*[cite: 1] */
-    --accent-hover: #D4A903;
-    --accent-text: #18181B;
-    --accent-muted: rgba(239, 191, 4, 0.12);
-    /*[cite: 1] */
-    --accent-rgb: 239, 191, 4;
-    /*[cite: 1] */
-
-    --bg-noise-opacity: 0;
-    --bg-grid-opacity: 0.02;
-    --bg-glow-opacity: 0;
+    --accent: #65A30D;
+    --accent-hover: #4D7C0F;
+    --accent-text: #FFFFFF;
+    --accent-muted: rgba(101, 163, 13, 0.12);
+    --bg-noise-opacity: 0.03;
+    --bg-grid-opacity: 0.03;
+    --bg-glow-opacity: 0.04;
   }
 
   .dark {
-    --bg-main: #0A0A0A;
-    --bg-secondary: #171717;
-    --bg-surface: #262626;
-    --border-color: #404040;
-    --text-primary: #FAFAFA;
-    --text-secondary: #A3A3A3;
-    --accent: #FBBF24;
-    /* Luminous Gold */
-    --accent-hover: #F59E0B;
-    --accent-text: #0A0A0A;
-    --accent-muted: rgba(251, 191, 36, 0.12);
-    --accent-rgb: 251, 191, 36;
+    --bg-main: #050505;
+    --bg-secondary: #0D0D0F;
+    --bg-surface: #121216;
+    --border-color: #24242A;
+    --text-primary: #F5F5F5;
+    --text-secondary: #A1A1AA;
+    --accent: #B6FF00;
+    --accent-hover: #C8FF33;
+    --accent-text: #050505;
+    --accent-muted: rgba(182, 255, 0, 0.12);
     --bg-noise-opacity: 0.04;
     --bg-grid-opacity: 0.04;
     --bg-glow-opacity: 0.05;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition: background-color 300ms ease, border-color 300ms ease, color 300ms ease, fill 300ms ease, stroke 300ms ease;
   }
 
   body {
@@ -61,6 +58,14 @@
 
   .font-mono {
     font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
   }
 }
 
@@ -219,6 +224,24 @@
 
 .bg-accent-lime:hover {
   background-color: var(--accent-hover);
+}
+
+.register-cta:hover {
+  background-color: #34d399;
+  background-image: none;
+}
+
+.signin-button:hover {
+  background-color: #34d399;
+  color: #052e16;
+}
+
+.navbar-login-button {
+  border: 1px solid transparent;
+}
+
+.navbar-login-button:hover {
+  border-color: var(--accent);
 }
 
 .text-accent-lime {
