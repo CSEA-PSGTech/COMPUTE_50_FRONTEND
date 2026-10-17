@@ -184,17 +184,17 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
         prev.map((m, index) =>
           index === 0
             ? {
-                ...m,
-                name: currentUser.name || m.name,
-                email: currentUser.email || m.email,
-                phone: currentUser.phone || m.phone,
-                college: currentUser.college || m.college,
-                department: currentUser.department || m.department,
-                year: currentUser.year || m.year,
-                rollNumber: currentUser.rollNumber || m.rollNumber,
-                isCompleted: true,
-                isRevealed: true,
-              }
+              ...m,
+              name: currentUser.name || m.name,
+              email: currentUser.email || m.email,
+              phone: currentUser.phone || m.phone,
+              college: currentUser.college || m.college,
+              department: currentUser.department || m.department,
+              year: currentUser.year || m.year,
+              rollNumber: currentUser.rollNumber || m.rollNumber,
+              isCompleted: true,
+              isRevealed: true,
+            }
             : m
         )
       );
@@ -348,7 +348,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
         if (
           formData.rollNumber.trim() &&
           m.rollNumber.trim().toUpperCase() ===
-            formData.rollNumber.trim().toUpperCase()
+          formData.rollNumber.trim().toUpperCase()
         ) {
           errors.rollNumber = 'This roll number is already used for another member';
         }
@@ -369,17 +369,17 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
     const updatedMembers = members.map((m) =>
       m.id === activeCardId
         ? {
-            ...m,
-            name: formData.name.trim(),
-            email: formData.email.trim(),
-            phone: formData.phone.trim(),
-            college: formData.college.trim(),
-            department: formData.department.trim(),
-            year: formData.year.trim(),
-            rollNumber: formData.rollNumber.trim().toUpperCase(),
-            isCompleted: true,
-            isRevealed: true,
-          }
+          ...m,
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          college: formData.college.trim(),
+          department: formData.department.trim(),
+          year: formData.year.trim(),
+          rollNumber: formData.rollNumber.trim().toUpperCase(),
+          isCompleted: true,
+          isRevealed: true,
+        }
         : m
     );
 
@@ -405,14 +405,14 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
       prev.map((m) =>
         m.id === id
           ? {
-              ...m,
-              name: '',
-              email: '',
-              phone: '',
-              rollNumber: '',
-              isCompleted: false,
-              isRevealed: false,
-            }
+            ...m,
+            name: '',
+            email: '',
+            phone: '',
+            rollNumber: '',
+            isCompleted: false,
+            isRevealed: false,
+          }
           : m
       )
     );
@@ -686,7 +686,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
               </button>
               <button
                 type="submit"
-                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-slate-950 text-xs font-mono font-extrabold shadow-sm text-center transition-all cursor-pointer min-h-[44px]"
+                className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-text)] text-xs font-mono font-extrabold shadow-sm text-center transition-all cursor-pointer min-h-[44px]"
               >
                 Save Member
               </button>
@@ -860,11 +860,10 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
               type="button"
               disabled={!allFilledValid || isLoading}
               onClick={() => onSubmitTeam(members, teamName)}
-              className={`w-full sm:w-auto px-8 py-3.5 rounded-xl font-mono font-extrabold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer min-h-[44px] ${
-                allFilledValid && !isLoading
-                  ? 'bg-[var(--accent)] text-slate-950 shadow-[0_0_20px_rgba(182,255,0,0.35)] hover:shadow-[0_0_30px_rgba(182,255,0,0.5)] hover:scale-[1.01]'
+              className={`w-full sm:w-auto px-8 py-3.5 rounded-xl font-mono font-extrabold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer min-h-[44px] ${allFilledValid && !isLoading
+                  ? 'bg-[var(--accent)] text-[var(--accent-text)] shadow-[0_0_20px_rgba(var(--accent-rgb),0.35)] hover:shadow-[0_0_30px_rgba(var(--accent-rgb),0.5)] hover:scale-[1.01]'
                   : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]/50 border border-[var(--border-color)] cursor-not-allowed'
-              }`}
+                }`}
             >
               {isLoading ? (
                 <span>Submitting Registration...</span>
@@ -893,7 +892,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
             initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.28, ease: 'easeOut' }}
-            className="w-full min-w-0 box-border rounded-2xl bg-[#121216] border border-[#24242A] shadow-2xl p-4 sm:p-6 text-left"
+            className="w-full min-w-0 box-border rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] shadow-2xl p-4 sm:p-6 text-left"
           >
             {renderMemberFormContent()}
           </motion.div>
@@ -920,9 +919,8 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
                   backfaceVisibility: 'hidden',
                   WebkitBackfaceVisibility: 'hidden',
                 }}
-                className={`absolute inset-0 w-full h-full rounded-2xl bg-[#121216] border border-[#24242A] flex flex-col items-center justify-center p-6 text-center space-y-3 z-10 ${
-                  isFlipped ? 'pointer-events-none' : ''
-                }`}
+                className={`absolute inset-0 w-full h-full rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] flex flex-col items-center justify-center p-6 text-center space-y-3 z-10 ${isFlipped ? 'pointer-events-none' : ''
+                  }`}
               >
                 <div className="w-14 h-14 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center text-[var(--accent)]">
                   {activeMember.role === 'Leader' ? (
@@ -946,7 +944,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
                   WebkitBackfaceVisibility: 'hidden',
                   transform: 'rotateY(180deg)',
                 }}
-                className="relative w-full rounded-2xl bg-[#121216] border border-[#24242A] shadow-2xl p-6 sm:p-7 text-left space-y-6"
+                className="relative w-full rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] shadow-2xl p-6 sm:p-7 text-left space-y-6"
               >
                 {renderMemberFormContent()}
               </div>
@@ -1007,14 +1005,12 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
             {members.map((m) => (
               <span
                 key={m.id}
-                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                  m.isCompleted
-                    ? 'bg-[var(--accent)] shadow-[0_0_8px_rgba(182,255,0,0.6)] scale-110'
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${m.isCompleted
+                    ? 'bg-[var(--accent)] shadow-[0_0_8px_rgba(var(--accent-rgb),0.6)] scale-110'
                     : 'bg-[var(--border-color)]'
-                }`}
-                title={`${m.slotTitle} (${m.isRequired ? 'Required' : 'Optional'}): ${
-                  m.isCompleted ? 'Completed' : 'Pending'
-                }`}
+                  }`}
+                title={`${m.slotTitle} (${m.isRequired ? 'Required' : 'Optional'}): ${m.isCompleted ? 'Completed' : 'Pending'
+                  }`}
               />
             ))}
           </div>
@@ -1047,24 +1043,22 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
                   shouldReduceMotion
                     ? {}
                     : {
-                        y: -24,
-                        scale: 1.04,
-                        zIndex: 60,
-                        transition: { duration: 0.2 },
-                      }
+                      y: -24,
+                      scale: 1.04,
+                      zIndex: 60,
+                      transition: { duration: 0.2 },
+                    }
                 }
                 whileTap={{ scale: 0.98 }}
                 style={{ zIndex }}
-                aria-label={`Card ${member.slotNumber}: ${member.slotTitle}. ${
-                  isCompleted ? `Completed - ${member.name}` : member.isRequired ? 'Required' : 'Optional'
-                }`}
-                className={`group relative w-56 md:w-64 h-80 rounded-2xl p-5 flex flex-col justify-between text-left cursor-pointer transition-all duration-300 outline-none focus:ring-2 focus:ring-[var(--accent)] shadow-xl ${
-                  isCompleted
-                    ? 'bg-[var(--bg-surface)] border-2 border-[var(--accent)]/80 shadow-[0_10px_30px_rgba(0,0,0,0.5)]'
+                aria-label={`Card ${member.slotNumber}: ${member.slotTitle}. ${isCompleted ? `Completed - ${member.name}` : member.isRequired ? 'Required' : 'Optional'
+                  }`}
+                className={`group relative w-56 md:w-64 h-80 rounded-2xl p-5 flex flex-col justify-between text-left cursor-pointer transition-all duration-300 outline-none focus:ring-2 focus:ring-[var(--accent)] shadow-xl ${isCompleted
+                    ? 'bg-[var(--bg-surface)] border-2 border-[var(--accent)]/80 shadow-[0_10px_30px_rgba(0,0,0,0.15)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.5)]'
                     : isNext
-                    ? 'bg-[var(--bg-surface)] border-2 border-[var(--accent)] shadow-[0_0_20px_rgba(182,255,0,0.25)] ring-1 ring-[var(--accent)]/40'
-                    : 'bg-[#121216] border border-[#24242A] hover:border-[var(--accent)]/60'
-                }`}
+                      ? 'bg-[var(--bg-surface)] border-2 border-[var(--accent)] shadow-[0_0_20px_rgba(var(--accent-rgb),0.25)] ring-1 ring-[var(--accent)]/40'
+                      : 'bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)]/60'
+                  }`}
               >
                 {/* Top Card Badge / Meta */}
                 <div className="flex items-center justify-between border-b border-[var(--border-color)]/70 pb-2.5">
@@ -1082,7 +1076,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
                       DONE
                     </span>
                   ) : isNext ? (
-                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono font-black uppercase tracking-wider bg-[var(--accent)] text-slate-950 animate-pulse">
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono font-black uppercase tracking-wider bg-[var(--accent)] text-[var(--accent-text)] animate-pulse">
                       NEXT
                     </span>
                   ) : null}
@@ -1091,13 +1085,12 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
                 {/* Card Artwork / Center Content */}
                 <div className="my-auto py-2 space-y-2.5 text-center">
                   <div
-                    className={`w-14 h-14 mx-auto rounded-2xl flex items-center justify-center border transition-all ${
-                      isCompleted
+                    className={`w-14 h-14 mx-auto rounded-2xl flex items-center justify-center border transition-all ${isCompleted
                         ? 'bg-[var(--accent-muted)] border-[var(--accent)]/40 text-[var(--accent)]'
                         : isNext
-                        ? 'bg-[var(--bg-secondary)] border-[var(--accent)] text-[var(--accent)]'
-                        : 'bg-[var(--bg-secondary)] border-[var(--border-color)] text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] group-hover:border-[var(--border-color)]'
-                    }`}
+                          ? 'bg-[var(--bg-secondary)] border-[var(--accent)] text-[var(--accent)]'
+                          : 'bg-[var(--bg-secondary)] border-[var(--border-color)] text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] group-hover:border-[var(--border-color)]'
+                      }`}
                   >
                     {member.role === 'Leader' ? (
                       <Crown className="w-7 h-7" />
@@ -1167,13 +1160,12 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
                 key={member.id}
                 type="button"
                 onClick={() => handleOpenCard(member)}
-                className={`relative w-full aspect-[3/4.2] rounded-2xl p-3.5 flex flex-col justify-between text-left cursor-pointer transition-all outline-none focus:ring-2 focus:ring-[var(--accent)] ${
-                  isCompleted
+                className={`relative w-full aspect-[3/4.2] rounded-2xl p-3.5 flex flex-col justify-between text-left cursor-pointer transition-all outline-none focus:ring-2 focus:ring-[var(--accent)] ${isCompleted
                     ? 'bg-[var(--bg-surface)] border-2 border-[var(--accent)] shadow-md'
                     : isNext
-                    ? 'bg-[var(--bg-surface)] border-2 border-[var(--accent)] ring-1 ring-[var(--accent)]/50'
-                    : 'bg-[#121216] border border-[#24242A]'
-                }`}
+                      ? 'bg-[var(--bg-surface)] border-2 border-[var(--accent)] ring-1 ring-[var(--accent)]/50'
+                      : 'bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)]/60'
+                  }`}
               >
                 <div className="flex items-center justify-between font-mono text-[10px]">
                   <span className="text-[var(--accent)] font-bold">{member.slotNumber}</span>
@@ -1214,11 +1206,10 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
           type="button"
           disabled={!requiredValid}
           onClick={() => setShowReview(true)}
-          className={`w-full sm:w-auto px-8 py-3.5 rounded-xl font-mono font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer min-h-[44px] ${
-            requiredValid
-              ? 'bg-[var(--accent)] text-slate-950 shadow-[0_0_20px_rgba(182,255,0,0.3)] hover:shadow-[0_0_28px_rgba(182,255,0,0.45)] hover:scale-[1.01]'
+          className={`w-full sm:w-auto px-8 py-3.5 rounded-xl font-mono font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer min-h-[44px] ${requiredValid
+              ? 'bg-[var(--accent)] text-[var(--accent-text)] shadow-[0_0_20px_rgba(var(--accent-rgb),0.3)] hover:shadow-[0_0_28px_rgba(var(--accent-rgb),0.45)] hover:scale-[1.01]'
               : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]/50 border border-[var(--border-color)] cursor-not-allowed'
-          }`}
+            }`}
         >
           <span>Review Team ({completedCount} / 4 Members Ready)</span>
           <ChevronRight className="w-4 h-4" />

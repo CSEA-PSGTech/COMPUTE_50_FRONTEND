@@ -360,6 +360,59 @@ Along with the 12 features above, the following theme/accessibility fixes were a
 
 ---
 
+## 13. Hero Section Animations & Event Date Highlight
+
+**What it does:**  
+Adds gentle, subtle entrance and micro-animations to key elements of the Hero section, and redesigns the event date into a prominent, glowing pill badge.
+
+**Key changes:**
+- **Floating Emblem**: 4s ease-in-out infinite floating animation (`animate-hero-emblem`) for the Compute 50 emblem logo.
+- **Pulsing Date Badge**: Redesigned the event date from a plain, small text string into a bold `text-base sm:text-lg md:text-xl` font inside a rounded pill badge with `var(--accent-muted)` background, accent border, and a 3s pulsing glow shadow (`animate-hero-date-glow`).
+- **Countdown Tick**: Subtle scale pulse on the countdown seconds digit (`animate-countdown-tick`).
+- **Accessibility**: All animations are automatically disabled when `prefers-reduced-motion` is active.
+
+**Files Edited:**
+| File | Change |
+|------|--------|
+| `src/index.css` | Added `--accent-rgb` tokens, `@keyframes hero-emblem-float`, `@keyframes hero-date-glow`, and `@keyframes countdown-tick` utilities |
+| `src/components/home/Hero.tsx` | Integrated animation classes and redesigned the event date section |
+
+---
+
+## 14. Prize Pool Light Mode Contrast & Alignment Fix
+
+**What it does:**  
+Fixes text glare/invisibility in light mode and prevents the `+` symbol from breaking onto a separate line underneath the amount.
+
+**Key changes:**
+- **Light Mode Visibility**: The huge amount (`₹2,50,000`) previously used a hardcoded `from-white` gradient designed only for dark mode. Replaced with `from-[var(--text-primary)] via-[var(--text-primary)] to-[var(--accent)]`, ensuring high-contrast readability against both white and dark backgrounds.
+- **Single-Line '+' Alignment**: Used `flex items-baseline flex-nowrap whitespace-nowrap` with `shrink-0` on the `+` sign and adjusted responsive font scale (`text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl`), ensuring the `+` is locked on the same line as the number across all screen sizes.
+- **Palette Consistency**: Converted all hardcoded lime green RGB values to `rgba(var(--accent-rgb), ...)` and button text to `text-[var(--accent-text)]` to work harmoniously with both the amber/gold and neon color palettes.
+
+**Files Edited:**
+| File | Change |
+|------|--------|
+| `src/components/home/PrizePool.tsx` | Theme-aware gradient text, single-line flex baseline layout for the `+` sign, and dynamic accent RGB variables |
+
+---
+
+## 15. Team Reveal Cards Theme Color Consistency Fix
+
+**What it does:**  
+Resolves mismatched card background colors where uncompleted cards (Card 03 and Card 04) rendered as solid black `#121216` cards even in light mode, while completed cards rendered as white.
+
+**Key changes:**
+- **Uniform Surface Colors**: Replaced hardcoded `#121216` background and `#24242A` border with semantic `var(--bg-surface)` and `var(--border-color)`. Now, all four cards (01, 02, 03, 04) share identical surface styling in both light and dark modes.
+- **Theme Variables**: Replaced hardcoded `text-slate-950` with `text-[var(--accent-text)]` on action buttons and status badges.
+- **Mobile & Flip Views**: Updated the flip form faces and mobile grid view to use `var(--bg-surface)` and `var(--border-color)`.
+
+**Files Edited:**
+| File | Change |
+|------|--------|
+| `src/components/hackathon/TeamRevealCards.tsx` | Replaced hardcoded `#121216` and `#24242A` with `var(--bg-surface)` and `var(--border-color)` across card deck and flip views |
+
+---
+
 ## Architecture Decisions
 
 1. **No new routing dependencies** — All animations use `framer-motion` which was already in the project.
@@ -367,3 +420,4 @@ Along with the 12 features above, the following theme/accessibility fixes were a
 3. **Mobile-first approach** — Bottom nav, pull-to-refresh, and swipeable schedule specifically target mobile users via responsive breakpoints.
 4. **Accessibility** — Particle background and cursor glow respect `prefers-reduced-motion`. All interactive elements have `aria-label` attributes.
 5. **Performance** — Canvas rendering uses `requestAnimationFrame` with cleanup. Scroll listeners use `{ passive: true }`. Mouse tracking uses lerp smoothing instead of direct DOM updates.
+
