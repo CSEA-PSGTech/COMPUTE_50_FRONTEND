@@ -44,7 +44,7 @@ export const AboutCsea: React.FC = () => {
             href={EVENT_CONFIG.organizerWebsite}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--bg-secondary)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[12px] font-semibold text-[var(--text-primary)] hover:text-[var(--accent)] rounded-lg transition-colors shrink-0"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--bg-secondary)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[12px] font-semibold text-[var(--text-primary)] dark:hover:text-[var(--accent)] rounded-lg transition-colors shrink-0"
           >
             <span>Website</span>
             <ExternalLink className="w-3 h-3" />

@@ -91,7 +91,7 @@ export const TexturedBackground: React.FC = () => {
         <div
           className="absolute inset-0 hidden md:block"
           style={{
-            background: `radial-gradient(600px circle at var(--spotlight-x) var(--spotlight-y), rgba(182, 255, 0, 0.06), transparent 80%)`,
+            background: `radial-gradient(600px circle at var(--spotlight-x) var(--spotlight-y), rgba(var(--accent-rgb), 0.06), transparent 80%)`,
           }}
         />
       )}

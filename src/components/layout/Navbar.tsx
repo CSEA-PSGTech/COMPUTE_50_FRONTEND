@@ -269,7 +269,7 @@ export const Navbar: React.FC = () => {
                     <Button
                       variant="primary"
                       size="sm"
-                      className="bg-[var(--accent)] text-slate-950 hover:bg-emerald-400 font-extrabold shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_22px_rgba(34,197,94,0.6)] transition-all transform hover:scale-105"
+                      className="bg-[var(--accent)] text-[var(--accent-text)] hover:bg-[var(--accent-hover)] font-extrabold shadow-[0_0_15px_rgba(var(--accent-rgb),0.35)] hover:shadow-[0_0_22px_rgba(var(--accent-rgb),0.55)] transition-all transform hover:scale-105"
                     >
                       Register
                     </Button>
@@ -582,7 +582,7 @@ export const Navbar: React.FC = () => {
                         fullWidth
                         size="sm"
                         leftIcon={<UserPlus className="w-3.5 h-3.5" />}
-                        className="bg-[var(--accent)] text-slate-950 font-bold"
+                        className="bg-[var(--accent)] text-[var(--accent-text)] font-bold"
                       >
                         Register
                       </Button>

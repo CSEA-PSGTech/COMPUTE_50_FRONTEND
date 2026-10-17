@@ -1,42 +1,45 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
-    --bg-main: #FFFFFF;
-    --bg-secondary: #F8F9FA;
-    --bg-surface: #FFFFFF;
-    --border-color: #E5E7EB;
-    --text-primary: #18181B;
-    --text-secondary: #52525B;
+    /* Sandalwood / Sandal Cream Light Theme */
+    --bg-main: #F5EFE6;
+    --bg-secondary: #EBE1D1;
+    --bg-surface: #FCFAF6;
+    --border-color: #DBCBB4;
+    --text-primary: #1C1814;
+    --text-secondary: #5C5349;
 
-    /* Updated to Gold from image */
+    /* Vibrant Gold Accent (restored) */
     --accent: #EFBF04;
-    /*[cite: 1] */
     --accent-hover: #D4A903;
     --accent-text: #18181B;
-    --accent-muted: rgba(239, 191, 4, 0.12);
-    /*[cite: 1] */
+    --accent-muted: rgba(239, 191, 4, 0.15);
     --accent-rgb: 239, 191, 4;
-    /*[cite: 1] */
 
-    --bg-noise-opacity: 0;
-    --bg-grid-opacity: 0.02;
-    --bg-glow-opacity: 0;
+    --bg-noise-opacity: 0.03;
+    --bg-grid-opacity: 0.035;
+    --bg-glow-opacity: 0.03;
   }
 
   .dark {
+    /* Obsidian Dark Theme */
     --bg-main: #0A0A0A;
     --bg-secondary: #171717;
     --bg-surface: #262626;
     --border-color: #404040;
     --text-primary: #FAFAFA;
     --text-secondary: #A3A3A3;
+
+    /* Luminous 50th Anniversary Gold Accent */
     --accent: #FBBF24;
-    /* Luminous Gold */
     --accent-hover: #F59E0B;
     --accent-text: #0A0A0A;
     --accent-muted: rgba(251, 191, 36, 0.12);
     --accent-rgb: 251, 191, 36;
+
     --bg-noise-opacity: 0.04;
     --bg-grid-opacity: 0.04;
     --bg-glow-opacity: 0.05;

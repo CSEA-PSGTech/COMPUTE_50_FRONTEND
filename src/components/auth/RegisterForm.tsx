@@ -80,7 +80,7 @@ export const RegisterForm: React.FC = () => {
 
       <p className="text-xs text-[var(--text-secondary)] text-center pt-6 border-t border-[var(--border-color)]">
         Already registered?{' '}
-        <Link to="/login" className="text-lime-800 dark:text-[var(--accent)] hover:underline font-bold">
+        <Link to="/login" className="text-[var(--accent)] hover:text-[var(--accent-hover)] hover:underline font-bold">
           Login here
         </Link>
       </p>

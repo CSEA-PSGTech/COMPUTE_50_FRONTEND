@@ -23,10 +23,10 @@ export const AboutSection: React.FC = () => {
             <div>
               <Link
                 to="/about"
-                className="inline-flex items-center gap-1.5 px-4 py-2 bg-[var(--bg-surface)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-sm font-bold text-[var(--text-primary)] hover:text-[var(--accent)] rounded-xl transition-all shadow-xs"
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-[var(--bg-surface)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-sm font-bold text-[var(--text-primary)] dark:hover:text-[var(--accent)] rounded-xl transition-all shadow-xs group"
               >
                 <span>Read more about Compute 50</span>
-                <ArrowRight className="w-4 h-4 text-[var(--accent)]" />
+                <ArrowRight className="w-4 h-4 text-[var(--accent)] transition-transform duration-200 group-hover:translate-x-1" />
               </Link>
             </div>
           </div>

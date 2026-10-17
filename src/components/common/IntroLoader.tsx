@@ -82,7 +82,7 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
                 <img
                   src={compute50Logo}
                   alt="Compute 50"
-                  className="w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(34,197,94,0.4)]"
+                  className="w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(var(--accent-rgb),0.4)]"
                 />
               </div>
             </motion.div>
@@ -111,7 +111,7 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
             >
               <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden border border-slate-700/50 p-[1px]">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-[var(--accent)] to-emerald-400 rounded-full"
+                  className="h-full bg-gradient-to-r from-[var(--accent)] to-[var(--accent-hover)] rounded-full"
                   style={{ width: `${progress}%` }}
                 />
               </div>

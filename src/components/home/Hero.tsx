@@ -87,7 +87,7 @@ export const Hero: React.FC = () => {
             <img
               src={compute50HeroEmblem}
               alt="Compute 50 Emblem"
-              className="animate-hero-emblem w-40 sm:w-56 md:w-64 lg:w-72 h-auto object-contain filter drop-shadow-[0_0_20px_rgba(34,197,94,0.2)] transition-transform duration-300 hover:scale-105 select-none"
+              className="animate-hero-emblem w-40 sm:w-56 md:w-64 lg:w-72 h-auto object-contain filter drop-shadow-[0_0_20px_rgba(var(--accent-rgb),0.2)] transition-transform duration-300 hover:scale-105 select-none"
             />
           </motion.div>
 
@@ -185,8 +185,8 @@ export const Hero: React.FC = () => {
               </div>
 
               {/* Round 2 — On Campus */}
-              <div className="p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-emerald-400/50 transition-colors flex items-start gap-3.5 shadow-sm">
-                <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
+              <div className="p-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)]/50 transition-colors flex items-start gap-3.5 shadow-sm">
+                <div className="w-9 h-9 rounded-lg bg-[var(--accent-muted)] border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] shrink-0 mt-0.5">
                   <MapPin className="w-4.5 h-4.5" />
                 </div>
                 <div className="min-w-0">
@@ -258,9 +258,9 @@ export const Hero: React.FC = () => {
               <Button
                 size="lg"
                 variant="primary"
-                className="bg-[var(--accent)] text-slate-950 hover:bg-emerald-400 font-extrabold shadow-[0_0_20px_rgba(34,197,94,0.4)] hover:shadow-[0_0_25px_rgba(34,197,94,0.6)] transition-all"
-                leftIcon={<UserPlus className="w-5 h-5 text-slate-950" />}
-                rightIcon={<ArrowRight className="w-5 h-5 text-slate-950" />}
+                className="bg-[var(--accent)] text-[var(--accent-text)] hover:bg-[var(--accent-hover)] font-extrabold shadow-[0_0_20px_rgba(var(--accent-rgb),0.35)] hover:shadow-[0_0_25px_rgba(var(--accent-rgb),0.55)] transition-all"
+                leftIcon={<UserPlus className="w-5 h-5 text-[var(--accent-text)]" />}
+                rightIcon={<ArrowRight className="w-5 h-5 text-[var(--accent-text)]" />}
               >
                 Register Now
               </Button>

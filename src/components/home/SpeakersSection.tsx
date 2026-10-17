@@ -314,7 +314,7 @@ export const SpeakersSection: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleToggleExpand}
-                    className="px-6 py-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-primary)] hover:text-[var(--accent)] text-xs font-semibold transition-all shadow-xs flex items-center gap-2 focus:outline-none cursor-pointer"
+                    className="px-6 py-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-primary)] dark:hover:text-[var(--accent)] text-xs font-semibold transition-all shadow-xs flex items-center gap-2 focus:outline-none cursor-pointer"
                   >
                     {expanded ? (
                       <>
@@ -525,7 +525,7 @@ export const SpeakersSection: React.FC = () => {
             <button
               type="button"
               onClick={handleToggleExpand}
-              className="px-6 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-primary)] hover:text-[var(--accent)] text-sm font-semibold transition-all shadow-xs flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] cursor-pointer"
+              className="px-6 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-primary)] dark:hover:text-[var(--accent)] text-sm font-semibold transition-all shadow-xs flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] cursor-pointer"
               aria-expanded={expanded}
               aria-controls="guests-grid"
             >

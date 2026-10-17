@@ -40,8 +40,8 @@ export const PrizeDetailsModal: React.FC<PrizeDetailsModalProps> = ({ isOpen, on
 
   const getRankIcon = (rank: string) => {
     if (rank.includes('1st')) return <Trophy className="w-6 h-6 text-[var(--accent)] shrink-0" />;
-    if (rank.includes('2nd')) return <Medal className="w-6 h-6 text-emerald-300 shrink-0" />;
-    return <Award className="w-6 h-6 text-emerald-400 shrink-0" />;
+    if (rank.includes('2nd')) return <Medal className="w-6 h-6 text-amber-500 shrink-0" />;
+    return <Award className="w-6 h-6 text-amber-600 shrink-0" />;
   };
 
   return (
@@ -107,7 +107,7 @@ export const PrizeDetailsModal: React.FC<PrizeDetailsModalProps> = ({ isOpen, on
                     key={item.id}
                     className={`p-4 rounded-xl border transition-all ${
                       item.isGrandWinner
-                        ? 'bg-[var(--accent)]/10 border-[var(--accent)]/50 shadow-[0_0_15px_rgba(34,197,94,0.15)]'
+                        ? 'bg-[var(--accent)]/10 border-[var(--accent)]/50 shadow-[0_0_15px_rgba(var(--accent-rgb),0.15)]'
                         : 'bg-[var(--bg-secondary)] border-[var(--border-color)]'
                     }`}
                   >

@@ -42,7 +42,7 @@ export const TracksSection: React.FC = () => {
             <Reveal key={track.id} delay={idx * 0.06}>
               <Card
                 hoverable
-                className="group flex flex-col justify-between p-5 sm:p-6 transition-all duration-200 hover:shadow-[0_0_20px_rgba(34,197,94,0.12)] hover:border-[var(--accent)]/60"
+                className="group flex flex-col justify-between p-5 sm:p-6 transition-all duration-200 hover:shadow-[0_0_20px_rgba(var(--accent-rgb),0.12)] hover:border-[var(--accent)]/60"
               >
                 <div className="flex items-center justify-between mb-5">
                   <motion.div

@@ -835,7 +835,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
                   <button
                     type="button"
                     onClick={() => handleOpenCard(member)}
-                    className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-[var(--border-color)] hover:border-[var(--accent)] text-xs font-mono font-bold text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors cursor-pointer min-h-[38px]"
+                    className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-[var(--border-color)] hover:border-[var(--accent)] text-xs font-mono font-bold text-[var(--text-primary)] dark:hover:text-[var(--accent)] transition-colors cursor-pointer min-h-[38px]"
                   >
                     + Add Member
                   </button>

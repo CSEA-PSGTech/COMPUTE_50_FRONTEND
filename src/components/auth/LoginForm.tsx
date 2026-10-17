@@ -131,7 +131,7 @@ export const LoginForm: React.FC = () => {
               onClick={() => {
                 addToast('Password reset instructions sent to your email.', 'info');
               }}
-              className="text-xs text-lime-800 dark:text-[var(--accent)] hover:underline cursor-pointer font-medium"
+              className="text-xs text-[var(--accent)] hover:text-[var(--accent-hover)] hover:underline cursor-pointer font-medium"
             >
               Forgot password?
             </button>
@@ -169,7 +169,7 @@ export const LoginForm: React.FC = () => {
 
       <p className="text-xs text-[var(--text-secondary)] text-center mt-6">
         Don't have an account?{' '}
-        <Link to="/register" className="text-lime-800 dark:text-[var(--accent)] hover:underline font-bold">
+        <Link to="/register" className="text-[var(--accent)] hover:text-[var(--accent-hover)] hover:underline font-bold">
           Register
         </Link>
       </p>
