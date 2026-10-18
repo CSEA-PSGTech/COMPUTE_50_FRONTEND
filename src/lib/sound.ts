@@ -1,5 +1,6 @@
-// Web Audio helper for futuristic UI interaction tones.
-// Handles browser autoplay restrictions via auto-resume and user gestures.
+// Web Audio & Foley Sound Engine for Compute 50 UI Interactions.
+// Supports low-latency Web Audio buffer playback with HTML5 Audio fallback.
+
 const KEY = 'compute50_muted';
 
 let ctx: AudioContext | undefined;
@@ -63,12 +64,143 @@ export const getAudioContext = (): AudioContext | undefined => {
   }
 };
 
+// =========================================================================
+// FOLEY AUDIO FILES & ZERO-LATENCY WEB AUDIO BUFFER PLAYBACK
+// =========================================================================
+
+export type SoundEffectName =
+  | 'tick'
+  | 'hover'
+  | 'swoosh'
+  | 'on'
+  | 'warning'
+  | 'success';
+
+const SOUND_CONFIG: Record<SoundEffectName, { url: string; volume: number }> = {
+  tick: { url: '/sounds/foley-tick.wav', volume: 0.45 },
+  hover: { url: '/sounds/foley-hover.wav', volume: 0.2 },
+  swoosh: { url: '/sounds/foley-tick.wav', volume: 0.45 },
+  on: { url: '/sounds/foley-on.wav', volume: 0.45 },
+  warning: { url: '/sounds/foley-warning.wav', volume: 0.55 },
+  success: { url: '/sounds/foley-success.wav', volume: 0.55 },
+};
+
+const audioBufferCache: Partial<Record<SoundEffectName, AudioBuffer>> = {};
+const bufferFetchPromises: Partial<Record<SoundEffectName, Promise<AudioBuffer | null>>> = {};
+
+// Preload and decode a sound buffer in memory
+const loadBuffer = async (name: SoundEffectName): Promise<AudioBuffer | null> => {
+  if (audioBufferCache[name]) return audioBufferCache[name]!;
+  if (bufferFetchPromises[name]) return bufferFetchPromises[name]!;
+
+  const audio = getAudioContext();
+  if (!audio) return null;
+
+  bufferFetchPromises[name] = (async () => {
+    try {
+      const res = await fetch(SOUND_CONFIG[name].url);
+      const arrayBuffer = await res.arrayBuffer();
+      const decoded = await audio.decodeAudioData(arrayBuffer);
+      audioBufferCache[name] = decoded;
+      return decoded;
+    } catch {
+      return null;
+    }
+  })();
+
+  return bufferFetchPromises[name]!;
+};
+
+// Preload all sounds on first user interaction for zero latency
+export const preloadSounds = (): void => {
+  if (isMuted()) return;
+  (Object.keys(SOUND_CONFIG) as SoundEffectName[]).forEach((name) => {
+    void loadBuffer(name);
+  });
+};
+
 export const unlockAudio = (): void => {
   if (!isMuted()) {
     getAudioContext();
+    preloadSounds();
   }
 };
 
+/**
+ * Plays a mapped foley audio effect.
+ * Uses Web Audio Buffer for 0ms latency; gracefully falls back to HTMLAudioElement.
+ */
+export const playSound = (name: SoundEffectName, customVolume?: number): void => {
+  if (isMuted()) return;
+
+  const config = SOUND_CONFIG[name];
+  if (!config) return;
+  const volume = customVolume ?? config.volume;
+
+  const audio = getAudioContext();
+  if (audio) {
+    if (audioBufferCache[name]) {
+      try {
+        const source = audio.createBufferSource();
+        source.buffer = audioBufferCache[name]!;
+        const gainNode = audio.createGain();
+        gainNode.gain.setValueAtTime(volume, audio.currentTime);
+        source.connect(gainNode);
+        gainNode.connect(audio.destination);
+        source.start(0);
+        return;
+      } catch {
+        // Fallback to HTMLAudioElement
+      }
+    } else {
+      void loadBuffer(name);
+    }
+  }
+
+  // Fallback to HTMLAudioElement
+  try {
+    const fallbackAudio = new Audio(config.url);
+    fallbackAudio.volume = Math.min(1, Math.max(0, volume));
+    void fallbackAudio.play().catch(() => {});
+  } catch {
+    // Ignore autoplay or audio restriction
+  }
+};
+
+// =========================================================================
+// MAPPED INTERACTION SOUND FUNCTIONS
+// =========================================================================
+
+/** 1. Button click: foley-tick.wav */
+export const soundTick = (): void => playSound('tick');
+export const soundTap = (): void => playSound('tick');
+
+/** 2. Hover disabled per user request */
+export const soundHover = (): void => {};
+
+/** 3. Page transition: replaced swoosh with foley-tick.wav per user preference */
+export const soundSwoosh = (): void => playSound('tick');
+
+/** 4. Toggling (theme switch or mute icon): foley-on.wav */
+export const soundSwitch = (_toDark?: boolean): void => playSound('on');
+export const soundToggle = (): void => playSound('on');
+
+/** 5. Incorrect password / validation error: foley-warning.wav */
+export const soundWarning = (): void => playSound('warning');
+
+/** 6. Correct password / registration success: foley-success.wav */
+export const soundSuccess = (): void => playSound('success');
+export const soundSave = (): void => playSound('success');
+export const soundTeamComplete = (): void => playSound('success');
+
+/** Reveal / unroll animation (uses tick) */
+export const soundReveal = (): void => playSound('tick');
+
+/** Modal open / close */
+export const soundModalOpen = (): void => playSound('tick');
+export const soundModalClose = (): void => playSound('tick');
+
+// Fallback oscillator tone generator (retained for backward compatibility)
 export const tone = (
   freq: number,
   duration = 0.08,
@@ -76,96 +208,31 @@ export const tone = (
   glideTo?: number,
   type: OscillatorType = 'sine'
 ): void => {
-  // Hard early exit if muted
   if (isMuted()) return;
-
   const audio = getAudioContext();
   if (!audio) return;
 
-  const play = () => {
-    // Double check mute status before playing scheduled audio
-    if (isMuted()) return;
+  try {
+    const osc = audio.createOscillator();
+    const amp = audio.createGain();
+    const now = audio.currentTime;
 
-    try {
-      const osc = audio.createOscillator();
-      const amp = audio.createGain();
-      const now = audio.currentTime;
-
-      osc.type = type;
-      osc.frequency.setValueAtTime(freq, now);
-      if (glideTo) {
-        osc.frequency.exponentialRampToValueAtTime(Math.max(1, glideTo), now + duration);
-      }
-
-      // Smooth attack & decay using linear ramps
-      amp.gain.setValueAtTime(0, now);
-      amp.gain.linearRampToValueAtTime(gain, now + 0.008);
-      amp.gain.linearRampToValueAtTime(0, now + duration);
-
-      osc.connect(amp);
-      amp.connect(audio.destination);
-
-      osc.start(now);
-      osc.stop(now + duration + 0.05);
-    } catch {
-      /* ignore audio errors */
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+    if (glideTo) {
+      osc.frequency.exponentialRampToValueAtTime(Math.max(1, glideTo), now + duration);
     }
-  };
 
-  if (audio.state === 'suspended') {
-    audio.resume().then(play).catch(() => {});
-  } else {
-    play();
-  }
-};
+    amp.gain.setValueAtTime(0, now);
+    amp.gain.linearRampToValueAtTime(gain, now + 0.008);
+    amp.gain.linearRampToValueAtTime(0, now + duration);
 
-export const soundTap = (): void => {
-  if (!isMuted()) {
-    tone(580, 0.08, 0.12, 880);
-  }
-};
+    osc.connect(amp);
+    amp.connect(audio.destination);
 
-export const soundReveal = (): void => {
-  if (!isMuted()) {
-    tone(320, 0.22, 0.14, 960);
-  }
-};
-
-export const soundSave = (): void => {
-  if (!isMuted()) {
-    tone(620, 0.12, 0.14, 1240);
-  }
-};
-
-export const soundTeamComplete = (): void => {
-  if (!isMuted()) {
-    tone(520, 0.2, 0.14, 880);
-    setTimeout(() => {
-      if (!isMuted()) {
-        tone(780, 0.3, 0.14, 1400);
-      }
-    }, 100);
-  }
-};
-
-export const soundSwitch = (toDark?: boolean): void => {
-  if (!isMuted()) {
-    if (toDark) {
-      tone(440, 0.08, 0.09, 680);
-    } else {
-      tone(680, 0.08, 0.09, 440);
-    }
-  }
-};
-
-export const soundModalOpen = (): void => {
-  if (!isMuted()) {
-    tone(380, 0.16, 0.09, 820);
-  }
-};
-
-export const soundModalClose = (): void => {
-  if (!isMuted()) {
-    tone(620, 0.09, 0.06, 320);
+    osc.start(now);
+    osc.stop(now + duration + 0.05);
+  } catch {
+    /* ignore audio errors */
   }
 };

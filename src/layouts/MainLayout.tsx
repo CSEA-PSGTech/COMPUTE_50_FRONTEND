@@ -26,6 +26,7 @@ const FrozenOutlet: React.FC = () => {
 export const MainLayout: React.FC = () => {
   const location = useLocation();
   const shouldReduceMotion = useReducedMotion();
+  const isRegisterPage = location.pathname === '/register';
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--bg-main)] text-[var(--text-primary)] transition-colors pb-[140px] md:pb-0 relative overflow-x-hidden">
@@ -60,7 +61,7 @@ export const MainLayout: React.FC = () => {
         </AnimatePresence>
       </main>
 
-      <Footer />
+      {!isRegisterPage && <Footer />}
       <FloatingSupport />
       <BackToTop />
       <BottomNav />

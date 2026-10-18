@@ -7,7 +7,7 @@ import { Badge } from '../common/Badge';
 import { Reveal } from '../common/Reveal';
 import { EmptyState } from '../common/EmptyState';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
-import { Users, User, Layers, Sparkles, ChevronRight, RotateCcw } from 'lucide-react';
+import { Users, User, Layers, Sparkles, ChevronRight, ChevronLeft, RotateCcw } from 'lucide-react';
 import { soundReveal } from '../../lib/sound';
 
 const SpeakerAvatar: React.FC<{ name: string; image?: string; confirmed?: boolean }> = ({ name, image, confirmed }) => {
@@ -64,14 +64,72 @@ export const SpeakersSection: React.FC = () => {
   const unconfirmedGuests = mockSpeakers.filter((s) => s.confirmed === false);
   const hasUnconfirmed = unconfirmedGuests.length > 0;
 
+  const totalCards = confirmedGuests.length + (unconfirmedGuests.length > 0 ? 1 : 0);
+
   // Handle mobile horizontal scroll indicator
   const handleMobileScroll = () => {
     if (!scrollContainerRef.current) return;
     const container = scrollContainerRef.current;
-    const firstCardWidth = container.firstElementChild?.clientWidth || 280;
-    const index = Math.round(container.scrollLeft / (firstCardWidth + 16));
-    setActiveMobileIndex(index);
+    const items = container.querySelectorAll<HTMLElement>('.snap-center');
+    if (items.length === 0) return;
+    const containerCenter = container.scrollLeft + container.clientWidth / 2;
+    let closestIndex = 0;
+    let minDiff = Infinity;
+    items.forEach((item, idx) => {
+      const itemCenter = item.offsetLeft + item.offsetWidth / 2;
+      const diff = Math.abs(containerCenter - itemCenter);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIndex = idx;
+      }
+    });
+    setActiveMobileIndex(closestIndex);
   };
+
+  const scrollToIndex = (index: number) => {
+    if (!scrollContainerRef.current) return;
+    const container = scrollContainerRef.current;
+    const items = container.querySelectorAll<HTMLElement>('.snap-center');
+    if (items[index]) {
+      items[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      setActiveMobileIndex(index);
+    }
+  };
+
+  // Mobile Carousel Auto-Scroll (advances every 3.5s when expanded; pauses on user interaction or reduced motion)
+  const [isUserInteracting, setIsUserInteracting] = useState(false);
+  const interactionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleUserInteraction = useCallback(() => {
+    setIsUserInteracting(true);
+    if (interactionTimeoutRef.current) {
+      clearTimeout(interactionTimeoutRef.current);
+    }
+    interactionTimeoutRef.current = setTimeout(() => {
+      setIsUserInteracting(false);
+    }, 5000);
+  }, []);
+
+  useEffect(() => {
+    if (!expanded || shouldReduceMotion || allUnconfirmed || totalCards <= 1 || isUserInteracting) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setActiveMobileIndex((prev) => {
+        const next = (prev + 1) % totalCards;
+        if (scrollContainerRef.current) {
+          const items = scrollContainerRef.current.querySelectorAll<HTMLElement>('.snap-center');
+          if (items[next]) {
+            items[next].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+          }
+        }
+        return next;
+      });
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [expanded, shouldReduceMotion, allUnconfirmed, totalCards, isUserInteracting]);
 
   // Synchronize overlay label: hide immediately when expanding, delay when collapsing
   useEffect(() => {
@@ -243,17 +301,61 @@ export const SpeakersSection: React.FC = () => {
               ) : (
                 /* Expanded Mobile Horizontal Swipeable Carousel */
                 <motion.div layout="position" className="w-full">
+                  {/* Top Mobile Control Bar: Counter + Previous/Next Buttons */}
+                  <div className="flex items-center justify-between px-1 mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-mono font-bold tracking-wider text-[var(--accent)] uppercase bg-[var(--accent)]/15 px-2.5 py-0.5 rounded-full border border-[var(--accent)]/30">
+                        {activeMobileIndex + 1} / {totalCards}
+                      </span>
+                      <span className="text-[11px] text-[var(--text-secondary)] font-medium">
+                        Swipe or tap arrows
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => scrollToIndex(Math.max(0, activeMobileIndex - 1))}
+                        disabled={activeMobileIndex === 0}
+                        className="p-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-color)] text-[var(--text-primary)] disabled:opacity-30 disabled:cursor-not-allowed hover:border-[var(--accent)] transition-colors cursor-pointer"
+                        aria-label="Previous speaker"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => scrollToIndex(Math.min(totalCards - 1, activeMobileIndex + 1))}
+                        disabled={activeMobileIndex === totalCards - 1}
+                        className="p-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-color)] text-[var(--text-primary)] disabled:opacity-30 disabled:cursor-not-allowed hover:border-[var(--accent)] transition-colors cursor-pointer"
+                        aria-label="Next speaker"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Native horizontal touch carousel */}
                   <div
                     ref={scrollContainerRef}
                     onScroll={handleMobileScroll}
-                    className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 pt-1 px-1 scrollbar-none"
+                    onTouchStart={handleUserInteraction}
+                    onPointerDown={handleUserInteraction}
+                    onMouseEnter={() => setIsUserInteracting(true)}
+                    onMouseLeave={() => setIsUserInteracting(false)}
+                    data-lenis-prevent="true"
+                    style={{
+                      touchAction: 'pan-x',
+                      WebkitOverflowScrolling: 'touch',
+                      overscrollBehaviorX: 'contain',
+                    }}
+                    className="flex gap-3.5 overflow-x-auto snap-x snap-mandatory pb-3 pt-1 px-1 scrollbar-none"
                   >
                     {confirmedGuests.map((speaker) => (
                       <div
                         key={speaker.id}
-                        className="snap-center shrink-0 w-[82vw] max-w-[310px]"
+                        className="snap-center shrink-0 w-[78vw] max-w-[290px]"
                       >
-                        <Card className="group text-center flex flex-col items-center justify-center p-6 w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-xs min-h-[280px] h-full">
+                        <Card className="group text-center flex flex-col items-center justify-center p-6 w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-xs min-h-[290px] h-full">
                           <SpeakerAvatar
                             name={speaker.name}
                             image={speaker.image}
@@ -282,8 +384,8 @@ export const SpeakersSection: React.FC = () => {
                     ))}
 
                     {unconfirmedGuests.length > 0 && (
-                      <div className="snap-center shrink-0 w-[82vw] max-w-[310px]">
-                        <div className="h-full min-h-[280px] rounded-2xl bg-[var(--bg-surface)] border-2 border-dashed border-[var(--border-color)] p-6 flex flex-col items-center justify-center text-center shadow-xs">
+                      <div className="snap-center shrink-0 w-[78vw] max-w-[290px]">
+                        <div className="h-full min-h-[290px] rounded-2xl bg-[var(--bg-surface)] border-2 border-dashed border-[var(--border-color)] p-6 flex flex-col items-center justify-center text-center shadow-xs">
                           <div className="w-12 h-12 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-secondary)] mb-3">
                             <Sparkles className="w-6 h-6 text-[var(--accent)]" />
                           </div>
@@ -298,15 +400,19 @@ export const SpeakersSection: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Dot Indicators */}
+                  {/* Interactive Clickable Dot Indicators */}
                   <div className="flex justify-center items-center gap-1.5 mt-2 mb-4">
-                    {Array.from({ length: confirmedGuests.length + (unconfirmedGuests.length > 0 ? 1 : 0) }).map((_, i) => (
-                      <div
+                    {Array.from({ length: totalCards }).map((_, i) => (
+                      <button
                         key={i}
-                        className={`h-2 rounded-full transition-all duration-300 ${activeMobileIndex === i
-                            ? 'w-6 bg-[var(--accent)]'
-                            : 'w-2 bg-[var(--border-color)]'
-                          }`}
+                        type="button"
+                        onClick={() => scrollToIndex(i)}
+                        aria-label={`Jump to speaker ${i + 1}`}
+                        className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                          activeMobileIndex === i
+                            ? 'w-6 bg-[var(--accent)] shadow-xs'
+                            : 'w-2 bg-[var(--border-color)] hover:bg-[var(--accent)]/40'
+                        }`}
                       />
                     ))}
                   </div>

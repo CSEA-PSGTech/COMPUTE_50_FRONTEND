@@ -198,12 +198,12 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <a
-                  href="/#faq"
+                <Link
+                  to="/#faq"
                   className="text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors inline-block"
                 >
                   Frequently Asked Questions
-                </a>
+                </Link>
               </li>
               <li>
                 <Link

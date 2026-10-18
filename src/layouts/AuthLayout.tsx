@@ -5,7 +5,7 @@ import { TexturedBackground } from '../components/common/TexturedBackground';
 import { SoundEffects } from '../components/common/SoundEffects';
 import { CursorGlow } from '../components/common/CursorGlow';
 import { FloatingSupport } from '../components/common/FloatingSupport';
-import { isMuted, setMuted } from '../lib/sound';
+import { isMuted, setMuted, soundSwitch } from '../lib/sound';
 import { useTheme } from '../hooks/useTheme';
 import cseaLogo from '../assets/logos/csea-logo.png';
 
@@ -25,13 +25,25 @@ export const AuthLayout: React.FC = () => {
   }, []);
 
   const toggleSound = () => {
-    const next = !muted;
-    setMutedState(next);
-    setMuted(next);
+    const currentlyMuted = isMuted();
+    if (!currentlyMuted) {
+      soundSwitch();
+      setMuted(true);
+      setMutedState(true);
+    } else {
+      setMuted(false);
+      setMutedState(false);
+      soundSwitch();
+    }
+  };
+
+  const handleToggleTheme = () => {
+    soundSwitch();
+    toggleTheme();
   };
 
   return (
-    <div className="h-screen max-h-screen overflow-hidden flex flex-col justify-between bg-[var(--bg-main)] text-[var(--text-primary)] transition-colors relative select-none">
+    <div className="min-h-screen flex flex-col justify-between bg-[var(--bg-main)] text-[var(--text-primary)] transition-colors relative select-none">
       <TexturedBackground />
       <SoundEffects />
       <CursorGlow />
@@ -64,7 +76,8 @@ export const AuthLayout: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={toggleTheme}
+            onClick={handleToggleTheme}
+            data-nosound="true"
             className="p-2 rounded-full bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] shadow-sm hover:shadow-md transition-all cursor-pointer"
             aria-label="Toggle Theme"
           >
@@ -73,8 +86,8 @@ export const AuthLayout: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Viewport Centered Content Area (Strict Zero-Scroll) */}
-      <main id="main-content" className="flex-1 flex items-center justify-center relative z-10 px-4 py-2 overflow-hidden">
+      {/* Main Viewport Centered Content Area (Scrollable on small screens) */}
+      <main id="main-content" className="flex-1 flex items-center justify-center relative z-10 px-4 py-6 overflow-y-auto">
         <Outlet />
       </main>
 
@@ -87,6 +100,7 @@ export const AuthLayout: React.FC = () => {
         <button
           type="button"
           onClick={toggleSound}
+          data-nosound="true"
           className="p-2.5 rounded-full bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] shadow-lg hover:shadow-xl transition-all cursor-pointer group"
           aria-label={muted ? 'Unmute Sound FX' : 'Mute Sound FX'}
           title={muted ? 'Sound Muted' : 'Sound Enabled'}

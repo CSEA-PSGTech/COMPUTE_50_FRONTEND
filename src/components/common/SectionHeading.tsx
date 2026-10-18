@@ -36,7 +36,7 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({
         <div className="mb-3">
           <span className="inline-flex items-center gap-2 font-mono text-[11px] sm:text-xs font-bold text-[var(--accent)] tracking-widest uppercase py-1 px-3 bg-[var(--accent-muted)] rounded-full border border-[var(--accent)]/30 shadow-[0_0_12px_rgba(var(--accent-rgb),0.12)]">
             <span className="relative flex h-2 w-2 shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-75" />
+              <span className="animate-ping motion-reduce:animate-none absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent)]" />
             </span>
             <span>{formattedEyebrow}</span>

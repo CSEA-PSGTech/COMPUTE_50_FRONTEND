@@ -12,12 +12,12 @@
     --text-primary: #1C1814;
     --text-secondary: #5C5349;
 
-    /* Vibrant Gold Accent (restored) */
-    --accent: #EFBF04;
-    --accent-hover: #D4A903;
+    /* Goldenrod Accent (#DAA520) */
+    --accent: #DAA520;
+    --accent-hover: #B8860B;
     --accent-text: #18181B;
-    --accent-muted: rgba(239, 191, 4, 0.15);
-    --accent-rgb: 239, 191, 4;
+    --accent-muted: rgba(218, 165, 32, 0.15);
+    --accent-rgb: 218, 165, 32;
 
     --bg-noise-opacity: 0.03;
     --bg-grid-opacity: 0.035;
@@ -194,6 +194,33 @@
   animation: shimmer 3s ease-in-out infinite;
 }
 
+/* Continuous Marquee Ticker for Single-Line Announcements */
+@keyframes marqueeScroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee-ticker {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 22s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee-ticker:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee-ticker {
+    animation: none !important;
+  }
+}
+
 /* Typography Utility Helper Classes */
 .text-heading-h1 {
   font-size: clamp(2.5rem, 8vw, 5.5rem);
@@ -350,4 +377,55 @@
   .animate-bell-ring {
     animation: none !important;
   }
-}
+}
+
+/* Compute 50 Hero Emblem Subtle Floating Animation */
+@keyframes hero-emblem-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-hero-emblem {
+  animation: hero-emblem-float 4s ease-in-out infinite;
+}
+
+/* Event Date Glowing Pulse */
+@keyframes hero-date-glow {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.15);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(var(--accent-rgb), 0.35);
+  }
+}
+
+.animate-hero-date-glow {
+  animation: hero-date-glow 3s ease-in-out infinite;
+}
+
+/* Countdown Seconds Tick */
+@keyframes countdown-tick {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.animate-countdown-tick {
+  animation: countdown-tick 1s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-emblem,
+  .animate-hero-date-glow,
+  .animate-countdown-tick {
+    animation: none !important;
+  }
+}
+

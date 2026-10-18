@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
   HelpCircle,
@@ -6,7 +7,6 @@ import {
   Phone,
   Mail,
   ExternalLink,
-  ArrowRight,
   MessageCircle,
   Sparkles,
 } from 'lucide-react';
@@ -15,8 +15,22 @@ import { soundModalOpen, soundModalClose } from '../../lib/sound';
 
 export const FloatingSupport: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const location = useLocation();
   const shouldReduceMotion = useReducedMotion();
   const drawerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  const isAuthPage = location.pathname === '/login';
+  const hasRegisterInBottomNav =
+    !isAuthPage && location.pathname !== '/register' && location.pathname !== '/profile';
+
+  // Responsive bottom offset: places Help button safely above BottomNav's Register CTA on mobile
+  const bottomPositionClass = isAuthPage
+    ? 'bottom-6 md:bottom-8'
+    : hasRegisterInBottomNav
+    ? 'bottom-[calc(142px+env(safe-area-inset-bottom,0px))] md:bottom-8'
+    : 'bottom-[calc(80px+env(safe-area-inset-bottom,0px))] md:bottom-8';
 
   const handleOpen = () => {
     soundModalOpen();
@@ -26,11 +40,17 @@ export const FloatingSupport: React.FC = () => {
   const handleClose = () => {
     soundModalClose();
     setIsOpen(false);
+    triggerRef.current?.focus();
   };
 
-  // Close on Escape key press
+  // Close on Escape key press and manage focus
   useEffect(() => {
     if (!isOpen) return;
+
+    // Auto-focus close button when dialog opens
+    const timer = setTimeout(() => {
+      closeButtonRef.current?.focus();
+    }, 50);
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -39,19 +59,23 @@ export const FloatingSupport: React.FC = () => {
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      clearTimeout(timer);
+    };
   }, [isOpen]);
 
   return (
     <>
-      {/* Symmetrical Floating Trigger Button (Bottom-Left) */}
-      <div className="fixed bottom-[calc(95px+env(safe-area-inset-bottom,0px))] md:bottom-8 left-4 sm:left-6 z-40">
+      {/* Symmetrical Floating Trigger Button (Bottom-Left, elevated above BottomNav) */}
+      <div className={`fixed ${bottomPositionClass} left-3 sm:left-6 z-40 transition-all duration-200`}>
         <motion.button
+          ref={triggerRef}
           type="button"
           onClick={handleOpen}
           whileHover={shouldReduceMotion ? undefined : { scale: 1.05 }}
           whileTap={shouldReduceMotion ? undefined : { scale: 0.95 }}
-          className="group flex items-center gap-2.5 px-3.5 py-2.5 sm:px-4 sm:py-2.5 rounded-full bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-primary)] shadow-lg hover:shadow-xl transition-all cursor-pointer select-none"
+          className="group flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-full bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-primary)] shadow-lg hover:shadow-xl transition-all cursor-pointer select-none"
           aria-label="Open CSEA Support & Helpdesk"
           title="Need Help? Open CSEA Helpdesk"
         >
@@ -62,9 +86,10 @@ export const FloatingSupport: React.FC = () => {
           </span>
 
           <HelpCircle className="w-4 h-4 text-[var(--accent)] shrink-0 transition-transform duration-200 group-hover:rotate-12" />
-          
-          <span className="text-xs font-mono font-bold tracking-tight hidden sm:inline-block">
-            Need Help?
+
+          <span className="text-xs font-mono font-bold tracking-tight text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">
+            <span className="hidden sm:inline">Need Help?</span>
+            <span className="sm:hidden">Help</span>
           </span>
         </motion.button>
       </div>
@@ -72,7 +97,7 @@ export const FloatingSupport: React.FC = () => {
       {/* Flyout Support Modal / Drawer */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-50 flex items-end sm:items-end md:items-end justify-start p-4 sm:p-6 overflow-hidden">
+          <div className="fixed inset-0 z-[60] flex items-end sm:items-end md:items-end justify-start p-4 sm:p-6 overflow-hidden">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -100,7 +125,7 @@ export const FloatingSupport: React.FC = () => {
                   : { opacity: 0, scale: 0.95, y: 20 }
               }
               transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="relative z-10 w-full sm:w-[420px] max-w-[calc(100vw-32px)] bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[82vh] mb-[calc(85px+env(safe-area-inset-bottom,0px))] md:mb-12"
+              className="relative z-10 w-full sm:w-[420px] max-w-[calc(100vw-32px)] bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[75vh] mb-[calc(142px+env(safe-area-inset-bottom,0px))] md:mb-12"
               role="dialog"
               aria-modal="true"
               aria-labelledby="support-drawer-title"
@@ -124,6 +149,7 @@ export const FloatingSupport: React.FC = () => {
                 </div>
 
                 <button
+                  ref={closeButtonRef}
                   type="button"
                   onClick={handleClose}
                   className="p-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
@@ -206,20 +232,6 @@ export const FloatingSupport: React.FC = () => {
                   ))}
                 </div>
 
-                {/* 3. Footer Quick Link to FAQ */}
-                <div className="pt-2 border-t border-[var(--border-color)] flex items-center justify-between text-xs font-mono">
-                  <span className="text-[var(--text-secondary)] text-[11px]">
-                    Looking for answers?
-                  </span>
-                  <a
-                    href="/#faq"
-                    onClick={handleClose}
-                    className="inline-flex items-center gap-1 text-[var(--accent)] hover:underline font-bold text-[11px]"
-                  >
-                    <span>Read FAQ</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </a>
-                </div>
               </div>
             </motion.div>
           </div>

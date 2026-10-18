@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import { TeamRevealCards, MemberData } from '../hackathon/TeamRevealCards';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
+import { soundSuccess, soundWarning } from '../../lib/sound';
 
 export const RegisterForm: React.FC = () => {
   const [error, setError] = useState<string>('');
@@ -42,9 +43,11 @@ export const RegisterForm: React.FC = () => {
       await new Promise((resolve) => setTimeout(resolve, 600));
 
       fireConfetti();
+      soundSuccess();
       addToast(`🎉 Hackathon Team Registered successfully with ${activeMembers.length} members!`, 'success');
       setTimeout(() => navigate('/profile'), 1200);
     } catch {
+      soundWarning();
       setError('Team registration submission failed. Please try again.');
       addToast('Submission failed. Your entered data is preserved.', 'error');
     } finally {

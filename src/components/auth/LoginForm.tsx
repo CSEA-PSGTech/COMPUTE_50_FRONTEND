@@ -6,7 +6,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
 import { GoogleIcon } from '../common/GoogleIcon';
 import { DecryptText } from '../common/DecryptText';
-import { soundModalOpen, soundModalClose } from '../../lib/sound';
+import { soundModalOpen, soundSuccess, soundWarning } from '../../lib/sound';
 
 export const LoginForm: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
@@ -64,7 +64,7 @@ export const LoginForm: React.FC = () => {
 
   const handleAuthSuccess = (toastMsg: string) => {
     addToast(toastMsg, 'success');
-    soundModalClose();
+    soundSuccess();
     // Trigger sci-fi laser roll-up / ascending wipe (bottom to top)
     setIsExiting(true);
     setTimeout(() => {
@@ -77,6 +77,7 @@ export const LoginForm: React.FC = () => {
     setError('');
 
     if (!validateForm()) {
+      soundWarning();
       return;
     }
 
@@ -99,6 +100,7 @@ export const LoginForm: React.FC = () => {
         handleAuthSuccess('Welcome back! Login successful.');
       }
     } catch {
+      soundWarning();
       const msg = isSignUp
         ? 'Account creation failed. Please try again.'
         : 'Invalid credentials. Please verify your email & password.';
@@ -114,6 +116,7 @@ export const LoginForm: React.FC = () => {
       await login({ email: 'google.user@psgtech.ac.in' });
       handleAuthSuccess('Welcome! Authenticated with Google.');
     } catch {
+      soundWarning();
       addToast('Google authentication failed. Please try again.', 'error');
       setLoading(false);
     }

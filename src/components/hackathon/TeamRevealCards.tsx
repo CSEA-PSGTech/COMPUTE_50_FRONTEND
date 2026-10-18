@@ -13,7 +13,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { User as AuthUser } from '../../types/auth';
-import { soundTap, soundSave, soundTeamComplete, soundReveal } from '../../lib/sound';
+import { soundSave, soundTeamComplete } from '../../lib/sound';
 
 export interface MemberData {
   id: string;
@@ -238,7 +238,6 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
 
   // Open a card to flip and edit
   const handleOpenCard = (member: MemberData) => {
-    soundReveal();
     setFormData({
       name: member.name,
       email: member.email,
@@ -270,7 +269,6 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
 
   // Return from form back to deck
   const handleBackToDeck = React.useCallback(() => {
-    soundTap();
     setIsFlipped(false);
     setTimeout(() => {
       const closedId = activeCardId;
@@ -400,7 +398,6 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
 
   // Remove optional member
   const handleRemoveOptionalMember = (id: string) => {
-    soundTap();
     setMembers((prev) =>
       prev.map((m) =>
         m.id === id

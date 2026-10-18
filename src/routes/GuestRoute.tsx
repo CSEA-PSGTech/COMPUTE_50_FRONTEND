@@ -10,9 +10,15 @@ interface GuestRouteProps {
 export const GuestRoute: React.FC<GuestRouteProps> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
-  const [wasInitiallyAuthed] = React.useState(isAuthenticated);
+  const [wasInitiallyAuthed, setWasInitiallyAuthed] = React.useState<boolean | null>(null);
 
-  if (isLoading) {
+  React.useEffect(() => {
+    if (!isLoading && wasInitiallyAuthed === null) {
+      setWasInitiallyAuthed(isAuthenticated);
+    }
+  }, [isLoading, isAuthenticated, wasInitiallyAuthed]);
+
+  if (isLoading || wasInitiallyAuthed === null) {
     return <LoadingState message="Checking authentication..." fullScreen />;
   }
 
