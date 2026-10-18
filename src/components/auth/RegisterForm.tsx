@@ -79,10 +79,11 @@ export const RegisterForm: React.FC = () => {
       />
 
       <p className="text-xs text-[var(--text-secondary)] text-center pt-6 border-t border-[var(--border-color)]">
-        Already registered?{' '}
-        <Link to="/login" className="text-[var(--accent)] hover:text-[var(--accent-hover)] hover:underline font-bold">
-          Login here
-        </Link>
+        Need to update an existing submission or have questions?{' '}
+        <Link to="/profile" className="text-[var(--accent)] hover:text-[var(--accent-hover)] hover:underline font-bold">
+          View Profile
+        </Link>{' '}
+        or contact CSEA Helpdesk.
       </p>
     </div>
   );

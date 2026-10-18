@@ -48,25 +48,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const login = async (credentials: LoginCredentials) => {
-    setIsLoading(true);
-    try {
-      const response = await authService.login(credentials);
-      setUser(response.user);
-      setToken(response.token);
-    } finally {
-      setIsLoading(false);
-    }
+    const response = await authService.login(credentials);
+    setUser(response.user);
+    setToken(response.token);
   };
 
   const register = async (data: RegisterData) => {
-    setIsLoading(true);
-    try {
-      const response = await authService.register(data);
-      setUser(response.user);
-      setToken(response.token);
-    } finally {
-      setIsLoading(false);
-    }
+    const response = await authService.register(data);
+    setUser(response.user);
+    setToken(response.token);
   };
 
   const logout = async () => {

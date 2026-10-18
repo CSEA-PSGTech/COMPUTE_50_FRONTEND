@@ -127,7 +127,7 @@ export const PrizePool: React.FC = () => {
 
                   <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--accent-muted)] border border-[var(--accent)]/30 rounded-full text-xs font-mono font-bold text-[var(--accent)]">
                     <Trophy className="w-3.5 h-3.5 animate-pulse text-[var(--accent)]" />
-                    <span>NATIONAL INNOVATION CHALLENGE</span>
+                    <span>INNOVATION CHALLENGE</span>
                   </div>
 
                   <div className="space-y-1.5">
@@ -135,7 +135,7 @@ export const PrizePool: React.FC = () => {
                       Ready to Win Big?
                     </h3>
                     <p className="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
-                      Compete alongside top talent across the nation. Register your team of 2–4 members and turn your engineering vision into reality.
+                      Register your team of 2–4 members and turn your engineering vision into reality.
                     </p>
                   </div>
 

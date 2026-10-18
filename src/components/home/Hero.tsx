@@ -208,12 +208,17 @@ export const Hero: React.FC = () => {
             {/* Notice Strip */}
             <div className="w-full p-3 sm:py-3 sm:px-4 rounded-xl bg-[var(--accent-muted)]/50 border border-[var(--accent)]/30 text-left flex items-start gap-2.5 sm:gap-3">
               <AlertCircle className="w-4 h-4 text-[var(--accent)] shrink-0 mt-0.5" />
-              <p className="text-xs text-[var(--text-primary)] leading-relaxed">
-                <strong className="text-[var(--accent)] font-mono font-bold uppercase tracking-wider mr-1.5">
-                  IMPORTANT:
-                </strong>
-                Round 1 is conducted entirely online. Only shortlisted teams will attend the on-campus final round at PSG Tech.
-              </p>
+              <div className="text-xs text-[var(--text-primary)] leading-relaxed space-y-1">
+                <p>
+                  <strong className="text-[var(--accent)] font-mono font-bold uppercase tracking-wider mr-1.5">
+                    IMPORTANT:
+                  </strong>
+                  Round 1 is conducted entirely online. Only shortlisted teams will attend the on-campus final round at PSG Tech.
+                </p>
+                <p className="text-[11px] text-[var(--text-secondary)] font-mono">
+                  <span className="text-[var(--accent)] font-bold">ELIGIBILITY:</span> {EVENT_CONFIG.eligibility}.
+                </p>
+              </div>
             </div>
           </motion.div>
 
