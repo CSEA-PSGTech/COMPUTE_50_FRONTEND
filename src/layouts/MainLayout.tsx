@@ -5,6 +5,7 @@ import { Navbar } from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
 import { BottomNav } from '../components/layout/BottomNav';
 import { BackToTop } from '../components/common/BackToTop';
+import { FloatingSupport } from '../components/common/FloatingSupport';
 import { CursorGlow } from '../components/common/CursorGlow';
 import { AnnouncementPopup } from '../components/common/AnnouncementPopup';
 import { SectionDotNav } from '../components/common/SectionDotNav';
@@ -49,10 +50,10 @@ export const MainLayout: React.FC = () => {
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
-            initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 12 }}
+            initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -24 }}
             animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
-            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1.0] }}
+            exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -16 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
           >
             <FrozenOutlet />
           </motion.div>
@@ -60,6 +61,7 @@ export const MainLayout: React.FC = () => {
       </main>
 
       <Footer />
+      <FloatingSupport />
       <BackToTop />
       <BottomNav />
     </div>

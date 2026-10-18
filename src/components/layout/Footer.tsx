@@ -147,8 +147,8 @@ export const Footer: React.FC = () => {
             </p>
 
             <p className="text-xs text-[var(--text-secondary)] leading-relaxed max-w-sm">
-              National 2-Day Technical Innovation Challenge commemorating 50 years of the M.E. CSE
-              programme at {EVENT_CONFIG.college}. Hosted by {EVENT_CONFIG.organizerFull}.
+              2-Day Technical Innovation Challenge commemorating 50 years of the M.E. CSE
+              programme at {EVENT_CONFIG.college}. Hosted by {EVENT_CONFIG.organizerFull}. Open to {EVENT_CONFIG.eligibility.toLowerCase()}.
             </p>
 
             {/* Venue & Location Link */}

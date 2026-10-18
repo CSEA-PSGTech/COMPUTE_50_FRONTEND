@@ -33,6 +33,8 @@ export const EVENT_CONFIG = {
     ],
   },
   teamSize: '2 - 4 Members',
+  // TO CONFIRM: Official announcement does not specify participant eligibility restrictions yet
+  eligibility: 'Undergraduate and postgraduate students currently enrolled in recognized colleges or universities',
   contactEmail: 'csea@psgtech.ac.in',
   contactPhone: '+91 98765 43210 / +91 91234 56789',
   contactPhones: {

@@ -1,4 +1,5 @@
 import { FAQItem } from '../types/hackathon';
+import { EVENT_CONFIG } from '../config/event';
 
 export const mockFaqs: FAQItem[] = [
   {
@@ -26,8 +27,7 @@ export const mockFaqs: FAQItem[] = [
     id: 'faq-3',
     category: 'General',
     question: 'Who is eligible to participate?',
-    answer:
-      'Undergraduate and postgraduate students currently enrolled in recognized colleges or universities are eligible.',
+    answer: `${EVENT_CONFIG.eligibility} are eligible.`,
   },
   {
     id: 'faq-4',

@@ -147,3 +147,25 @@ export const soundTeamComplete = (): void => {
     }, 100);
   }
 };
+
+export const soundSwitch = (toDark?: boolean): void => {
+  if (!isMuted()) {
+    if (toDark) {
+      tone(440, 0.08, 0.09, 680);
+    } else {
+      tone(680, 0.08, 0.09, 440);
+    }
+  }
+};
+
+export const soundModalOpen = (): void => {
+  if (!isMuted()) {
+    tone(380, 0.16, 0.09, 820);
+  }
+};
+
+export const soundModalClose = (): void => {
+  if (!isMuted()) {
+    tone(620, 0.09, 0.06, 320);
+  }
+};

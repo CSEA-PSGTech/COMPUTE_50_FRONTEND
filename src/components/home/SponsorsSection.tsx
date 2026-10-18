@@ -23,7 +23,7 @@ const SponsorCard: React.FC<SponsorCardProps> = ({ sponsor, isDuplicate = false 
       rel="noreferrer"
       aria-hidden={isDuplicate ? 'true' : undefined}
       tabIndex={isDuplicate ? -1 : 0}
-      className="w-52 sm:w-60 h-40 sm:h-44 p-5 sm:p-6 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-xl flex flex-col items-center justify-between text-center transition-all duration-300 group hover:-translate-y-1 hover:border-[var(--accent)] hover:shadow-[0_4px_20px_rgba(182,255,0,0.14)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] shrink-0 select-none"
+      className="w-52 sm:w-60 h-40 sm:h-44 p-5 sm:p-6 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-xl flex flex-col items-center justify-between text-center transition-all duration-300 group hover:-translate-y-1 hover:border-[var(--accent)] hover:shadow-[0_4px_20px_rgba(var(--accent-rgb),0.14)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] shrink-0 select-none"
     >
       <div className="flex-1 w-full flex flex-col items-center justify-center">
         <img

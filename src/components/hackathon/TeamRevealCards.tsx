@@ -13,7 +13,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { User as AuthUser } from '../../types/auth';
-import { soundTap, soundSave, soundTeamComplete } from '../../lib/sound';
+import { soundTap, soundSave, soundTeamComplete, soundReveal } from '../../lib/sound';
 
 export interface MemberData {
   id: string;
@@ -238,7 +238,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
 
   // Open a card to flip and edit
   const handleOpenCard = (member: MemberData) => {
-    soundTap();
+    soundReveal();
     setFormData({
       name: member.name,
       email: member.email,
@@ -835,7 +835,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
                   <button
                     type="button"
                     onClick={() => handleOpenCard(member)}
-                    className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-[var(--border-color)] hover:border-[var(--accent)] text-xs font-mono font-bold text-[var(--text-primary)] hover:text-[var(--accent)] transition-colors cursor-pointer min-h-[38px]"
+                    className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-[var(--border-color)] hover:border-[var(--accent)] text-xs font-mono font-bold text-[var(--text-primary)] dark:hover:text-[var(--accent)] transition-colors cursor-pointer min-h-[38px]"
                   >
                     + Add Member
                   </button>

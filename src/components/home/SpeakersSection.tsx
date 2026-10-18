@@ -8,6 +8,7 @@ import { Reveal } from '../common/Reveal';
 import { EmptyState } from '../common/EmptyState';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Users, User, Layers, Sparkles, ChevronRight, RotateCcw } from 'lucide-react';
+import { soundReveal } from '../../lib/sound';
 
 const SpeakerAvatar: React.FC<{ name: string; image?: string; confirmed?: boolean }> = ({ name, image, confirmed }) => {
   const [imgError, setImgError] = React.useState(false);
@@ -170,6 +171,7 @@ export const SpeakersSection: React.FC = () => {
   }
 
   const handleToggleExpand = () => {
+    soundReveal();
     if (expanded) {
       setExpanded(false);
       if (window.innerWidth < 640 && sectionRef.current) {
@@ -218,7 +220,10 @@ export const SpeakersSection: React.FC = () => {
                 /* Collapsed Mobile Deck (~220px height) */
                 <motion.div
                   layout="position"
-                  onClick={() => setExpanded(true)}
+                  onClick={() => {
+                    soundReveal();
+                    setExpanded(true);
+                  }}
                   className="w-full rounded-2xl bg-[var(--bg-surface)] border-2 border-[var(--accent)]/60 p-6 text-center flex flex-col items-center justify-center shadow-lg relative cursor-pointer min-h-[220px]"
                 >
                   <span className="px-3 py-1 rounded-full bg-[var(--accent)]/15 text-[var(--accent)] border border-[var(--accent)]/40 text-[10px] font-bold font-mono tracking-widest uppercase mb-2">
@@ -314,7 +319,7 @@ export const SpeakersSection: React.FC = () => {
                   <button
                     type="button"
                     onClick={handleToggleExpand}
-                    className="px-6 py-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-primary)] hover:text-[var(--accent)] text-xs font-semibold transition-all shadow-xs flex items-center gap-2 focus:outline-none cursor-pointer"
+                    className="px-6 py-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-primary)] dark:hover:text-[var(--accent)] text-xs font-semibold transition-all shadow-xs flex items-center gap-2 focus:outline-none cursor-pointer"
                   >
                     {expanded ? (
                       <>
@@ -525,7 +530,7 @@ export const SpeakersSection: React.FC = () => {
             <button
               type="button"
               onClick={handleToggleExpand}
-              className="px-6 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-primary)] hover:text-[var(--accent)] text-sm font-semibold transition-all shadow-xs flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] cursor-pointer"
+              className="px-6 py-3 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-primary)] dark:hover:text-[var(--accent)] text-sm font-semibold transition-all shadow-xs flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] cursor-pointer"
               aria-expanded={expanded}
               aria-controls="guests-grid"
             >

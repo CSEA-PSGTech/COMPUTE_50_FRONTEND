@@ -106,7 +106,7 @@ export const AffiliatedClubs: React.FC = () => {
                             href={club.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-[var(--text-primary)] hover:text-[var(--accent)] bg-[var(--bg-secondary)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] rounded-lg transition-colors shrink-0"
+                            className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-[var(--text-primary)] dark:hover:text-[var(--accent)] bg-[var(--bg-secondary)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] rounded-lg transition-colors shrink-0"
                             aria-label={`Explore ${club.name}`}
                           >
                             <span>Explore</span>

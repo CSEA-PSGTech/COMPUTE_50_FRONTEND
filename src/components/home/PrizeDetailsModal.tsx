@@ -3,6 +3,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { X, Trophy, Medal, Award, Gift, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { prizeData } from '../../data/prizes';
 import { useSmoothScroll } from '../../context/SmoothScrollContext';
+import { soundModalClose } from '../../lib/sound';
 
 interface PrizeDetailsModalProps {
   isOpen: boolean;
@@ -14,6 +15,11 @@ export const PrizeDetailsModal: React.FC<PrizeDetailsModalProps> = ({ isOpen, on
   const modalRef = useRef<HTMLDivElement>(null);
   const { stop, start } = useSmoothScroll();
 
+  const handleClose = () => {
+    soundModalClose();
+    onClose();
+  };
+
   // Close on Escape key press & handle focus trap
   useEffect(() => {
     if (!isOpen) return;
@@ -23,7 +29,7 @@ export const PrizeDetailsModal: React.FC<PrizeDetailsModalProps> = ({ isOpen, on
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose();
+        handleClose();
       }
     };
 
@@ -40,8 +46,8 @@ export const PrizeDetailsModal: React.FC<PrizeDetailsModalProps> = ({ isOpen, on
 
   const getRankIcon = (rank: string) => {
     if (rank.includes('1st')) return <Trophy className="w-6 h-6 text-[var(--accent)] shrink-0" />;
-    if (rank.includes('2nd')) return <Medal className="w-6 h-6 text-emerald-300 shrink-0" />;
-    return <Award className="w-6 h-6 text-emerald-400 shrink-0" />;
+    if (rank.includes('2nd')) return <Medal className="w-6 h-6 text-amber-500 shrink-0" />;
+    return <Award className="w-6 h-6 text-amber-600 shrink-0" />;
   };
 
   return (
@@ -54,7 +60,7 @@ export const PrizeDetailsModal: React.FC<PrizeDetailsModalProps> = ({ isOpen, on
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            onClick={onClose}
+            onClick={handleClose}
             aria-hidden="true"
             className="fixed inset-0 bg-black/80 backdrop-blur-sm"
           />
@@ -88,7 +94,7 @@ export const PrizeDetailsModal: React.FC<PrizeDetailsModalProps> = ({ isOpen, on
               </div>
 
               <button
-                onClick={onClose}
+                onClick={handleClose}
                 aria-label="Close modal"
                 className="p-2 rounded-xl bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-color)] hover:border-[var(--accent)] transition-colors shrink-0"
               >
@@ -107,7 +113,7 @@ export const PrizeDetailsModal: React.FC<PrizeDetailsModalProps> = ({ isOpen, on
                     key={item.id}
                     className={`p-4 rounded-xl border transition-all ${
                       item.isGrandWinner
-                        ? 'bg-[var(--accent)]/10 border-[var(--accent)]/50 shadow-[0_0_15px_rgba(34,197,94,0.15)]'
+                        ? 'bg-[var(--accent)]/10 border-[var(--accent)]/50 shadow-[0_0_15px_rgba(var(--accent-rgb),0.15)]'
                         : 'bg-[var(--bg-secondary)] border-[var(--border-color)]'
                     }`}
                   >

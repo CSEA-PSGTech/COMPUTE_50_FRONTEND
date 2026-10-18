@@ -19,7 +19,7 @@ import {
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../hooks/useTheme';
-import { isMuted, setMuted } from '../../lib/sound';
+import { isMuted, setMuted, soundSwitch } from '../../lib/sound';
 import { Container } from '../common/Container';
 import { Button } from '../common/Button';
 import { EVENT_CONFIG } from '../../config/event';
@@ -46,6 +46,11 @@ export const Navbar: React.FC = () => {
     const next = !isMuted();
     setMuted(next);
     setMutedState(next);
+  };
+
+  const handleToggleTheme = () => {
+    soundSwitch(theme === 'light');
+    toggleTheme();
   };
 
   useEffect(() => {
@@ -221,7 +226,7 @@ export const Navbar: React.FC = () => {
             <div className="hidden md:flex items-center gap-2">
               <button
                 type="button"
-                onClick={toggleTheme}
+                onClick={handleToggleTheme}
                 className="min-h-[40px] min-w-[40px] p-2 rounded-full border border-[var(--border-color)] bg-[var(--bg-surface)] text-[var(--text-primary)] hover:border-[var(--accent)] transition-all cursor-pointer flex items-center justify-center"
                 aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
                 title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
@@ -269,7 +274,7 @@ export const Navbar: React.FC = () => {
                     <Button
                       variant="primary"
                       size="sm"
-                      className="bg-[var(--accent)] text-slate-950 hover:bg-emerald-400 font-extrabold shadow-[0_0_15px_rgba(34,197,94,0.4)] hover:shadow-[0_0_22px_rgba(34,197,94,0.6)] transition-all transform hover:scale-105"
+                      className="bg-[var(--accent)] text-[var(--accent-text)] hover:bg-[var(--accent-hover)] font-extrabold shadow-[0_0_15px_rgba(var(--accent-rgb),0.35)] hover:shadow-[0_0_22px_rgba(var(--accent-rgb),0.55)] transition-all transform hover:scale-105"
                     >
                       Register
                     </Button>
@@ -282,7 +287,7 @@ export const Navbar: React.FC = () => {
             <div className="flex md:hidden items-center gap-1.5">
               <button
                 type="button"
-                onClick={toggleTheme}
+                onClick={handleToggleTheme}
                 className="min-h-[40px] min-w-[40px] p-2 rounded-xl border border-[var(--border-color)] text-[var(--text-primary)] bg-[var(--bg-surface)] hover:border-[var(--accent)]/60 transition-colors cursor-pointer flex items-center justify-center"
                 aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
                 title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
@@ -582,7 +587,7 @@ export const Navbar: React.FC = () => {
                         fullWidth
                         size="sm"
                         leftIcon={<UserPlus className="w-3.5 h-3.5" />}
-                        className="bg-[var(--accent)] text-slate-950 font-bold"
+                        className="bg-[var(--accent)] text-[var(--accent-text)] font-bold"
                       >
                         Register
                       </Button>

@@ -125,9 +125,7 @@ export const ParticleBackground: React.FC = () => {
         ctx.scale(dpr, dpr);
         ctx.clearRect(0, 0, width, height);
 
-        const isDark =
-          document.documentElement.classList.contains('dark') ||
-          !document.documentElement.classList.contains('light');
+        const isDark = document.documentElement.classList.contains('dark');
 
         // Dynamic theme token fallback
         const cssAccentRgb = getComputedStyle(document.documentElement).getPropertyValue('--accent-rgb').trim();

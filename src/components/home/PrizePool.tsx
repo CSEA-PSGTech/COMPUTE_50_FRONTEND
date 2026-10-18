@@ -6,6 +6,7 @@ import { Container } from '../common/Container';
 import { CountUp } from '../common/CountUp';
 import { prizeData } from '../../data/prizes';
 import { PrizeDetailsModal } from './PrizeDetailsModal';
+import { soundModalOpen } from '../../lib/sound';
 
 export const PrizePool: React.FC = () => {
   const shouldReduceMotion = useReducedMotion();
@@ -100,11 +101,14 @@ export const PrizePool: React.FC = () => {
                 {/* Modal CTA Trigger Button */}
                 <div className="pt-2">
                   <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[var(--bg-secondary)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-xs sm:text-sm font-mono font-bold text-[var(--text-primary)] hover:text-[var(--accent)] rounded-xl transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] cursor-pointer"
+                    onClick={() => {
+                      soundModalOpen();
+                      setIsModalOpen(true);
+                    }}
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[var(--bg-secondary)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-xs sm:text-sm font-mono font-bold text-[var(--text-primary)] dark:hover:text-[var(--accent)] rounded-xl transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] cursor-pointer group"
                   >
                     <span>View full prize details</span>
-                    <ArrowRight className="w-4 h-4 text-[var(--accent)]" />
+                    <ArrowRight className="w-4 h-4 text-[var(--accent)] transition-transform duration-200 group-hover:translate-x-1" />
                   </button>
                 </div>
               </div>
@@ -123,7 +127,7 @@ export const PrizePool: React.FC = () => {
 
                   <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--accent-muted)] border border-[var(--accent)]/30 rounded-full text-xs font-mono font-bold text-[var(--accent)]">
                     <Trophy className="w-3.5 h-3.5 animate-pulse text-[var(--accent)]" />
-                    <span>NATIONAL INNOVATION CHALLENGE</span>
+                    <span>INNOVATION CHALLENGE</span>
                   </div>
 
                   <div className="space-y-1.5">
@@ -131,7 +135,7 @@ export const PrizePool: React.FC = () => {
                       Ready to Win Big?
                     </h3>
                     <p className="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
-                      Compete alongside top talent across the nation. Register your team of 2–4 members and turn your engineering vision into reality.
+                      Register your team of 2–4 members and turn your engineering vision into reality.
                     </p>
                   </div>
 

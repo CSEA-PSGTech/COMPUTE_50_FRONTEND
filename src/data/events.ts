@@ -4,7 +4,7 @@ export const mockEvents: EventItem[] = [
   {
     id: 'evt-1',
     title: 'Compute 50 Main Hackathon',
-    description: 'The flagship technical innovation event featuring top student teams across the nation.',
+    description: 'The flagship technical innovation event bringing together student teams to build solutions.',
     date: 'Oct 15 - 16, 2026',
     type: 'Hackathon',
     mode: 'Round 1 Online · Finals at PSG Tech',

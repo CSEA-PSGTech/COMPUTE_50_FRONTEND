@@ -2,7 +2,7 @@
 
 ## Overview
 - **Name**: Compute 50 Frontend [from code]
-- **One-liner**: Official web platform for the Compute 50 anniversary celebration and national hackathon hosted by CSEA at PSG College of Technology. [from code]
+- **One-liner**: Official web platform for the Compute 50 anniversary celebration and hackathon hosted by CSEA at PSG College of Technology. [from code]
 - **Platform**: Web (Responsive Single-Page Application using React 19 + Vite) [from code]
 
 ## Problem and Users
