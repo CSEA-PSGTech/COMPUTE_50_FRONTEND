@@ -13,7 +13,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { User as AuthUser } from '../../types/auth';
-import { soundTap, soundSave, soundTeamComplete } from '../../lib/sound';
+import { soundTap, soundSave, soundTeamComplete, soundReveal } from '../../lib/sound';
 
 export interface MemberData {
   id: string;
@@ -238,7 +238,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
 
   // Open a card to flip and edit
   const handleOpenCard = (member: MemberData) => {
-    soundTap();
+    soundReveal();
     setFormData({
       name: member.name,
       email: member.email,

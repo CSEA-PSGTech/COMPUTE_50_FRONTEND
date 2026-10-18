@@ -36,7 +36,8 @@ export const SoundEffects: React.FC = () => {
       if (el && !el.closest('[data-nosound]')) {
         if (el !== last) {
           last = el;
-          tone(980, 0.04, 0.06);
+          // Gentle, warm tactile hover tick (soft 30ms sine pulse)
+          tone(620, 0.03, 0.03);
         }
       } else {
         last = null;
@@ -50,7 +51,8 @@ export const SoundEffects: React.FC = () => {
       const el = (e.target as Element).closest?.('button, a[href], [role="button"]') ?? null;
       if (el && !el.closest('[data-nosound]')) {
         unlockAudio();
-        tone(640, 0.08, 0.12, 920);
+        // Soft tactile confirmation click
+        tone(520, 0.06, 0.08, 760);
       }
     };
 

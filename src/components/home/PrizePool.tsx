@@ -6,6 +6,7 @@ import { Container } from '../common/Container';
 import { CountUp } from '../common/CountUp';
 import { prizeData } from '../../data/prizes';
 import { PrizeDetailsModal } from './PrizeDetailsModal';
+import { soundModalOpen } from '../../lib/sound';
 
 export const PrizePool: React.FC = () => {
   const shouldReduceMotion = useReducedMotion();
@@ -100,7 +101,10 @@ export const PrizePool: React.FC = () => {
                 {/* Modal CTA Trigger Button */}
                 <div className="pt-2">
                   <button
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() => {
+                      soundModalOpen();
+                      setIsModalOpen(true);
+                    }}
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[var(--bg-secondary)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-xs sm:text-sm font-mono font-bold text-[var(--text-primary)] dark:hover:text-[var(--accent)] rounded-xl transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-[var(--accent)] cursor-pointer group"
                   >
                     <span>View full prize details</span>
