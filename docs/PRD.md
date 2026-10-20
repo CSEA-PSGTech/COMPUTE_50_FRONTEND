@@ -33,7 +33,7 @@
   - Overview, Prize Breakdown, Tracks, Problem Statements, Rules & Guidelines, Schedule, Important Info
 - **Authentication & User Profile**:
   - `/login`: [`src/pages/Login.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/pages/Login.tsx)
-  - `/register`: [`src/pages/Register.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/pages/Register.tsx) — Features 4 interactive Clash Royale style team reveal cards (`TeamRevealCards.tsx`) with 3D Y-axis flip transforms, particle bursts, focus-trapped edit dialogs / mobile bottom sheets, per-member roll number/phone validation, duplicate detection, and progress indicator (`x / 4 Members Ready`).
+  - `/register`: Authenticated participants choose to create a team and share its generated ID or join one with an ID. Teams support up to 4 members. This frontend prototype stores teams in browser local storage, so accounts can join across sessions in the same browser profile; cross-device sharing requires backend endpoints.
   - `/profile`: [`src/pages/Profile.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/pages/Profile.tsx)
 - **Error Page (`*`)**: [`src/pages/NotFound.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/pages/NotFound.tsx)
 
@@ -53,4 +53,5 @@
 - `UNKNOWN - ask owner`: What is the official live backend API URL for production deployment?
 - `UNKNOWN - ask owner`: Should stub components returning `null` (`ParticleBackground.tsx`, `StickyMobileRegister.tsx`) be implemented or pruned?
 - `UNKNOWN - ask owner`: Should duplicate `CountUp` components ([`about/CountUp.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/components/about/CountUp.tsx) vs [`common/CountUp.tsx`](file:///d:/Workspace/Projects/Compute_50_Frontend_Backup/src/components/common/CountUp.tsx)) be refactored into a single shared utility?
+
 

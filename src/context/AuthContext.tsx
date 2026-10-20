@@ -72,6 +72,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const updateUser = (updatedUser: User) => {
     setUser(updatedUser);
+    localStorage.setItem('compute50_user', JSON.stringify(updatedUser));
   };
 
   return (

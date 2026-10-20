@@ -111,10 +111,33 @@ export const LoginForm: React.FC = () => {
   };
 
   const handleGoogleAuth = async () => {
+    if (!email.trim() || !/\S+@\S+\.\S+/.test(email.trim())) {
+      setError('Enter the email address for this demo sign-in.');
+      soundWarning();
+      return;
+    }
+
+    if (isSignUp && !validateForm()) {
+      soundWarning();
+      return;
+    }
+
     setLoading(true);
     try {
-      await login({ email: 'google.user@psgtech.ac.in' });
-      handleAuthSuccess('Welcome! Authenticated with Google.');
+      if (isSignUp) {
+        await register({
+          name: name.trim(),
+          email: email.trim(),
+          college: college.trim(),
+          phone: '+91 9876543210',
+          department: 'Computer Science & Engineering',
+          year: '3rd Year',
+        });
+        handleAuthSuccess('Demo account created successfully.');
+      } else {
+        await login({ email: email.trim() });
+        handleAuthSuccess('Demo sign-in successful.');
+      }
     } catch {
       soundWarning();
       addToast('Google authentication failed. Please try again.', 'error');
