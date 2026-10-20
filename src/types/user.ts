@@ -12,6 +12,8 @@ export interface TeamMember {
   rollNumber?: string;
   role: 'Leader' | 'Member';
   college: string;
+  department?: string;
+  year?: string;
 }
 
 export interface HackathonTeam {

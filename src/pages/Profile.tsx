@@ -29,7 +29,10 @@ export const Profile: React.FC = () => {
     try {
       const data = await userService.getUserProfile();
       if (user) {
-        data.user = user;
+        data.user = {
+          ...user,
+          ...data.user,
+        };
       }
       setProfile(data);
     } catch (err) {

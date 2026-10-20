@@ -10,6 +10,8 @@ interface SectionItem {
 // Matches the exact DOM rendering order in Home.tsx
 const HOME_SECTIONS: SectionItem[] = [
   { id: 'hero', label: 'Top' },
+  { id: 'about', label: 'About' },
+  { id: 'hackathon', label: 'Hackathon' },
   { id: 'prizepool-home', label: 'Prizes' },
   { id: 'speakers', label: 'Speakers' },
   { id: 'sponsors', label: 'Sponsors' },
@@ -19,7 +21,7 @@ const HOME_SECTIONS: SectionItem[] = [
 export const SectionDotNav: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>('hero');
   const location = useLocation();
-  const { scrollTo } = useSmoothScroll();
+  const { scrollTo, lenis } = useSmoothScroll();
 
   const isHomePage = location.pathname === '/';
 
@@ -27,43 +29,67 @@ export const SectionDotNav: React.FC = () => {
     if (!isHomePage) return;
 
     const handleScroll = () => {
-      // Top of page edge case
+      // 1. Top of page edge case
       if (window.scrollY < 80) {
         setActiveSection('hero');
         return;
       }
 
-      // Bottom of page edge case
-      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 50;
+      // 2. Bottom of page edge case
+      const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 60;
       if (isAtBottom) {
         setActiveSection('contact');
         return;
       }
 
-      const threshold = Math.min(window.innerHeight * 0.25, 180);
-      let currentSection = 'hero';
+      // 3. Viewport focal anchor (approx 38% down from viewport top)
+      const focalPoint = window.innerHeight * 0.38;
 
       for (const sec of HOME_SECTIONS) {
         const el = document.getElementById(sec.id);
         if (el) {
           const rect = el.getBoundingClientRect();
-          if (rect.top <= threshold) {
-            currentSection = sec.id;
+          if (rect.top <= focalPoint && rect.bottom > focalPoint) {
+            setActiveSection(sec.id);
+            return;
           }
         }
       }
 
-      setActiveSection(currentSection);
+      // 4. Fallback for fast scrolling
+      let closestSection = 'hero';
+      let closestDist = Infinity;
+      for (const sec of HOME_SECTIONS) {
+        const el = document.getElementById(sec.id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          const dist = Math.abs(rect.top - focalPoint);
+          if (dist < closestDist) {
+            closestDist = dist;
+            closestSection = sec.id;
+          }
+        }
+      }
+      setActiveSection(closestSection);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll, { passive: true });
+
+    if (lenis) {
+      lenis.on('scroll', handleScroll);
+    }
+
     handleScroll();
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
+      if (lenis) {
+        lenis.off('scroll', handleScroll);
+      }
     };
-  }, [isHomePage]);
+  }, [isHomePage, lenis]);
 
   if (!isHomePage) return null;
 
