@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Bell, X, MessageCircle, ArrowRight } from 'lucide-react';
+import { Bell, X, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { EVENT_CONFIG } from '../../config/event';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 export interface AnnouncementPopupProps {
   message?: string;
@@ -102,7 +103,7 @@ export const AnnouncementPopup: React.FC<AnnouncementPopupProps> = ({
                   className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full text-[11px] font-medium shadow-xs transition-all cursor-pointer whitespace-nowrap shrink-0"
                   title="PSG Tech Compute 50 WhatsApp Group"
                 >
-                  <MessageCircle className="w-3 h-3" />
+                  <WhatsAppIcon className="w-3.5 h-3.5" color="#ffffff" />
                   <span>WhatsApp</span>
                 </a>
               )}

@@ -7,11 +7,11 @@ import {
   Phone,
   Mail,
   ExternalLink,
-  MessageCircle,
   Sparkles,
 } from 'lucide-react';
 import { EVENT_CONFIG, SUPPORT_CONTACTS } from '../../config/event';
 import { soundModalOpen, soundModalClose } from '../../lib/sound';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 export const FloatingSupport: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -170,8 +170,8 @@ export const FloatingSupport: React.FC = () => {
                     className="p-3 rounded-xl bg-[var(--accent-muted)] border border-[var(--accent)]/40 hover:border-[var(--accent)] flex items-center justify-between group transition-all"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-[var(--accent)] text-black flex items-center justify-center font-bold shrink-0">
-                        <MessageCircle className="w-4 h-4 text-black" />
+                      <div className="w-8 h-8 rounded-lg bg-[#25D366]/20 border border-[#25D366]/40 flex items-center justify-center shrink-0">
+                        <WhatsAppIcon className="w-5 h-5" color="#25D366" />
                       </div>
                       <div>
                         <h4 className="text-xs font-mono font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">
