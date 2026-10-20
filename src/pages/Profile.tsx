@@ -27,10 +27,7 @@ export const Profile: React.FC = () => {
 
   const fetchProfileData = useCallback(async () => {
     try {
-      const data = await userService.getUserProfile();
-      if (user) {
-        data.user = user;
-      }
+      const data = await userService.getUserProfile(user ?? undefined);
       setProfile(data);
     } catch (err) {
       console.error('Failed to load profile:', err);
@@ -68,18 +65,6 @@ export const Profile: React.FC = () => {
     }
   };
 
-  const handleCreateTeam = async (teamName: string) => {
-    if (profile) {
-      try {
-        const newTeam = await userService.createTeam(teamName);
-        setProfile({ ...profile, team: newTeam });
-        addToast(`Team "${teamName}" created successfully!`, 'success');
-      } catch {
-        addToast('Failed to create team.', 'error');
-      }
-    }
-  };
-
   if (loading || !profile) {
     return <ProfileSkeleton />;
   }
@@ -110,7 +95,7 @@ export const Profile: React.FC = () => {
         <div className="space-y-8">
           <PersonalDetails user={profile.user} onEdit={() => setIsEditModalOpen(true)} />
           <StatusCards registrationStatus={profile.registrationStatus} />
-          <TeamSection team={profile.team} onCreateTeam={handleCreateTeam} />
+          <TeamSection team={profile.team} />
         </div>
 
         <EditProfileModal

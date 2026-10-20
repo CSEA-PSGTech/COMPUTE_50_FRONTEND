@@ -5,10 +5,10 @@
 @layer base {
   :root {
     /* Sandalwood / Sandal Cream Light Theme */
-    --bg-main: #F5EFE6;
-    --bg-secondary: #EBE1D1;
+    --bg-main: #faedda;
+    --bg-secondary: #faedda;
     --bg-surface: #FCFAF6;
-    --border-color: #DBCBB4;
+    --border-color: #faedda;
     --text-primary: #1C1814;
     --text-secondary: #5C5349;
 
@@ -428,4 +428,4 @@
     animation: none !important;
   }
 }
-
+
