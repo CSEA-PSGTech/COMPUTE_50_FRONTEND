@@ -2,11 +2,12 @@ import React, { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isMuted, soundTick, unlockAudio } from '../../lib/sound';
 
+let lastGlobalClickTime = 0;
+
 /** Global click sound ticks and page navigation ticks */
 export const SoundEffects: React.FC = () => {
   const location = useLocation();
   const isFirstRender = useRef(true);
-  const lastClickTimeRef = useRef<number>(0);
 
   // Play tick on page navigation/back (e.g. browser back/forward buttons)
   useEffect(() => {
@@ -16,7 +17,7 @@ export const SoundEffects: React.FC = () => {
     }
     // If navigation happened via link click, the click already played tick.
     // Only play tick if navigation was triggered without a recent click (e.g. browser back/forward).
-    if (Date.now() - lastClickTimeRef.current >= 350) {
+    if (Date.now() - lastGlobalClickTime >= 400) {
       soundTick();
     }
   }, [location.pathname]);
@@ -44,7 +45,7 @@ export const SoundEffects: React.FC = () => {
 
       const el = (e.target as Element).closest?.('button, a[href], [role="button"]') ?? null;
       if (el && !el.closest('[data-nosound]')) {
-        lastClickTimeRef.current = Date.now();
+        lastGlobalClickTime = Date.now();
         unlockAudio();
         // Play foley-tick.wav
         soundTick();

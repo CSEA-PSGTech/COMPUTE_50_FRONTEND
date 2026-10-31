@@ -130,7 +130,11 @@ export const unlockAudio = (): void => {
  * Plays a mapped foley audio effect.
  * Uses Web Audio Buffer for 0ms latency; gracefully falls back to HTMLAudioElement.
  */
+let lastPlayTime = 0;
+
 export const playSound = (name: SoundEffectName, customVolume?: number): void => {
+  if (Date.now() - lastPlayTime < 80) return;
+  lastPlayTime = Date.now();
   if (isMuted()) return;
 
   const config = SOUND_CONFIG[name];

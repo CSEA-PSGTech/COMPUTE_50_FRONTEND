@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, User, School, LogIn, UserPlus } from 'lucide-react';
@@ -6,7 +6,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
 import { GoogleIcon } from '../common/GoogleIcon';
 import { DecryptText } from '../common/DecryptText';
-import { soundModalOpen, soundSuccess, soundWarning } from '../../lib/sound';
+import { soundSuccess, soundWarning } from '../../lib/sound';
 
 export const LoginForm: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
@@ -30,10 +30,10 @@ export const LoginForm: React.FC = () => {
   const targetDestination = stateFrom && stateFrom !== '/' && stateFrom !== '/login' ? stateFrom : '/register';
   const isFromRegister = stateFrom === '/register';
 
-  // Sound effect on sci-fi laser projection activation
-  useEffect(() => {
-    soundModalOpen();
-  }, []);
+
+
+
+
 
   const validateForm = () => {
     const errors: { [key: string]: string | undefined } = {};

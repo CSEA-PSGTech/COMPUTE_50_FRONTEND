@@ -288,6 +288,7 @@ export const HolographicDevTeamSection: React.FC<HolographicDevTeamSectionProps>
           <button
             type="button"
             onClick={onClose}
+            data-nosound="true"
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--bg-surface)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-xs font-mono text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all cursor-pointer shadow-xs group"
           >
             <span>✕ Close Team Hologram</span>

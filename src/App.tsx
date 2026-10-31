@@ -6,6 +6,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './context/ToastContext';
 import { SmoothScrollProvider } from './context/SmoothScrollContext';
 import { ToastContainer } from './components/common/ToastContainer';
+import { SoundEffects } from './components/common/SoundEffects';
 import { AppRouter } from './routes/AppRouter';
 
 const queryClient = new QueryClient({
@@ -26,6 +27,7 @@ export const App: React.FC = () => {
           <ToastProvider>
             <BrowserRouter>
               <SmoothScrollProvider>
+                <SoundEffects />
                 <AppRouter />
               </SmoothScrollProvider>
             </BrowserRouter>

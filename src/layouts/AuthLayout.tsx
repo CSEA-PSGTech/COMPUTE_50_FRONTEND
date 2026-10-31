@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { Volume2, VolumeX, ArrowLeft, Sun, Moon } from 'lucide-react';
 import { TexturedBackground } from '../components/common/TexturedBackground';
-import { SoundEffects } from '../components/common/SoundEffects';
 import { CursorGlow } from '../components/common/CursorGlow';
 import { FloatingSupport } from '../components/common/FloatingSupport';
 import { isMuted, setMuted, soundSwitch } from '../lib/sound';
@@ -45,7 +44,6 @@ export const AuthLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col justify-between bg-[var(--bg-main)] text-[var(--text-primary)] transition-colors relative select-none">
       <TexturedBackground />
-      <SoundEffects />
       <CursorGlow />
 
       {/* Streamlined Top Header: Home + Center Branding + Theme Toggle */}
