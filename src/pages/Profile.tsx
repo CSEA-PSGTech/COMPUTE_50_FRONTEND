@@ -53,9 +53,10 @@ export const Profile: React.FC = () => {
   };
 
   const handleLogout = async () => {
+    navigate('/', { replace: true });
     await logout();
     addToast('Logged out successfully.', 'info');
-    navigate('/');
+
   };
 
   const handleSaveProfile = async (updatedData: Partial<User>) => {

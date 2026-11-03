@@ -267,6 +267,7 @@ export const RepellingTeamOrb: React.FC = () => {
         <button
           type="button"
           onClick={handleSettledClick}
+          data-nosound="true"
           className="group relative inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--bg-surface)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-xs font-mono font-bold text-[var(--accent)] transition-all shadow-xs cursor-pointer active:scale-95"
           aria-label={isRevealed ? 'Hide team hologram' : 'Meet the Team'}
         >
@@ -296,6 +297,7 @@ export const RepellingTeamOrb: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.5 }}
             whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
+            data-nosound="true"
             className="group relative inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--bg-surface)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-xs font-mono font-bold text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors shadow-xs cursor-pointer focus:outline-hidden"
             aria-label="Meet the Compute 50 engineering team"
           >
@@ -361,6 +363,7 @@ export const RepellingTeamOrb: React.FC = () => {
             }}
             whileHover={shouldReduceMotion ? {} : { scale: 1.04 }}
             whileTap={shouldReduceMotion ? {} : { scale: 0.96 }}
+            data-nosound="true"
             className="group relative inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-[var(--bg-surface)] hover:bg-[var(--accent-muted)] border border-[var(--accent)] text-xs font-mono font-bold text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors shadow-[0_0_20px_rgba(var(--accent-rgb),0.35)] cursor-pointer focus:outline-hidden overflow-hidden"
             aria-label={isRevealed ? 'Hide team hologram' : 'Meet the Team'}
           >

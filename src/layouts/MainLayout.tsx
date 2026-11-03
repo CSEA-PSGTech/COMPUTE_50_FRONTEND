@@ -13,7 +13,6 @@ import { SectionDotNav } from '../components/common/SectionDotNav';
 import { ScrollProgressBar } from '../components/common/ScrollProgressBar';
 import { ScrollToTop } from '../components/common/ScrollToTop';
 import { IntroLoader } from '../components/common/IntroLoader';
-import { SoundEffects } from '../components/common/SoundEffects';
 import { TexturedBackground } from '../components/common/TexturedBackground';
 
 // Preserves the route element corresponding to the motion.div key so that exiting pages keep rendering their own content during AnimatePresence exit animations
@@ -31,7 +30,6 @@ export const MainLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[var(--bg-main)] text-[var(--text-primary)] transition-colors pb-[140px] md:pb-0 relative overflow-x-hidden">
       <TexturedBackground />
-      <SoundEffects />
       <ScrollProgressBar />
       <IntroLoader />
       <ScrollToTop />

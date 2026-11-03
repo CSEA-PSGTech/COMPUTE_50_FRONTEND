@@ -7,12 +7,12 @@ import {
   Sun,
   Moon,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../hooks/useTheme';
 import { isMuted, setMuted, soundSwitch } from '../../lib/sound';
 import { Container } from '../common/Container';
 import { Button } from '../common/Button';
+import { CircuitNav } from './CircuitNav';
 import compute50Logo from '../../assets/logos/compute 50 logo.png';
 import psgLogo from '../../assets/logos/psg-logo.png';
 import cseaLogo from '../../assets/logos/csea-logo.png';
@@ -120,34 +120,7 @@ export const Navbar: React.FC = () => {
           </Link>
 
           {/* Center: Desktop Navigation Links */}
-          <nav
-            aria-label="Desktop primary navigation"
-            className="hidden lg:flex items-center gap-1 bg-[var(--bg-surface)] border border-[var(--border-color)] px-3 py-1.5 rounded-full shadow-xs"
-          >
-            {navLinks.map((link) => {
-              const active = isActive(link.path);
-              return (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`relative text-sm font-medium px-4 py-1.5 rounded-full transition-colors ${
-                    active
-                      ? 'text-[var(--accent)] font-semibold'
-                      : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
-                  }`}
-                >
-                  {active && (
-                    <motion.div
-                      layoutId="activeNavTab"
-                      className="absolute inset-0 bg-[var(--accent-muted)] border border-[var(--accent)]/30 rounded-full"
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                  <span className="relative z-10">{link.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
+          <CircuitNav items={navLinks} className="hidden lg:block w-[400px] xl:w-[460px]" />
 
           {/* Top Right: Institutional Logos & Actions */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
@@ -274,8 +247,6 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
       </Container>
-
-
     </header>
   );
 };

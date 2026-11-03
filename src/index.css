@@ -428,4 +428,31 @@
     animation: none !important;
   }
 }
-
+
+/* Circuit nav: ring that pulses out of a node when the trace arrives. */
+@keyframes circuit-ping {
+  from {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+.circuit-ping {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5px;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: circuit-ping 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .circuit-ping {
+    animation: none;
+    opacity: 0;
+  }
+}
