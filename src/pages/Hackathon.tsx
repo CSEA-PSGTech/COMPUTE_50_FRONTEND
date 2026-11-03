@@ -4,8 +4,12 @@ import { SectionHeading } from '../components/common/SectionHeading';
 import { PrizeBreakdown } from '../components/hackathon/PrizeBreakdown';
 import { RulesGuidelines } from '../components/hackathon/RulesGuidelines';
 import { ImportantInfo } from '../components/hackathon/ImportantInfo';
-import { TracksSection } from '../components/home/TracksSection';
 import { ScheduleSection } from '../components/home/ScheduleSection';
+/* =========================================================================
+ * STASHED HACKATHON TRACKS (PRESERVED FOR FUTURE USE)
+ * Uncomment the import and component below if organizers ask for it back:
+ * import { TracksSection } from '../components/home/TracksSection';
+ * ========================================================================= */
 
 export const Hackathon: React.FC = () => {
   return (
@@ -19,7 +23,7 @@ export const Hackathon: React.FC = () => {
 
         <div className="space-y-12">
           <PrizeBreakdown />
-          <TracksSection />
+          {/* STASHED: <TracksSection /> */}
           <RulesGuidelines />
           <ScheduleSection />
           <ImportantInfo />
