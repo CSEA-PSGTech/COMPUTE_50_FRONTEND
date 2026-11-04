@@ -69,7 +69,7 @@ export const ScheduleSection: React.FC = () => {
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}
-              <span className="relative z-10">Day 1 — Kickoff & Coding</span>
+              <span className="relative z-10">Day 1 (Dec 4) — Kickoff & Coding</span>
             </button>
             <button
               onClick={() => switchDay('Day 2')}
@@ -85,7 +85,7 @@ export const ScheduleSection: React.FC = () => {
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}
-              <span className="relative z-10">Day 2 — Mentorship & Finale</span>
+              <span className="relative z-10">Day 2 (Dec 5) — Mentorship & Finale</span>
             </button>
           </div>
         </div>
