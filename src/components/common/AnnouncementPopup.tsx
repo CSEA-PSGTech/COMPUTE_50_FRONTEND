@@ -27,7 +27,7 @@ export const AnnouncementPopup: React.FC<AnnouncementPopupProps> = ({
       {isVisible && (
         <aside
           aria-label="Event Announcement"
-          className="relative z-30 w-full flex justify-center px-2 sm:px-3 pt-2 sm:pt-3 pb-1 pointer-events-none select-none transition-colors"
+          className="relative z-30 w-full flex justify-center px-3 pt-2.5 pb-1 pointer-events-none select-none transition-colors"
         >
           {/* Centered Floating Cyber Capsule */}
           <motion.div
@@ -35,7 +35,7 @@ export const AnnouncementPopup: React.FC<AnnouncementPopupProps> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.96 }}
             transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className="pointer-events-auto relative inline-flex items-center gap-1.5 sm:gap-2.5 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-[var(--bg-surface)]/95 backdrop-blur-xl border border-[var(--border-color)] hover:border-[var(--accent)]/50 shadow-[0_4px_20px_rgba(0,0,0,0.18)] text-xs text-[var(--text-primary)] max-w-[calc(100vw-20px)] transition-all group shrink-0"
+            className="pointer-events-auto relative inline-flex items-center gap-1.5 sm:gap-2.5 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-[var(--bg-surface)]/95 backdrop-blur-xl border border-[var(--border-color)] hover:border-[var(--accent)]/50 shadow-[0_4px_20px_rgba(0,0,0,0.18)] text-xs text-[var(--text-primary)] max-w-[calc(100vw-1.5rem)] transition-all group shrink-0"
           >
             {/* Ambient Breathing Border Glow */}
             <div
@@ -46,20 +46,24 @@ export const AnnouncementPopup: React.FC<AnnouncementPopupProps> = ({
             />
 
             {/* LIVE Radar Beacon + Label */}
-            <div className="flex items-center gap-1.5 shrink-0">
+            <Link
+              to="/hackathon"
+              className="flex items-center gap-1.5 shrink-0 hover:opacity-85 transition-opacity"
+              title="View Hackathon Rounds"
+            >
               <span className="relative flex h-2 w-2 shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
-              <span className="font-mono font-extrabold text-[10px] sm:text-[11px] text-[var(--text-primary)] tracking-wider uppercase shrink-0">
-                <span className="hidden sm:inline">Round 1 </span>Live
+              <span className="font-mono font-extrabold text-[10px] sm:text-[11px] text-[var(--text-primary)] tracking-wider uppercase shrink-0 whitespace-nowrap">
+                <span className="hidden md:inline">Round 1 </span>Live
               </span>
-            </div>
+            </Link>
 
             <span className="text-[var(--border-color)] select-none">·</span>
 
             {/* Fee Pill */}
-            <span className="font-mono text-[10px] sm:text-[11px] text-[var(--accent)] font-bold shrink-0">
+            <span className="font-mono text-[10px] sm:text-[11px] text-[var(--accent)] font-bold shrink-0 whitespace-nowrap">
               <span className="hidden sm:inline">Fee: </span>{feePerPerson}
             </span>
 
@@ -71,21 +75,21 @@ export const AnnouncementPopup: React.FC<AnnouncementPopupProps> = ({
                   href={EVENT_CONFIG.whatsappLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 hover:text-emerald-300 border border-emerald-500/25 text-[10px] sm:text-[11px] font-mono font-semibold transition-colors shrink-0"
+                  className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 border border-emerald-500/30 text-[10px] sm:text-[11px] font-mono font-semibold transition-colors shrink-0 whitespace-nowrap"
                   title="Join official Compute 50 WhatsApp Group"
                 >
-                  <WhatsAppIcon className="w-3 h-3 shrink-0" color="#10b981" />
+                  <WhatsAppIcon className="w-3 h-3 shrink-0" color="#25D366" />
                   <span>WhatsApp</span>
-                  <span className="hidden md:inline"> Group</span>
+                  <span className="hidden lg:inline"> Group</span>
                 </a>
               </>
             )}
 
-            {/* Register CTA (Shown on tablet and desktop, already present in sticky mobile BottomNav) */}
-            <span className="text-[var(--border-color)] select-none hidden sm:inline">·</span>
+            {/* Register CTA (Shown on md+ screens; hidden on mobile to avoid overflow and redundancy with mobile bottom bar) */}
+            <span className="text-[var(--border-color)] select-none hidden md:inline">·</span>
             <Link
               to="/register"
-              className="hidden sm:inline-flex items-center gap-1 text-[var(--text-primary)] hover:text-[var(--accent)] font-mono font-bold text-[11px] transition-colors shrink-0 group/link"
+              className="hidden md:inline-flex items-center gap-1 text-[var(--text-primary)] hover:text-[var(--accent)] font-mono font-bold text-[11px] transition-colors shrink-0 group/link whitespace-nowrap"
             >
               <span>Register</span>
               <ArrowRight className="w-3.5 h-3.5 text-[var(--accent)] transition-transform duration-200 group-hover/link:translate-x-0.5" />
