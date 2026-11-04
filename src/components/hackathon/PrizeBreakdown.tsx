@@ -12,7 +12,7 @@ export const PrizeBreakdown: React.FC = () => {
       amountVal: EVENT_CONFIG.prizes.first,
       amountFormatted: EVENT_CONFIG.prizes.firstFormatted,
       icon: <Trophy className="w-9 h-9 text-[var(--accent)]" />,
-      perks: ['Grand Winner Trophy', 'Cash Prize Rewards'],
+      perks: ['Grand Winner Trophy', 'Cash Prize Rewards', 'Certificate of Excellence', 'Direct Mentorship'],
       highlight: true,
     },
     {
@@ -21,7 +21,7 @@ export const PrizeBreakdown: React.FC = () => {
       amountVal: EVENT_CONFIG.prizes.second,
       amountFormatted: EVENT_CONFIG.prizes.secondFormatted,
       icon: <Medal className="w-9 h-9 text-[var(--text-secondary)]" />,
-      perks: ['Runner Up Trophy', 'Cash Prize Rewards'],
+      perks: ['Runner Up Trophy', 'Cash Prize Rewards', 'Certificate of Merit'],
       highlight: false,
     },
     {
@@ -30,7 +30,7 @@ export const PrizeBreakdown: React.FC = () => {
       amountVal: EVENT_CONFIG.prizes.third,
       amountFormatted: EVENT_CONFIG.prizes.thirdFormatted,
       icon: <Award className="w-9 h-9 text-[var(--text-secondary)]" />,
-      perks: ['Third Place Trophy', 'Cash Prize Rewards'],
+      perks: ['Third Place Trophy', 'Cash Prize Rewards', 'Certificate of Merit'],
       highlight: false,
     },
     {
@@ -40,7 +40,7 @@ export const PrizeBreakdown: React.FC = () => {
       amountFormatted: EVENT_CONFIG.prizes.categoriesFormatted,
       suffix: ' Total',
       icon: <Gift className="w-9 h-9 text-[var(--accent)]" />,
-      perks: ['Track Best Innovations', 'Special Category Rewards'],
+      perks: ['Track Best Innovations', 'Special Category Rewards', 'Recognition Certificates'],
       highlight: false,
     },
   ];
@@ -50,11 +50,14 @@ export const PrizeBreakdown: React.FC = () => {
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--border-color)] pb-4">
         <div>
           <span className="font-mono text-xs font-bold text-[var(--accent)] uppercase tracking-wider block mb-1">
-            PRIZE BREAKDOWN
+            PRIZE POOL
           </span>
           <h3 className="text-2xl font-bold text-[var(--text-primary)]">
             {EVENT_CONFIG.prizes.totalFormatted} Total Rewards
           </h3>
+          <p className="text-xs text-[var(--text-secondary)] mt-1 font-mono">
+            Category & podium prize split-up will be announced soon
+          </p>
         </div>
         <span className="px-3 py-1 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-xl text-xs font-mono font-semibold text-[var(--text-primary)]">
           Official Prize Pool
@@ -77,9 +80,17 @@ export const PrizeBreakdown: React.FC = () => {
                 {p.place}
               </span>
               <h4 className="text-lg font-bold text-[var(--text-primary)] mb-2">{p.title}</h4>
-              <p className="text-2xl font-extrabold text-[var(--text-primary)] mb-6 font-mono">
-                <CountUp end={p.amountVal} prefix="₹" suffix={p.suffix || ''} />
-              </p>
+              <div className="h-10 flex items-center justify-center mb-6 font-mono">
+                {p.amountVal > 0 ? (
+                  <p className="text-2xl font-extrabold text-[var(--text-primary)]">
+                    <CountUp end={p.amountVal} prefix="₹" suffix={p.suffix || ''} />
+                  </p>
+                ) : (
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-[var(--accent)] bg-[var(--accent-muted)] border border-[var(--accent)]/30 tracking-wider uppercase">
+                    {p.amountFormatted.replace(/^.*:\s*/, '') || 'Revealing Soon'}
+                  </span>
+                )}
+              </div>
 
               <ul className="text-[13px] text-[var(--text-secondary)] space-y-2 text-left border-t border-[var(--border-color)] pt-4">
                 {p.perks.map((perk, i) => (

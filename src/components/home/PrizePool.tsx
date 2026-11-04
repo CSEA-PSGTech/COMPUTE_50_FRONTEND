@@ -83,14 +83,11 @@ export const PrizePool: React.FC = () => {
                 {/* Huge Display Amount with Odometer CountUp */}
                 <div
                   className="space-y-1"
-                  aria-label={`Total Prize Pool: ${prizeData.totalAmount} Indian Rupees Plus`}
+                  aria-label={`Total Prize Pool: ${prizeData.totalAmount} Indian Rupees`}
                 >
                   <div className="flex items-baseline flex-nowrap whitespace-nowrap text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black font-mono tracking-tight leading-none select-none">
                     <span className="bg-gradient-to-r from-[var(--text-primary)] via-[var(--text-primary)] to-[var(--accent)] bg-clip-text text-transparent filter drop-shadow-[0_0_30px_rgba(var(--accent-rgb),0.35)]">
                       <CountUp end={prizeData.totalAmount} prefix="₹" />
-                    </span>
-                    <span className="inline-block text-[var(--accent)] animate-pulse ml-1 shrink-0">
-                      +
                     </span>
                   </div>
                   <span className="text-xs font-mono text-[var(--text-secondary)] uppercase tracking-wider block pt-1">

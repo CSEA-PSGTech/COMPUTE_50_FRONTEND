@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { X, Trophy, Medal, Award, Gift, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { X, Trophy, Medal, Award, Gift, CheckCircle2, ShieldAlert, Sparkles } from 'lucide-react';
 import { prizeData } from '../../data/prizes';
 import { useSmoothScroll } from '../../context/SmoothScrollContext';
 import { soundModalClose } from '../../lib/sound';
@@ -83,7 +83,7 @@ export const PrizeDetailsModal: React.FC<PrizeDetailsModalProps> = ({ isOpen, on
             <div className="flex items-start justify-between gap-4 border-b border-[var(--border-color)] pb-4">
               <div>
                 <span className="font-mono text-xs font-bold text-[var(--accent)] tracking-widest uppercase block mb-1">
-                  OFFICIAL BREAKDOWN
+                  OFFICIAL PRIZE DETAILS
                 </span>
                 <h2 id="prize-modal-title" className="text-2xl sm:text-3xl font-black font-mono text-[var(--text-primary)] leading-tight">
                   Compute 50 Prize Pool
@@ -100,6 +100,12 @@ export const PrizeDetailsModal: React.FC<PrizeDetailsModalProps> = ({ isOpen, on
               >
                 <X className="w-5 h-5" />
               </button>
+            </div>
+
+            {/* Split Notice Banner */}
+            <div className="p-3.5 rounded-xl bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center gap-3 text-xs font-mono text-[var(--text-primary)]">
+              <Sparkles className="w-4 h-4 text-[var(--accent)] shrink-0" />
+              <span>Total prize pool is <strong className="text-[var(--accent)]">{prizeData.totalFormatted}</strong>. Category & podium prize split-up will be announced shortly.</span>
             </div>
 
             {/* Podium Prizes List */}
@@ -128,7 +134,7 @@ export const PrizeDetailsModal: React.FC<PrizeDetailsModalProps> = ({ isOpen, on
                           <p className="text-xs text-[var(--text-secondary)] mt-1">{item.description}</p>
                         </div>
                       </div>
-                      <span className="text-lg sm:text-xl font-extrabold font-mono text-[var(--text-primary)] shrink-0">
+                      <span className="text-xs font-bold font-mono px-2.5 py-1 rounded-full bg-[var(--accent-muted)] text-[var(--accent)] border border-[var(--accent)]/30 tracking-wider uppercase shrink-0">
                         {item.amountFormatted}
                       </span>
                     </div>
@@ -157,7 +163,7 @@ export const PrizeDetailsModal: React.FC<PrizeDetailsModalProps> = ({ isOpen, on
                     {prizeData.trackPrizes.label}
                   </span>
                 </div>
-                <span className="text-base font-bold font-mono text-[var(--accent)]">
+                <span className="text-xs font-bold font-mono px-2.5 py-1 rounded-full bg-[var(--accent-muted)] text-[var(--accent)] border border-[var(--accent)]/30 tracking-wider uppercase shrink-0">
                   {prizeData.trackPrizes.amountFormatted}
                 </span>
               </div>

@@ -15,47 +15,42 @@ export interface ContactCategory {
   people: ContactPerson[];
 }
 
-// Editable category data with clear placeholders for allotted members to fill in
 const FOOTER_CATEGORIES: ContactCategory[] = [
   {
     title: 'HEADS',
     people: [
-      { name: 'Name', position: 'Secretary', phone: '+91 XXXXX XXXXX' },
-      { name: 'Name', position: 'Joint Secretary', phone: '+91 XXXXX XXXXX' },
-      { name: 'Name', position: 'Head - Sponsorship', phone: '+91 XXXXX XXXXX' },
+      { name: 'Sanjay J', position: 'Secretary', phone: '+91 97897 10033' },
+      { name: 'Subhasree L K', position: 'Joint Secretary', phone: '+91 79048 86850' },
+      { name: 'Mukunth B', position: 'Head - Collaboration', phone: '+91 70102 73925' },
     ],
   },
   {
     title: 'TECH SUPPORT',
     people: [
-      { name: 'Name', phone: '+91 XXXXX XXXXX' },
-      { name: 'Name', phone: '+91 XXXXX XXXXX' },
-      { name: 'Name', phone: '+91 XXXXX XXXXX' },
-    ],
-  },
-  {
-    title: 'EVENT SUPPORT',
-    people: [
-      { name: 'Name', phone: '+91 XXXXX XXXXX' },
-      { name: 'Name', phone: '+91 XXXXX XXXXX' },
-      { name: 'Name', phone: '+91 XXXXX XXXXX' },
+      { name: 'Adhish Krishna S', phone: '+91 82178 96832' },
+      { name: 'Ahamed Shalman H', phone: '+91 63695 51733' },
+      { name: 'Abinayasri', phone: '+91 89038 87312' },
     ],
   },
   {
     title: 'ACCOMMODATION',
     subtitle: '(BOYS)',
     people: [
-      { name: 'Name', phone: '+91 XXXXX XXXXX' },
-      { name: 'Name', phone: '+91 XXXXX XXXXX' },
-      { name: 'Name', phone: '+91 XXXXX XXXXX' },
+      { name: 'Sai Karthi Balaji', phone: '+91 98422 94606' },
+      { name: 'Hari Keshav', phone: '+91 97500 56748' },
+      { name: 'Rithik L', phone: '+91 95669 80193' },
+      { name: 'Harrish M', phone: '+91 75388 11510' },
     ],
   },
   {
     title: 'ACCOMMODATION',
     subtitle: '(GIRLS)',
     people: [
-      { name: 'Name', phone: '+91 XXXXX XXXXX' },
-      { name: 'Name', phone: '+91 XXXXX XXXXX' },
+      { name: 'Thejashri', phone: '+91 98421 19832' },
+      { name: 'Shakthi Abinaya V', phone: '+91 90522 06050' },
+      { name: 'Avanthika S', phone: '+91 90030 18620' },
+      { name: 'Sanjana R', phone: '+91 87785 25284' },
+      { name: 'Shahana PS', phone: '+91 81110 28378' },
     ],
   },
 ];
@@ -95,7 +90,7 @@ export const HolographicContactSection: React.FC = () => {
 
   return (
     <div ref={containerRef} className="relative w-full mb-16 group/hologram">
-      {/* Floating Replay Holograms Button (Visible ONLY when hovering on the section) */}
+      {/* Floating Replay Holograms Button (Visible on hover/focus) */}
       <div className="flex justify-center sm:justify-end mb-3 px-2 max-w-6xl mx-auto min-h-[28px] pointer-events-none">
         <button
           type="button"
@@ -114,14 +109,14 @@ export const HolographicContactSection: React.FC = () => {
         </button>
       </div>
 
-      {/* 5 Open Columns Grid (Each column has its OWN simultaneous hologram beam & unroll) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-y-12 gap-x-4 lg:gap-x-6 text-center">
+      {/* 4 Open Columns Grid (Simultaneous hologram beam & unroll) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-4 lg:gap-x-8 text-center max-w-6xl mx-auto">
         {FOOTER_CATEGORIES.map((cat, catIdx) => (
           <div
             key={`col-${catIdx}`}
             className="relative flex flex-col items-center group/col w-full overflow-hidden px-1"
           >
-            {/* INDIVIDUAL COLUMN LASER SCANLINE (Sweeps simultaneously on all 5 verticals) */}
+            {/* INDIVIDUAL COLUMN LASER SCANLINE */}
             {!shouldReduceMotion && isUnrolling && (
               <motion.div
                 key={`col-laser-${unrollKey}-${catIdx}`}
@@ -130,7 +125,7 @@ export const HolographicContactSection: React.FC = () => {
                 transition={{
                   duration: 2.4,
                   ease: [0.22, 1, 0.36, 1],
-                  delay: 0.08, // Simultaneous trigger across all columns!
+                  delay: 0.08,
                 }}
                 className="absolute -left-1 -right-1 h-[2px] sm:h-[2.5px] bg-[var(--accent)] shadow-[0_0_12px_var(--accent),0_0_24px_var(--accent),0_0_4px_#ffffff] z-30 pointer-events-none rounded-full"
               >
@@ -170,10 +165,7 @@ export const HolographicContactSection: React.FC = () => {
               }
               className="relative w-full flex flex-col items-center"
             >
-              {/* ========================================================= */}
-              {/* UNIFIED HEADER (Identical height across all columns)       */}
-              {/* Guarantees the bottom baseline matches to the pixel       */}
-              {/* ========================================================= */}
+              {/* UNIFIED HEADER */}
               <div className="h-14 sm:h-16 flex flex-col justify-end items-center mb-6 w-full">
                 <div className="flex items-center justify-center gap-1.5 sm:gap-2 w-full">
                   <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shadow-[0_0_8px_var(--accent)] shrink-0" />
@@ -188,7 +180,6 @@ export const HolographicContactSection: React.FC = () => {
                         {cat.subtitle}
                       </span>
                     ) : (
-                      /* Matching invisible placeholder line to ensure single-line headers share identical bottom baseline */
                       <span
                         className="text-[11px] font-mono select-none opacity-0 leading-none mt-1"
                         aria-hidden="true"
@@ -203,72 +194,47 @@ export const HolographicContactSection: React.FC = () => {
                 </div>
               </div>
 
-              {/* ========================================================= */}
-              {/* CONTACT PERSONS ROWS (Row 0, 1, 2 have uniform heights)    */}
-              {/* Placeholders for Name and Number aligned in straight lines */}
-              {/* ========================================================= */}
-              <div className="flex flex-col space-y-6 w-full items-center">
-                {[0, 1, 2].map((slotIdx) => {
-                  const person = cat.people[slotIdx];
+              {/* CONTACT PERSONS ROWS */}
+              <div className="flex flex-col space-y-4 sm:space-y-5 w-full items-center">
+                {cat.people.map((person, slotIdx) => (
+                  <div
+                    key={`person-${catIdx}-${slotIdx}`}
+                    className="group/person w-full max-w-[220px] min-h-[64px] flex flex-col justify-center items-center py-1 px-2 rounded-lg transition-all duration-200 hover:bg-[var(--accent)]/5"
+                  >
+                    {/* Name */}
+                    <p className="font-mono font-bold text-sm sm:text-[14px] text-[var(--text-primary)]/90 group-hover/person:text-[var(--accent)] transition-colors tracking-wide truncate max-w-full leading-tight">
+                      {person.name}
+                    </p>
 
-                  if (!person) {
-                    // Empty slot to preserve vertical alignment for 3-row layout
-                    return (
-                      <div
-                        key={`empty-slot-${slotIdx}`}
-                        className="w-full max-w-[210px] h-[72px] sm:h-[76px] hidden lg:block select-none pointer-events-none opacity-0"
-                        aria-hidden="true"
-                      />
-                    );
-                  }
-
-                  return (
-                    <div
-                      key={`person-${slotIdx}`}
-                      className="group/person w-full max-w-[210px] h-[72px] sm:h-[76px] flex flex-col justify-center items-center py-1 px-2 rounded-lg transition-all duration-200 hover:bg-[var(--accent)]/5"
-                    >
-                      {/* Name Placeholder (Straight horizontal line across all 5 columns) */}
-                      <p className="font-mono font-bold text-sm sm:text-[14px] text-[var(--text-primary)]/80 group-hover/person:text-[var(--accent)] transition-colors tracking-wide truncate max-w-full leading-tight">
-                        {person.name}
-                      </p>
-
-                      {/* Position / Role (Standardized h-4 slot to keep line height aligned) */}
-                      <div className="h-4 flex items-center justify-center my-0.5">
-                        {person.position ? (
-                          <p className="font-mono italic text-[11px] sm:text-xs text-[var(--accent)]/85 tracking-wide font-medium leading-none">
-                            {person.position}
-                          </p>
-                        ) : (
-                          <span
-                            className="opacity-0 select-none text-[11px] leading-none"
-                            aria-hidden="true"
-                          >
-                            &nbsp;
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Phone Placeholder */}
-                      <div className="mt-0.5">
-                        {person.phone.includes('X') ? (
-                          <span className="inline-flex items-center gap-1.5 font-mono text-xs sm:text-[13px] text-[var(--text-secondary)]/60 tracking-wider select-none">
-                            <Phone className="w-2.5 h-2.5 text-[var(--accent)] opacity-60 shrink-0" />
-                            <span>{person.phone}</span>
-                          </span>
-                        ) : (
-                          <a
-                            href={`tel:${person.phone.replace(/\s+/g, '')}`}
-                            className="inline-flex items-center gap-1.5 font-mono text-xs sm:text-[13px] text-[var(--text-secondary)] group-hover/person:text-[var(--text-primary)] hover:!text-[var(--accent)] transition-colors tracking-wider"
-                            aria-label={`Call ${person.name} at ${person.phone}`}
-                          >
-                            <Phone className="w-2.5 h-2.5 text-[var(--accent)] opacity-70 group-hover/person:opacity-100 shrink-0" />
-                            <span>{person.phone}</span>
-                          </a>
-                        )}
-                      </div>
+                    {/* Position / Role */}
+                    <div className="h-4 flex items-center justify-center my-0.5">
+                      {person.position ? (
+                        <p className="font-mono italic text-[11px] sm:text-xs text-[var(--accent)]/85 tracking-wide font-medium leading-none">
+                          {person.position}
+                        </p>
+                      ) : (
+                        <span
+                          className="opacity-0 select-none text-[11px] leading-none"
+                          aria-hidden="true"
+                        >
+                          &nbsp;
+                        </span>
+                      )}
                     </div>
-                  );
-                })}
+
+                    {/* Phone link */}
+                    <div className="mt-0.5">
+                      <a
+                        href={`tel:${person.phone.replace(/\s+/g, '')}`}
+                        className="inline-flex items-center gap-1.5 font-mono text-xs sm:text-[13px] text-[var(--text-secondary)] group-hover/person:text-[var(--text-primary)] hover:!text-[var(--accent)] transition-colors tracking-wider"
+                        aria-label={`Call ${person.name} at ${person.phone}`}
+                      >
+                        <Phone className="w-2.5 h-2.5 text-[var(--accent)] opacity-70 group-hover/person:opacity-100 shrink-0" />
+                        <span>{person.phone}</span>
+                      </a>
+                    </div>
+                  </div>
+                ))}
               </div>
             </motion.div>
           </div>
