@@ -4,7 +4,7 @@ import {
   X,
   Code2,
   Server,
-  Sparkles,
+  UserCheck,
   Users,
   ExternalLink,
   Layers,
@@ -79,7 +79,7 @@ export const MeetTheTeamModal: React.FC<MeetTheTeamModalProps> = ({ isOpen, onCl
         return {
           label: 'Coordination & Design',
           color: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
-          icon: <Sparkles className="w-3 h-3" />,
+          icon: <UserCheck className="w-3 h-3" />,
           glow: 'from-amber-500/20 to-orange-500/10',
         };
     }

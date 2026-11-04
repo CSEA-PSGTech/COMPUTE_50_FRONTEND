@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { PlusCircle, UserPlus, ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
+import { PlusCircle, UserPlus, ArrowLeft, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { CreateTeamForm } from './CreateTeamForm';
 import { JoinTeamForm } from './JoinTeamForm';
@@ -29,7 +29,7 @@ export const RegisterForm: React.FC = () => {
           {/* Header */}
           <div className="text-center space-y-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider bg-[var(--accent-muted)] text-[var(--accent)] border border-[var(--accent)]/30">
-              <Sparkles className="w-3.5 h-3.5" />
+              
               <span>Squad Enrollment</span>
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)]">

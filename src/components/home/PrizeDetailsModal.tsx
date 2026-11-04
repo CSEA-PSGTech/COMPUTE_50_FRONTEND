@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { X, Trophy, Medal, Award, Gift, CheckCircle2, ShieldAlert, Sparkles } from 'lucide-react';
+import { X, Trophy, Medal, Award, Gift, CheckCircle2, ShieldAlert, Info } from 'lucide-react';
 import { prizeData } from '../../data/prizes';
 import { useSmoothScroll } from '../../context/SmoothScrollContext';
 import { soundModalClose } from '../../lib/sound';
@@ -104,7 +104,7 @@ export const PrizeDetailsModal: React.FC<PrizeDetailsModalProps> = ({ isOpen, on
 
             {/* Split Notice Banner */}
             <div className="p-3.5 rounded-xl bg-[var(--accent)]/10 border border-[var(--accent)]/30 flex items-center gap-3 text-xs font-mono text-[var(--text-primary)]">
-              <Sparkles className="w-4 h-4 text-[var(--accent)] shrink-0" />
+              <Info className="w-4 h-4 text-[var(--accent)] shrink-0" />
               <span>Total prize pool is <strong className="text-[var(--accent)]">{prizeData.totalFormatted}</strong>. Category & podium prize split-up will be announced shortly.</span>
             </div>
 

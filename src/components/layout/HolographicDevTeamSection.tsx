@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { ExternalLink, Sparkles, Code2, Server } from 'lucide-react';
+import { ExternalLink, UserCheck, Code2, Server } from 'lucide-react';
 import { DEV_TEAM_MEMBERS, DevTeamMember } from '../../data/devTeam';
 import { soundReveal } from '../../lib/sound';
 
@@ -15,7 +15,7 @@ interface CategoryConfig {
 const CATEGORIES: CategoryConfig[] = [
   { id: 'frontend', title: 'FRONTEND', icon: <Code2 className="w-3.5 h-3.5" /> },
   { id: 'backend', title: 'BACKEND', icon: <Server className="w-3.5 h-3.5" /> },
-  { id: 'coordinator', title: 'COORDINATOR', icon: <Sparkles className="w-3.5 h-3.5" /> },
+  { id: 'coordinator', title: 'COORDINATOR', icon: <UserCheck className="w-3.5 h-3.5" /> },
 ];
 
 export interface HolographicDevTeamSectionProps {

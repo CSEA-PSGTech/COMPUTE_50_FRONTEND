@@ -7,7 +7,6 @@ import {
   Phone,
   Mail,
   ExternalLink,
-  Sparkles,
 } from 'lucide-react';
 import { EVENT_CONFIG, SUPPORT_CONTACTS } from '../../config/event';
 import { soundModalOpen, soundModalClose } from '../../lib/sound';
@@ -134,7 +133,7 @@ export const FloatingSupport: React.FC = () => {
               <div className="p-4 sm:p-5 border-b border-[var(--border-color)] flex items-start justify-between bg-[var(--bg-secondary)]/60">
                 <div className="space-y-1">
                   <span className="font-mono text-[10px] font-bold text-[var(--accent)] tracking-widest uppercase flex items-center gap-1.5">
-                    <Sparkles className="w-3 h-3 text-[var(--accent)]" />
+                    <HelpCircle className="w-3 h-3 text-[var(--accent)]" />
                     CSEA HELPDESK // COMPUTE 50
                   </span>
                   <h3

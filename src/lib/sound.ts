@@ -77,12 +77,12 @@ export type SoundEffectName =
   | 'success';
 
 const SOUND_CONFIG: Record<SoundEffectName, { url: string; volume: number }> = {
-  tick: { url: '/sounds/foley-tick.wav', volume: 0.45 },
-  hover: { url: '/sounds/foley-hover.wav', volume: 0.2 },
-  swoosh: { url: '/sounds/foley-tick.wav', volume: 0.45 },
-  on: { url: '/sounds/foley-on.wav', volume: 0.45 },
-  warning: { url: '/sounds/foley-warning.wav', volume: 0.55 },
-  success: { url: '/sounds/foley-success.wav', volume: 0.55 },
+  tick: { url: '/sounds/foley-tick.wav', volume: 0.22 },
+  hover: { url: '/sounds/foley-hover.wav', volume: 0.12 },
+  swoosh: { url: '/sounds/foley-tick.wav', volume: 0.20 },
+  on: { url: '/sounds/foley-on.wav', volume: 0.25 },
+  warning: { url: '/sounds/foley-warning.wav', volume: 0.35 },
+  success: { url: '/sounds/foley-success.wav', volume: 0.35 },
 };
 
 const audioBufferCache: Partial<Record<SoundEffectName, AudioBuffer>> = {};
@@ -133,7 +133,7 @@ export const unlockAudio = (): void => {
 let lastPlayTime = 0;
 
 export const playSound = (name: SoundEffectName, customVolume?: number): void => {
-  if (Date.now() - lastPlayTime < 80) return;
+  if (Date.now() - lastPlayTime < 110) return;
   lastPlayTime = Date.now();
   if (isMuted()) return;
 

@@ -2,10 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   Globe,
-  Mail,
   MapPin,
   ExternalLink,
-  Sparkles,
 } from 'lucide-react';
 import { Container } from '../common/Container';
 import { EVENT_CONFIG } from '../../config/event';
@@ -13,6 +11,7 @@ import compute50Logo from '../../assets/logos/compute 50 logo.png';
 import { HolographicContactSection } from './HolographicContactSection';
 import { WhatsAppIcon } from '../common/WhatsAppIcon';
 import { InstagramIcon } from '../common/InstagramIcon';
+import { GithubIcon } from '../common/GithubIcon';
 import { RepellingTeamOrb } from './RepellingTeamOrb';
 
 export const Footer: React.FC = () => {
@@ -86,10 +85,8 @@ export const Footer: React.FC = () => {
             </span>
           </Link>
 
-          <p className="font-mono text-[11px] tracking-[0.2em] text-[var(--accent)] uppercase font-bold flex items-center gap-2">
-            <Sparkles className="w-3 h-3 text-[var(--accent)]" />
+          <p className="font-mono text-[11px] tracking-[0.2em] text-[var(--accent)] uppercase font-bold flex items-center justify-center gap-2">
             <span>50 YEARS OF M.E. CSE · PSG COLLEGE OF TECHNOLOGY</span>
-            <Sparkles className="w-3 h-3 text-[var(--accent)]" />
           </p>
         </div>
 
@@ -106,7 +103,7 @@ export const Footer: React.FC = () => {
         <RepellingTeamOrb />
 
         {/* ========================================================= */}
-        {/* CENTER SOCIAL ICONS (Instagram, Mail, WhatsApp, Globe)    */}
+        {/* CENTER SOCIAL ICONS (Instagram, GitHub, WhatsApp, Globe)  */}
         {/* ========================================================= */}
         <div className="flex items-center justify-center gap-4 mb-8">
           {EVENT_CONFIG.instagramUrl && (
@@ -114,7 +111,7 @@ export const Footer: React.FC = () => {
               href={EVENT_CONFIG.instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Instagram @csea_psgtech"
+              aria-label="Instagram @cseapsgtech"
               className="p-2.5 rounded-full bg-[var(--bg-surface)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all shadow-xs group"
             >
               <InstagramIcon className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
@@ -122,13 +119,13 @@ export const Footer: React.FC = () => {
           )}
 
           <a
-            href={`mailto:${EVENT_CONFIG.contactEmail}?subject=${encodeURIComponent(
-              'Compute 50 General Enquiry'
-            )}`}
-            aria-label="Email CSEA Helpdesk"
+            href={EVENT_CONFIG.githubUrl || 'https://github.com/CSEA-PSGTech'}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub CSEA-PSGTech"
             className="p-2.5 rounded-full bg-[var(--bg-surface)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all shadow-xs group"
           >
-            <Mail className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
+            <GithubIcon className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
           </a>
 
           {EVENT_CONFIG.whatsappLink && (

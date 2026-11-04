@@ -11,7 +11,6 @@ import {
   Copy,
   Check,
   ArrowRight,
-  Sparkles,
   AlertCircle,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
@@ -156,7 +155,7 @@ export const CreateTeamForm: React.FC<CreateTeamFormProps> = ({ onSuccess }) => 
     return (
       <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-3xl p-6 sm:p-8 shadow-xl max-w-xl mx-auto space-y-6 text-center">
         <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 flex items-center justify-center mx-auto">
-          <Sparkles className="w-8 h-8" />
+          <Check className="w-8 h-8" />
         </div>
 
         <div>

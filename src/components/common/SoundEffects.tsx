@@ -30,16 +30,18 @@ export const SoundEffects: React.FC = () => {
       }
     };
 
-    window.addEventListener('pointerdown', handleFirstGesture, { once: true, passive: true });
+    window.addEventListener('click', handleFirstGesture, { once: true, passive: true });
     window.addEventListener('keydown', handleFirstGesture, { once: true, passive: true });
-    window.addEventListener('touchstart', handleFirstGesture, { once: true, passive: true });
 
     const isNoSound = (target: EventTarget | null): boolean => {
       if (!target || !(target instanceof Element)) return false;
       return Boolean(target.closest('[data-nosound]'));
     };
 
-    const handlePointerDown = (e: PointerEvent) => {
+    // Use standard 'click' event instead of 'pointerdown'.
+    // On mobile touch devices, 'pointerdown' fires on scroll/swipe touchstart,
+    // which caused accidental audio clicks while scrolling. 'click' only fires on intentional taps.
+    const handleClick = (e: MouseEvent) => {
       if (isMuted()) return;
       if (isNoSound(e.target)) return;
 
@@ -47,18 +49,17 @@ export const SoundEffects: React.FC = () => {
       if (el && !el.closest('[data-nosound]')) {
         lastGlobalClickTime = Date.now();
         unlockAudio();
-        // Play foley-tick.wav
+        // Play subtle foley-tick.wav
         soundTick();
       }
     };
 
-    window.addEventListener('pointerdown', handlePointerDown, { passive: true });
+    window.addEventListener('click', handleClick, { passive: true });
 
     return () => {
-      window.removeEventListener('pointerdown', handleFirstGesture);
+      window.removeEventListener('click', handleFirstGesture);
       window.removeEventListener('keydown', handleFirstGesture);
-      window.removeEventListener('touchstart', handleFirstGesture);
-      window.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('click', handleClick);
     };
   }, []);
 

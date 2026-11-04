@@ -7,7 +7,7 @@ import { Badge } from '../common/Badge';
 import { Reveal } from '../common/Reveal';
 import { EmptyState } from '../common/EmptyState';
 import { useReducedMotion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { Handshake } from 'lucide-react';
 import { Sponsor } from '../../types/hackathon';
 
 interface SponsorCardProps {
@@ -100,7 +100,7 @@ export const SponsorsSection: React.FC = () => {
               category="SPONSORS & PARTNERS"
               title="Sponsors & Partners Announcing Soon"
               subtitle={`We are actively onboarding sponsors for Compute 50. Interested in partnering? Reach out at ${EVENT_CONFIG.contactEmail}`}
-              icon={<Sparkles className="w-7 h-7" />}
+              icon={<Handshake className="w-7 h-7" />}
             />
           </Reveal>
         </Container>

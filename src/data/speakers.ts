@@ -1,8 +1,19 @@
 import { Speaker } from '../types/hackathon';
+import arulkumaraImg from '../assets/images/speakers/arulkumara.jpg';
 
 export const mockSpeakers: Speaker[] = [
   {
     id: 'spk-1',
+    name: 'Mr. Arulkumara B R',
+    role: 'AI Engineer',
+    organization: 'ARM Bangalore',
+    bio: 'AI Engineer at ARM Bangalore · BE CSE 2026 Alumnus',
+    image: arulkumaraImg,
+    type: 'judge',
+    confirmed: true,
+  },
+  {
+    id: 'spk-2',
     name: 'Dr. R. Sudha',
     role: 'Professor & Head, CSE',
     organization: 'PSG College of Technology',
@@ -12,7 +23,7 @@ export const mockSpeakers: Speaker[] = [
     confirmed: false,
   },
   {
-    id: 'spk-2',
+    id: 'spk-3',
     name: 'Vikram Sundaram',
     role: 'VP of Software Engineering',
     organization: 'Cloud Enterprise Systems',
@@ -22,7 +33,7 @@ export const mockSpeakers: Speaker[] = [
     confirmed: false,
   },
   {
-    id: 'spk-3',
+    id: 'spk-4',
     name: 'Ananya Ramakrishnan',
     role: 'Lead AI Researcher',
     organization: 'DeepVision AI Labs',
@@ -32,7 +43,7 @@ export const mockSpeakers: Speaker[] = [
     confirmed: false,
   },
   {
-    id: 'spk-4',
+    id: 'spk-5',
     name: 'Karthik Natarajan',
     role: 'Chief Technology Officer',
     organization: 'NextGen CyberSec',
@@ -42,7 +53,7 @@ export const mockSpeakers: Speaker[] = [
     confirmed: false,
   },
   {
-    id: 'spk-5',
+    id: 'spk-6',
     name: 'Priya Venkatesh',
     role: 'Senior Product Architect',
     organization: 'InnovateX Labs',
@@ -51,15 +62,4 @@ export const mockSpeakers: Speaker[] = [
     type: 'mentor',
     confirmed: false,
   },
-  {
-    id: 'spk-6',
-    name: 'To Be Announced',
-    role: 'Keynote Guest Specialist',
-    organization: 'Leading Tech Enterprise',
-    bio: 'Distinguished industry leader in distributed AI infrastructure.',
-    image: '',
-    type: 'speaker',
-    confirmed: false,
-  },
 ];
-

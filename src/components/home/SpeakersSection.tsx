@@ -7,7 +7,7 @@ import { Badge } from '../common/Badge';
 import { Reveal } from '../common/Reveal';
 import { EmptyState } from '../common/EmptyState';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
-import { Users, User, Layers, Sparkles, ChevronRight, ChevronLeft, RotateCcw } from 'lucide-react';
+import { Users, User, Layers, ChevronRight, ChevronLeft, RotateCcw } from 'lucide-react';
 import { soundReveal } from '../../lib/sound';
 
 const SpeakerAvatar: React.FC<{ name: string; image?: string; confirmed?: boolean }> = ({ name, image, confirmed }) => {
@@ -39,7 +39,7 @@ const SpeakerAvatar: React.FC<{ name: string; image?: string; confirmed?: boolea
         src={image}
         alt={name}
         onError={() => setImgError(true)}
-        className="w-24 h-24 rounded-full object-cover bg-[var(--bg-secondary)]"
+        className="w-24 h-24 rounded-full object-cover object-[center_20%] bg-[var(--bg-secondary)]"
       />
     </div>
   );
@@ -212,7 +212,7 @@ export const SpeakersSection: React.FC = () => {
             <SectionHeading
               badge="GUESTS & JUDGES"
               title="Guests & Judges"
-              subtitle="Our speakers and judges will be announced soon."
+              subtitle={allUnconfirmed ? "Our speakers and judges will be announced soon." : "Meet our distinguished industry leaders, alumni, and hackathon judges."}
             />
           </Reveal>
           <Reveal>
@@ -387,7 +387,7 @@ export const SpeakersSection: React.FC = () => {
                       <div className="snap-center shrink-0 w-[78vw] max-w-[290px]">
                         <div className="h-full min-h-[290px] rounded-2xl bg-[var(--bg-surface)] border-2 border-dashed border-[var(--border-color)] p-6 flex flex-col items-center justify-center text-center shadow-xs">
                           <div className="w-12 h-12 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-secondary)] mb-3">
-                            <Sparkles className="w-6 h-6 text-[var(--accent)]" />
+                            <User className="w-6 h-6 text-[var(--accent)]" />
                           </div>
                           <h4 className="text-lg font-bold text-[var(--text-primary)] mb-1">
                             +{unconfirmedGuests.length} More
@@ -655,7 +655,7 @@ export const SpeakersSection: React.FC = () => {
 
             {hasUnconfirmed && (
               <p className="text-sm text-[var(--text-secondary)] font-medium flex items-center gap-1.5 mt-1">
-                <Sparkles className="w-4 h-4 text-[var(--accent)] shrink-0" />
+                
                 <span>More guests will be announced soon</span>
               </p>
             )}

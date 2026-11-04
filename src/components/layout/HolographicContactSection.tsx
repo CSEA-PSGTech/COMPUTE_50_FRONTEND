@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
-import { RotateCcw, Phone, Sparkles } from 'lucide-react';
+import { RotateCcw, Phone } from 'lucide-react';
 import { soundReveal } from '../../lib/sound';
 
 export interface ContactPerson {
@@ -105,7 +105,7 @@ export const HolographicContactSection: React.FC = () => {
             }`}
           />
           <span>Replay Holograms</span>
-          <Sparkles className="w-2.5 h-2.5 text-[var(--accent)] opacity-70 group-hover/btn:opacity-100" />
+          
         </button>
       </div>
 

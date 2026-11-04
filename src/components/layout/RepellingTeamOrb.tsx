@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { Users } from 'lucide-react';
 import { soundSwitch, soundReveal, soundModalClose } from '../../lib/sound';
 import { HolographicDevTeamSection } from './HolographicDevTeamSection';
 
@@ -271,7 +271,7 @@ export const RepellingTeamOrb: React.FC = () => {
           className="group relative inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--bg-surface)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-xs font-mono font-bold text-[var(--accent)] transition-all shadow-xs cursor-pointer active:scale-95"
           aria-label={isRevealed ? 'Hide team hologram' : 'Meet the Team'}
         >
-          <Sparkles className="w-3.5 h-3.5 text-[var(--accent)] transition-transform group-hover:rotate-45" />
+          <Users className="w-3.5 h-3.5 text-[var(--accent)] transition-transform group-hover:scale-110" />
           <span className="tracking-wide uppercase font-bold text-xs">
             {isRevealed ? 'Hide Team' : 'Meet the Team'}
           </span>
@@ -309,7 +309,7 @@ export const RepellingTeamOrb: React.FC = () => {
               }}
             />
 
-            <Sparkles className="w-3.5 h-3.5 text-[var(--accent)] transition-transform group-hover:rotate-45" />
+            <Users className="w-3.5 h-3.5 text-[var(--accent)] transition-transform group-hover:scale-110" />
             <span className="tracking-wide">Meet the Team</span>
           </motion.button>
         )}

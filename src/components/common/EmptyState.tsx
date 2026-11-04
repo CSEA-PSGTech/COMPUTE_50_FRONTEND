@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from './Card';
-import { Sparkles } from 'lucide-react';
+import { Layers } from 'lucide-react';
 
 interface EmptyStateProps {
   title?: string;
@@ -24,7 +24,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
       <div className="relative z-10 flex flex-col items-center max-w-md mx-auto space-y-4">
         <div className="w-14 h-14 rounded-2xl bg-[var(--accent-muted)] border border-[var(--accent)]/30 flex items-center justify-center text-[var(--accent)] shrink-0">
-          {icon || <Sparkles className="w-7 h-7" />}
+          {icon || <Layers className="w-7 h-7" />}
         </div>
 
         <div className="space-y-1.5">
