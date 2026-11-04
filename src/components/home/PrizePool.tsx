@@ -109,7 +109,7 @@ export const PrizePool: React.FC = () => {
                       Ready to Win Big?
                     </h3>
                     <p className="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed">
-                      Register your team of 2–4 members and turn your engineering vision into reality.
+                      Register your team of 3–4 members and turn your engineering vision into reality.
                     </p>
                   </div>
 

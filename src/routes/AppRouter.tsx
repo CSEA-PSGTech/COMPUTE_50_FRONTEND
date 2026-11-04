@@ -15,7 +15,6 @@ import NotFound from '../pages/NotFound';
 import AuthCallback from '../pages/AuthCallback';
 import VerifyEmail from '../pages/VerifyEmail';
 import ResetPassword from '../pages/ResetPassword';
-import PaymentStatus from '../pages/PaymentStatus';
 
 export const AppRouter: React.FC = () => {
   return (
@@ -42,8 +41,6 @@ export const AppRouter: React.FC = () => {
         <Route path="/verify-email/:token" element={<VerifyEmail />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/payment" element={<PaymentStatus />} />
-        <Route path="/payment/status" element={<PaymentStatus />} />
 
         <Route
           path="/register"

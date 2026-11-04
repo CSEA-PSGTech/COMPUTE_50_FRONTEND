@@ -11,6 +11,7 @@ import { Card } from '../components/common/Card';
 import { LoadingState } from '../components/common/LoadingState';
 import { PasswordStrength } from '../components/auth/PasswordStrength';
 import { GOOGLE_REG_KEY, readGoogleRegistration } from '../lib/googleRegistration';
+import { validatePhotoFile } from '../lib/profilePhoto';
 
 interface CompleteRegistrationProps {
   email: string;
@@ -35,6 +36,25 @@ export const CompleteRegistration: React.FC<CompleteRegistrationProps> = ({ emai
     accommodation: false,
   });
 
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState('');
+  const photoInputRef = useRef<HTMLInputElement>(null);
+
+  const pickPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    const invalid = validatePhotoFile(file);
+    if (invalid) {
+      setError(invalid);
+      return;
+    }
+    setError('');
+    if (photoPreview) URL.revokeObjectURL(photoPreview);
+    setPhoto(file);
+    setPhotoPreview(URL.createObjectURL(file));
+  };
+
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm({ ...form, [k]: e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value });
 
@@ -47,6 +67,7 @@ export const CompleteRegistration: React.FC<CompleteRegistrationProps> = ({ emai
     }
     const phone = form.phone.replace(/\D/g, '').slice(-10);
     if (!/^\d{10}$/.test(phone)) return setError('Enter a valid 10-digit phone number.');
+    if (!photo) return setError('Please add a profile photo.');
     setSubmitting(true);
     try {
       await register({
@@ -64,7 +85,12 @@ export const CompleteRegistration: React.FC<CompleteRegistrationProps> = ({ emai
         discoveryMethod: 'Website',
       });
       sessionStorage.removeItem(GOOGLE_REG_KEY);
-      addToast('Account created! Welcome to Compute 50.', 'success');
+      try {
+        await authService.uploadProfilePhoto(photo);
+        addToast('Account created! Welcome to Compute 50.', 'success');
+      } catch {
+        addToast('Account created, but the photo upload failed. Please upload it from your profile.', 'info');
+      }
       navigate('/profile', { replace: true });
     } catch (err) {
       setError(getApiErrorMessage(err, 'Registration failed.'));
@@ -83,6 +109,31 @@ export const CompleteRegistration: React.FC<CompleteRegistrationProps> = ({ emai
         {error && <p className="text-xs font-mono text-red-500">{error}</p>}
         <form onSubmit={submit} className="space-y-3">
           <Input label="Full Name" value={form.name} onChange={set('name')} required />
+          <div className="space-y-1.5">
+            <span className="block text-sm font-medium text-[var(--text-primary)]">
+              Profile Photo <span className="text-red-500">*</span>
+            </span>
+            <div className="flex items-center gap-3">
+              <div className="w-14 h-14 rounded-full overflow-hidden bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center text-[10px] text-[var(--text-secondary)] shrink-0">
+                {photoPreview ? (
+                  <img src={photoPreview} alt="Selected profile" className="w-full h-full object-cover" />
+                ) : (
+                  'No photo'
+                )}
+              </div>
+              <Button type="button" variant="outline" size="sm" onClick={() => photoInputRef.current?.click()}>
+                {photo ? 'Change Photo' : 'Choose Photo'}
+              </Button>
+              <input
+                ref={photoInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={pickPhoto}
+              />
+            </div>
+            <p className="text-xs text-[var(--text-secondary)]">A clear photo of your face. JPEG, PNG or WebP, up to 5 MB.</p>
+          </div>
           <Input label="Phone (WhatsApp)" value={form.phone} onChange={set('phone')} required />
           <Input label="College" value={form.college} onChange={set('college')} required />
           <Input label="Department" value={form.department} onChange={set('department')} required />

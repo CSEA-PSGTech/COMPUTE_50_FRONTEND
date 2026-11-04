@@ -1,6 +1,5 @@
 import { authService } from './auth.service';
 import { hackathonService } from './hackathon.service';
-import { paymentService, isSuccessfulPayment } from './payment.service';
 import { API_CONFIG } from '../config/api';
 import type { UserProfile, HackathonTeam, PaymentStatus, RegistrationStatus } from '../types/user';
 import type { User } from '../types/auth';
@@ -67,16 +66,16 @@ export const userService = {
   getUserProfile: async (): Promise<UserProfile> => {
     const user = await authService.getProfile();
 
-    const [payments, hackathon] = await Promise.all([
-      paymentService.getMyPayments().catch(() => []),
+    const [receipts, hackathon] = await Promise.all([
+      authService.getPaymentReceipts().catch(() => []),
       hackathonService
         .getStatus()
         .catch(() => ({ exists: true, closed: false, registered: false })),
     ]);
 
+    const feeReceipt = receipts.find((r) => r.type === 'STUDENT');
     let paymentStatus: PaymentStatus;
-    if (user.generalFeePaid || payments.some(isSuccessfulPayment)) paymentStatus = 'Paid';
-    else if (payments.length > 0 && payments.every((p) => /ERROR|FAIL/i.test(String(p.status)))) paymentStatus = 'Failed';
+    if (user.generalFeePaid) paymentStatus = 'Paid';
     else paymentStatus = API_CONFIG.requireGeneralFee ? 'Pending' : 'Not Applicable';
 
     const registrationStatus: RegistrationStatus = hackathon.registered ? 'Confirmed' : 'Pending';
@@ -87,7 +86,7 @@ export const userService = {
       paymentStatus,
       accommodationStatus: user.accommodation ? 'Pending' : 'Not Requested',
       team: readLocalTeam(),
-      payments,
+      feeReceipt,
       hackathon,
     };
   },

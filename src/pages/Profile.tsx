@@ -4,7 +4,9 @@ import { Container } from '../components/common/Container';
 import { SectionHeading } from '../components/common/SectionHeading';
 import { PersonalDetails } from '../components/profile/PersonalDetails';
 import { EditProfileModal } from '../components/profile/EditProfileModal';
-import { TeamSection } from '../components/profile/TeamSection';
+import { WhatsAppGroupCard } from '../components/profile/WhatsAppGroupCard';
+import { ProfilePhotoCard } from '../components/profile/ProfilePhotoCard';
+import { hasProfilePhoto } from '../lib/profilePhoto';
 import { StatusCards } from '../components/profile/StatusCards';
 import { ProfileSkeleton } from '../components/common/Skeleton';
 import { PullToRefresh } from '../components/common/PullToRefresh';
@@ -77,18 +79,6 @@ export const Profile: React.FC = () => {
     }
   };
 
-  const handleCreateTeam = async (teamName: string) => {
-    if (profile) {
-      try {
-        const newTeam = await userService.createTeam(teamName, profile.user);
-        setProfile({ ...profile, team: newTeam });
-        addToast(`Team "${teamName}" created successfully!`, 'success');
-      } catch (err) {
-        addToast(getApiErrorMessage(err, 'Failed to create team.'), 'error');
-      }
-    }
-  };
-
   if (loading || !profile) {
     return <ProfileSkeleton />;
   }
@@ -101,7 +91,7 @@ export const Profile: React.FC = () => {
             <SectionHeading
               badge="DASHBOARD"
               title="Participant Profile"
-              subtitle="Manage your personal details, team composition, and registration status."
+              subtitle="Manage your personal details and hackathon registration status."
               align="left"
               className="mb-0 max-w-xl"
             />
@@ -126,11 +116,18 @@ export const Profile: React.FC = () => {
               updateUser(updated);
             }}
           />
+          {!hasProfilePhoto(profile.user.profilePhoto) && (
+            <ProfilePhotoCard onUploaded={fetchProfileData} />
+          )}
           <StatusCards registrationStatus={profile.registrationStatus} paymentStatus={profile.paymentStatus}
             onRegister={handleRegisterHackathon}
             hackathon={profile.hackathon}
+            feeReceipt={profile.feeReceipt}
+            user={profile.user}
+            onFeeUpdated={fetchProfileData}
+            photoOk={hasProfilePhoto(profile.user.profilePhoto)}
           />
-          <TeamSection team={profile.team} onCreateTeam={handleCreateTeam} />
+          <WhatsAppGroupCard registered={profile.registrationStatus === 'Confirmed'} />
         </div>
 
         <EditProfileModal

@@ -24,7 +24,7 @@ export const GuestRoute: React.FC<GuestRouteProps> = ({ children }) => {
 
   if (wasInitiallyAuthed) {
     const stateFrom = (location.state as { from?: { pathname?: string } })?.from?.pathname;
-    const target = stateFrom && stateFrom !== '/' && stateFrom !== '/login' ? stateFrom : '/register';
+    const target = stateFrom && stateFrom !== '/' && stateFrom !== '/login' ? stateFrom : '/profile';
     return <Navigate to={target} replace />;
   }
 

@@ -32,10 +32,10 @@ export const EVENT_CONFIG = {
 
     ],
   },
-  teamSize: '2 - 4 Members',
+  teamSize: '3 - 4 Members',
   // TO CONFIRM: Official announcement does not specify participant eligibility restrictions yet
   eligibility: 'Undergraduate and postgraduate students currently enrolled in recognized colleges or universities',
-  contactEmail: 'csea@psgtech.ac.in',
+  contactEmail: 'csea.cse@psgtech.ac.in',
   contactPhone: '+91 97897 10033 / +91 79048 86850',
   contactPhones: {
     general: '+91 97897 10033',
@@ -71,7 +71,7 @@ export const SUPPORT_CONTACTS: SupportContact[] = [
     contactName: 'CSEA Secretariat',
     role: 'Convenor & Helpdesk',
     phone: '+91 98765 43210',
-    email: 'csea@psgtech.ac.in',
+    email: 'csea.cse@psgtech.ac.in',
     description: 'General enquiries, schedule info, and event coordination',
   },
   {
@@ -80,7 +80,7 @@ export const SUPPORT_CONTACTS: SupportContact[] = [
     contactName: 'Registration Committee',
     role: 'Participant Coordination',
     phone: '+91 91234 56789',
-    email: 'csea@psgtech.ac.in',
+    email: 'csea.cse@psgtech.ac.in',
     description: 'Account signup, team formation, and roster updates',
   },
   {
@@ -89,7 +89,7 @@ export const SUPPORT_CONTACTS: SupportContact[] = [
     contactName: 'Hackathon Operations',
     role: 'Track & Logistics Lead',
     phone: '+91 98765 43210',
-    email: 'csea@psgtech.ac.in',
+    email: 'csea.cse@psgtech.ac.in',
     description: 'Track rules, challenge guidelines, and venue check-in',
   },
   {
@@ -97,7 +97,7 @@ export const SUPPORT_CONTACTS: SupportContact[] = [
     category: 'TECHNICAL SUPPORT',
     contactName: 'Tech & Platform Team',
     role: 'Portal Administration',
-    email: 'csea@psgtech.ac.in',
+    email: 'csea.cse@psgtech.ac.in',
     description: 'Website issues, authentication, and technical problems',
   },
 ];

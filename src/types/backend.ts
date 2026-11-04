@@ -60,6 +60,24 @@ export interface BackendProfileUpdateBody {
   discoveryMethod?: string;
 }
 
+export interface BackendPaymentReceipt {
+  fileName: string;
+  type: 'STUDENT' | 'WORKSHOP';
+  verified: boolean;
+  receiptNumber: string | null;
+  email: string | null;
+  mobile: string | null;
+  name: string | null;
+}
+
+export interface BackendReceiptUploadResponse {
+  message: string;
+  fileName: string;
+  fileUrl: string;
+  verified: boolean;
+  receiptData?: { receiptNumber: string | null; name: string | null; email: string | null; phone: string | null };
+}
+
 export interface BackendRound {
   title: string;
   description: string;
@@ -83,28 +101,4 @@ export interface BackendEvent {
   date?: string;
   closed?: boolean;
   timing?: string;
-}
-
-export type BackendPaymentStatus = 'SUCCESS' | 'ERROR' | 'PENDING' | 'FAILED' | string;
-
-export interface BackendPaymentRecord {
-  transactionId?: string;
-  transid?: string;
-  uniqueId?: string;
-  email?: string;
-  eventId?: string;
-  fee?: number;
-  amount?: number;
-  status?: BackendPaymentStatus;
-  createdAt?: string;
-  [key: string]: unknown;
-}
-
-export interface BackendRedirectPayload {
-  eventId?: string;
-  success?: boolean;
-  error?: string;
-  status?: BackendPaymentStatus;
-  transactionId?: string;
-  [key: string]: unknown;
 }

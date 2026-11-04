@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 import {
   Globe,
   MapPin,
@@ -9,12 +10,14 @@ import { Container } from '../common/Container';
 import { EVENT_CONFIG } from '../../config/event';
 import compute50Logo from '../../assets/logos/compute 50 logo.png';
 import { HolographicContactSection } from './HolographicContactSection';
-import { WhatsAppIcon } from '../common/WhatsAppIcon';
 import { InstagramIcon } from '../common/InstagramIcon';
 import { GithubIcon } from '../common/GithubIcon';
 import { RepellingTeamOrb } from './RepellingTeamOrb';
 
 export const Footer: React.FC = () => {
+  const { pathname } = useLocation();
+  const { isAuthenticated } = useAuth();
+  const hideRegister = isAuthenticated || pathname === '/register' || pathname === '/profile';
   return (
     <footer
       id="contact"
@@ -103,7 +106,7 @@ export const Footer: React.FC = () => {
         <RepellingTeamOrb />
 
         {/* ========================================================= */}
-        {/* CENTER SOCIAL ICONS (Instagram, GitHub, WhatsApp, Globe)  */}
+        {/* CENTER SOCIAL ICONS (Instagram, GitHub, Globe)  */}
         {/* ========================================================= */}
         <div className="flex items-center justify-center gap-4 mb-8">
           {EVENT_CONFIG.instagramUrl && (
@@ -127,18 +130,6 @@ export const Footer: React.FC = () => {
           >
             <GithubIcon className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
           </a>
-
-          {EVENT_CONFIG.whatsappLink && (
-            <a
-              href={EVENT_CONFIG.whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Official WhatsApp Announcement Channel"
-              className="p-2.5 rounded-full bg-[var(--bg-surface)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-secondary)] hover:text-[var(--accent)] transition-all shadow-xs group"
-            >
-              <WhatsAppIcon className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
-            </a>
-          )}
 
           <a
             href={EVENT_CONFIG.organizerWebsite}
@@ -169,9 +160,11 @@ export const Footer: React.FC = () => {
             <Link to="/#faq" className="hover:text-[var(--accent)] transition-colors">
               FAQs
             </Link>
-            <Link to="/register" className="text-[var(--accent)] font-bold hover:underline">
-              Register →
-            </Link>
+            {!hideRegister && (
+              <Link to="/register" className="text-[var(--accent)] font-bold hover:underline">
+                Register →
+              </Link>
+            )}
           </div>
 
           {/* Campus Location */}

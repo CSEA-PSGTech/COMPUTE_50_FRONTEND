@@ -14,6 +14,7 @@ import compute50HeroEmblem from '../../assets/logos/compute-50-hero-emblem.png';
 import { EVENT_CONFIG } from '../../config/event';
 import { home } from '../../data/content';
 import { ParticleBackground } from './ParticleBackground';
+import { useAuth } from '../../hooks/useAuth';
 
 const Compute50HeroLogo: React.FC<{ shouldReduceMotion: boolean | null }> = ({
   shouldReduceMotion,
@@ -219,6 +220,7 @@ const PresenterHeader: React.FC = () => {
 };
 
 export const Hero: React.FC = () => {
+  const { isAuthenticated } = useAuth();
   const eventDate = EVENT_CONFIG.isoDate;
   const countdown = useCountdown(eventDate);
   const shouldReduceMotion = useReducedMotion();
@@ -425,20 +427,22 @@ export const Hero: React.FC = () => {
 
           {/* 7. Action Buttons (Order: 7) */}
           <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center gap-4 pt-2">
-            <Link to="/register">
-              <Button
-                size="lg"
-                variant="primary"
-                className="bg-[var(--accent)] text-[var(--accent-text)] hover:bg-[var(--accent-hover)] font-extrabold shadow-[0_0_20px_rgba(var(--accent-rgb),0.35)] hover:shadow-[0_0_25px_rgba(var(--accent-rgb),0.55)] transition-all"
-                leftIcon={<UserPlus className="w-5 h-5 text-[var(--accent-text)]" />}
-                rightIcon={<ArrowRight className="w-5 h-5 text-[var(--accent-text)]" />}
-              >
-                Register Now
-              </Button>
-            </Link>
-            <Link to="/login">
-              <Button size="lg" variant="outline" leftIcon={<LogIn className="w-5 h-5" />}>
-                Participant Login
+            {!isAuthenticated && (
+              <Link to="/register">
+                <Button
+                  size="lg"
+                  variant="primary"
+                  className="bg-[var(--accent)] text-[var(--accent-text)] hover:bg-[var(--accent-hover)] font-extrabold shadow-[0_0_20px_rgba(var(--accent-rgb),0.35)] hover:shadow-[0_0_25px_rgba(var(--accent-rgb),0.55)] transition-all"
+                  leftIcon={<UserPlus className="w-5 h-5 text-[var(--accent-text)]" />}
+                  rightIcon={<ArrowRight className="w-5 h-5 text-[var(--accent-text)]" />}
+                >
+                  Register Now
+                </Button>
+              </Link>
+            )}
+            <Link to={isAuthenticated ? '/profile' : '/login'}>
+              <Button size="lg" variant={isAuthenticated ? 'primary' : 'outline'} leftIcon={<LogIn className="w-5 h-5" />}>
+                {isAuthenticated ? 'My Profile' : 'Participant Login'}
               </Button>
             </Link>
           </motion.div>

@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Container } from '../common/Container';
 import { SectionHeading } from '../common/SectionHeading';
 import { Calendar, Users, MapPin, Trophy, ArrowRight } from 'lucide-react';
 import { Reveal } from '../common/Reveal';
 import { EVENT_CONFIG } from '../../config/event';
+import { RegisterInfoModal } from './RegisterInfoModal';
 
 export const HackathonSection: React.FC = () => {
+  const [infoOpen, setInfoOpen] = useState(false);
   const cards = [
     {
       icon: <Calendar className="w-5 h-5 text-[var(--accent)] shrink-0" />,
@@ -38,7 +40,7 @@ export const HackathonSection: React.FC = () => {
             <SectionHeading
               badge="THE HACKATHON"
               title="Build. Compete. Win."
-              subtitle="Pick a track, form a team of 2 to 4, and turn a real-world problem into a working solution with mentors and judges beside you."
+              subtitle="Pick a track, form a team of 3 to 4, and turn a real-world problem into a working solution with mentors and judges beside you."
               className="mb-10"
             />
 
@@ -72,16 +74,18 @@ export const HackathonSection: React.FC = () => {
                 <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
               </Link>
 
-              <Link
-                to="/register"
-                className="inline-flex items-center gap-2 px-6 py-2.5 bg-[var(--bg-surface)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-primary)] dark:hover:text-[var(--accent)] font-semibold text-sm rounded-xl sm:rounded-full transition-all shadow-xs"
+              <button
+                type="button"
+                onClick={() => setInfoOpen(true)}
+                className="cursor-pointer inline-flex items-center gap-2 px-6 py-2.5 bg-[var(--bg-surface)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-primary)] dark:hover:text-[var(--accent)] font-semibold text-sm rounded-xl sm:rounded-full transition-all shadow-xs"
               >
                 <span>Register your team</span>
-              </Link>
+              </button>
             </div>
           </div>
         </Reveal>
       </Container>
+      <RegisterInfoModal isOpen={infoOpen} onClose={() => setInfoOpen(false)} />
     </section>
   );
 };

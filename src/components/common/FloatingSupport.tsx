@@ -6,11 +6,9 @@ import {
   X,
   Phone,
   Mail,
-  ExternalLink,
 } from 'lucide-react';
-import { EVENT_CONFIG, SUPPORT_CONTACTS } from '../../config/event';
+import { SUPPORT_CONTACTS } from '../../config/event';
 import { soundModalOpen, soundModalClose } from '../../lib/sound';
-import { WhatsAppIcon } from './WhatsAppIcon';
 
 export const FloatingSupport: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -160,31 +158,6 @@ export const FloatingSupport: React.FC = () => {
 
               {/* Scrollable Channels List */}
               <div className="p-4 sm:p-5 space-y-3.5 overflow-y-auto">
-                {/* 1. Official WhatsApp Community Banner */}
-                {EVENT_CONFIG.whatsappLink && (
-                  <a
-                    href={EVENT_CONFIG.whatsappLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-3 rounded-xl bg-[var(--accent-muted)] border border-[var(--accent)]/40 hover:border-[var(--accent)] flex items-center justify-between group transition-all"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-[#25D366]/20 border border-[#25D366]/40 flex items-center justify-center shrink-0">
-                        <WhatsAppIcon className="w-5 h-5" color="#25D366" />
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-mono font-bold text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors">
-                          Join WhatsApp Helpdesk
-                        </h4>
-                        <p className="text-[10px] text-[var(--text-secondary)]">
-                          Fastest response for queries & announcements
-                        </p>
-                      </div>
-                    </div>
-                    <ExternalLink className="w-4 h-4 text-[var(--accent)] shrink-0 transition-transform group-hover:translate-x-0.5" />
-                  </a>
-                )}
-
                 {/* 2. Direct Support Contacts */}
                 <div className="space-y-2">
                   <span className="text-[10px] font-mono font-bold text-[var(--text-secondary)] uppercase tracking-wider block">

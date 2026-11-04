@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 import { X, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { EVENT_CONFIG } from '../../config/event';
-import { WhatsAppIcon } from './WhatsAppIcon';
 
 export interface AnnouncementPopupProps {
   feePerPerson?: string;
@@ -13,6 +12,9 @@ export const AnnouncementPopup: React.FC<AnnouncementPopupProps> = ({
   feePerPerson = '₹150 / person',
 }) => {
   const [isVisible, setIsVisible] = useState<boolean>(true);
+  const { pathname } = useLocation();
+  const { isAuthenticated } = useAuth();
+  const hideRegister = isAuthenticated || pathname === '/register' || pathname === '/profile';
 
   useEffect(() => {
     try {
@@ -67,33 +69,19 @@ export const AnnouncementPopup: React.FC<AnnouncementPopupProps> = ({
               <span className="hidden sm:inline">Fee: </span>{feePerPerson}
             </span>
 
-            {/* Official WhatsApp Group Chip */}
-            {EVENT_CONFIG.whatsappLink && (
+            {/* Register CTA (Shown on md+ screens; hidden on mobile to avoid overflow and redundancy with mobile bottom bar) */}
+            {!hideRegister && (
               <>
-                <span className="text-[var(--border-color)] select-none">·</span>
-                <a
-                  href={EVENT_CONFIG.whatsappLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 border border-emerald-500/30 text-[10px] sm:text-[11px] font-mono font-semibold transition-colors shrink-0 whitespace-nowrap"
-                  title="Join official Compute 50 WhatsApp Group"
+                <span className="text-[var(--border-color)] select-none hidden md:inline">·</span>
+                <Link
+                  to="/register"
+                  className="hidden md:inline-flex items-center gap-1 text-[var(--text-primary)] hover:text-[var(--accent)] font-mono font-bold text-[11px] transition-colors shrink-0 group/link whitespace-nowrap"
                 >
-                  <WhatsAppIcon className="w-3 h-3 shrink-0" color="#25D366" />
-                  <span>WhatsApp</span>
-                  <span className="hidden lg:inline"> Group</span>
-                </a>
+                  <span>Register</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[var(--accent)] transition-transform duration-200 group-hover/link:translate-x-0.5" />
+                </Link>
               </>
             )}
-
-            {/* Register CTA (Shown on md+ screens; hidden on mobile to avoid overflow and redundancy with mobile bottom bar) */}
-            <span className="text-[var(--border-color)] select-none hidden md:inline">·</span>
-            <Link
-              to="/register"
-              className="hidden md:inline-flex items-center gap-1 text-[var(--text-primary)] hover:text-[var(--accent)] font-mono font-bold text-[11px] transition-colors shrink-0 group/link whitespace-nowrap"
-            >
-              <span>Register</span>
-              <ArrowRight className="w-3.5 h-3.5 text-[var(--accent)] transition-transform duration-200 group-hover/link:translate-x-0.5" />
-            </Link>
 
             {/* Subtle Divider */}
             <span className="w-[1px] h-3 bg-[var(--border-color)] shrink-0 select-none mx-0.5" />

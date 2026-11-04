@@ -7,6 +7,7 @@ import { authService } from '../../services/auth.service';
 import { getApiErrorMessage } from '../../services/api';
 import { API_CONFIG, fileUrl } from '../../config/api';
 import { useToast } from '../../hooks/useToast';
+import { hasProfilePhoto, validatePhotoFile } from '../../lib/profilePhoto';
 
 interface PersonalDetailsProps {
   user: User;
@@ -14,29 +15,21 @@ interface PersonalDetailsProps {
   onPhotoChange?: (url: string) => void;
 }
 
-const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-const MAX_BYTES = 5 * 1024 * 1024;
-
-const isDefaultPhoto = (url?: string) => !url || /Default_pfp/i.test(url);
-
 export const PersonalDetails: React.FC<PersonalDetailsProps> = ({ user, onEdit, onPhotoChange }) => {
   const { addToast } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
 
-  const showPhoto = !isDefaultPhoto(user.profilePhoto) && !imgFailed;
+  const showPhoto = hasProfilePhoto(user.profilePhoto) && !imgFailed;
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      addToast('Please choose a JPEG, PNG or WebP image.', 'error');
-      return;
-    }
-    if (file.size > MAX_BYTES) {
-      addToast('Image must be 5 MB or smaller.', 'error');
+    const invalid = validatePhotoFile(file);
+    if (invalid) {
+      addToast(invalid, 'error');
       return;
     }
     setUploading(true);

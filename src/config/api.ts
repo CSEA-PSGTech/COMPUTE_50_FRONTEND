@@ -8,8 +8,6 @@ export const API_CONFIG = {
 
   eventBaseUrl: trim(import.meta.env.VITE_EVENT_API_URL || GATEWAY),
 
-  paymentBaseUrl: trim(import.meta.env.VITE_PAYMENT_API_URL || GATEWAY),
-
   hackathonEventId: import.meta.env.VITE_HACKATHON_EVENT_ID || '',
 
   requireGeneralFee: (import.meta.env.VITE_REQUIRE_GENERAL_FEE ?? 'true') === 'true',
@@ -17,6 +15,10 @@ export const API_CONFIG = {
   sendBearer: (import.meta.env.VITE_SEND_BEARER ?? 'false') === 'true',
 
   profileEditEnabled: (import.meta.env.VITE_PROFILE_EDIT ?? 'false') === 'true',
+
+  participantWhatsappUrl: import.meta.env.VITE_PARTICIPANT_WHATSAPP_URL || '',
+
+  paymentPortalUrl: import.meta.env.VITE_PAYMENT_PORTAL_URL || '',
 
   timeoutMs: 15000,
 } as const;

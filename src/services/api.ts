@@ -14,7 +14,7 @@ export const setUnauthorizedHandler = (handler: UnauthorizedHandler | null) => {
   onUnauthorized = handler;
 };
 
-const createClient = (baseURL: string): AxiosInstance => {
+const createClient = (baseURL: string, { ownsSession = false } = {}): AxiosInstance => {
   const client = axios.create({
     baseURL,
     withCredentials: true,
@@ -41,7 +41,7 @@ const createClient = (baseURL: string): AxiosInstance => {
       const isAuthAttempt = /\/(login|login-google|register|onspot)$/.test(url);
       const sentToken = (error.config as { _sentToken?: string | null } | undefined)?._sentToken ?? null;
       const staleRequest = sentToken !== accessToken;
-      if (error.response?.status === 401 && !isAuthAttempt && !staleRequest) {
+      if (ownsSession && error.response?.status === 401 && !isAuthAttempt && !staleRequest) {
         accessToken = null;
         onUnauthorized?.();
       }
@@ -52,9 +52,8 @@ const createClient = (baseURL: string): AxiosInstance => {
   return client;
 };
 
-export const authApi = createClient(API_CONFIG.authBaseUrl);
+export const authApi = createClient(API_CONFIG.authBaseUrl, { ownsSession: true });
 export const eventApi = createClient(API_CONFIG.eventBaseUrl);
-export const paymentApi = createClient(API_CONFIG.paymentBaseUrl);
 
 export const apiClient = authApi;
 export default apiClient;

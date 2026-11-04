@@ -710,7 +710,7 @@ export const TeamRevealCards: React.FC<TeamRevealCardsProps> = ({
               Review Your Team
             </h2>
             <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">
-              Verify your team roster before final submission. Minimum 2 members required.
+              Verify your team roster before final submission. Minimum 3 members required.
             </p>
           </div>
 

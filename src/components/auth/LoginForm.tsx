@@ -28,7 +28,7 @@ export const LoginForm: React.FC = () => {
   const location = useLocation();
 
   const stateFrom = (location.state as { from?: { pathname?: string } })?.from?.pathname;
-  const targetDestination = stateFrom && stateFrom !== '/' && stateFrom !== '/login' ? stateFrom : '/register';
+  const targetDestination = stateFrom && stateFrom !== '/' && stateFrom !== '/login' ? stateFrom : '/profile';
   const isFromRegister = stateFrom === '/register';
 
   const validateForm = () => {

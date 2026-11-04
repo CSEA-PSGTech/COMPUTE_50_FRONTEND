@@ -21,7 +21,7 @@ export const mockFaqs: FAQItem[] = [
     category: 'Registration',
     question: 'What is the team size limit for the hackathon?',
     answer:
-      'Teams can consist of 2 to 4 members. Individual registration is supported, but team formation must be finalized before the deadline.',
+      'Teams can consist of 3 to 4 members. Everyone registers individually first — team formation opens after registrations close, and the details will be shared in the participants WhatsApp group.',
   },
   {
     id: 'faq-3',
