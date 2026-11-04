@@ -25,7 +25,6 @@ const FrozenOutlet: React.FC = () => {
 export const MainLayout: React.FC = () => {
   const location = useLocation();
   const shouldReduceMotion = useReducedMotion();
-  const isRegisterPage = location.pathname === '/register';
 
   return (
     <div className="min-h-screen flex flex-col bg-[var(--bg-main)] text-[var(--text-primary)] transition-colors pb-[140px] md:pb-0 relative overflow-x-hidden">
@@ -38,9 +37,10 @@ export const MainLayout: React.FC = () => {
         Skip to main content
       </a>
 
-      <AnnouncementPopup />
       <CursorGlow />
       <Navbar />
+      {/* Floating Announcement Capsule positioned cleanly below Navbar */}
+      <AnnouncementPopup />
 
       {/* Desktop Section Navigation Dots */}
       <SectionDotNav />
@@ -49,19 +49,22 @@ export const MainLayout: React.FC = () => {
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
-            initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -24 }}
-            animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -16 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -12 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="w-full"
           >
             <FrozenOutlet />
           </motion.div>
         </AnimatePresence>
       </main>
 
-      {!isRegisterPage && <Footer />}
+      <Footer />
+      {/* Floating Support widget on desktop & tablet */}
       <FloatingSupport />
       <BackToTop />
+      {/* Mobile persistent bottom bar with prominent Register CTA */}
       <BottomNav />
     </div>
   );

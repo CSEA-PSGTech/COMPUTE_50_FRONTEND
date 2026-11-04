@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Bell, X, ArrowRight } from 'lucide-react';
+import { X, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { EVENT_CONFIG } from '../../config/event';
 import { WhatsAppIcon } from './WhatsAppIcon';
 
 export interface AnnouncementPopupProps {
-  message?: string;
-  badge?: string;
+  feePerPerson?: string;
 }
 
 export const AnnouncementPopup: React.FC<AnnouncementPopupProps> = ({
-  message = 'Registrations for Compute 50 Hackathon are ONGOING! Form your team and register now.',
-  badge = 'NOTIFICATION',
+  feePerPerson = '₹150 / person',
 }) => {
   const [isVisible, setIsVisible] = useState<boolean>(true);
 
-  // Clear any stale sessionStorage lockout so the notification always appears
   useEffect(() => {
     try {
       sessionStorage.removeItem('announcement_dismissed');
@@ -28,99 +25,88 @@ export const AnnouncementPopup: React.FC<AnnouncementPopupProps> = ({
   return (
     <AnimatePresence>
       {isVisible && (
-        <motion.aside
-          initial={{ opacity: 0, y: -24, height: 0 }}
-          animate={{ opacity: 1, y: 0, height: 'auto' }}
-          exit={{ opacity: 0, y: -24, height: 0 }}
-          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          aria-label="Important Announcement"
-          className="relative z-50 bg-[var(--accent-muted)] border-b border-[var(--border-color)] text-[var(--text-primary)] px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs transition-colors shadow-xs overflow-hidden"
+        <aside
+          aria-label="Event Announcement"
+          className="relative z-30 w-full flex justify-center px-2 sm:px-3 pt-2 sm:pt-3 pb-1 pointer-events-none select-none transition-colors"
         >
-          {/* Subtle Ambient Shimmer Sweep */}
-          <div
-            className="absolute inset-0 animate-shimmer opacity-35 pointer-events-none"
-            aria-hidden="true"
-          />
+          {/* Centered Floating Cyber Capsule */}
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.96 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="pointer-events-auto relative inline-flex items-center gap-1.5 sm:gap-2.5 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-[var(--bg-surface)]/95 backdrop-blur-xl border border-[var(--border-color)] hover:border-[var(--accent)]/50 shadow-[0_4px_20px_rgba(0,0,0,0.18)] text-xs text-[var(--text-primary)] max-w-[calc(100vw-20px)] transition-all group shrink-0"
+          >
+            {/* Ambient Breathing Border Glow */}
+            <div
+              className="absolute -inset-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none -z-10"
+              style={{
+                boxShadow: '0 0 16px rgba(var(--accent-rgb), 0.25)',
+              }}
+            />
 
-          <div className="max-w-[1240px] mx-auto flex items-center justify-between gap-2 sm:gap-3 relative z-10 w-full overflow-hidden flex-nowrap">
-            {/* Left: Ringing Notification Bell & Badge */}
-            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-              {/* Ringing Notification Bell Icon */}
-              <div className="relative flex items-center justify-center p-1 rounded-full bg-[var(--accent)]/15 border border-[var(--accent)]/30 shrink-0">
-                <Bell className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[var(--accent)] animate-bell-ring" />
-                <span className="absolute -top-0.5 -right-0.5 flex h-2 w-2">
-                  <span className="animate-ping motion-reduce:animate-none absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent)]" />
-                </span>
-              </div>
-
-              {/* Notification Badge */}
-              <span className="bg-[var(--accent)] text-[var(--accent-text)] px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold tracking-wider shrink-0 uppercase font-mono shadow-[0_0_8px_rgba(var(--accent-rgb),0.3)]">
-                {badge}
+            {/* LIVE Radar Beacon + Label */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              <span className="relative flex h-2 w-2 shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <span className="font-mono font-extrabold text-[10px] sm:text-[11px] text-[var(--text-primary)] tracking-wider uppercase shrink-0">
+                <span className="hidden sm:inline">Round 1 </span>Live
               </span>
             </div>
 
-            {/* Center: Seamless Horizontal Marquee Track (Ultra-compact, single-line ticker) */}
-            <div
-              className="flex-1 min-w-0 overflow-hidden relative h-5 sm:h-6 flex items-center select-none"
-              style={{
-                maskImage: 'linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent)',
-                WebkitMaskImage: 'linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent)',
-              }}
-            >
-              <div className="animate-marquee-ticker flex items-center gap-6 whitespace-nowrap text-xs font-semibold text-[var(--text-primary)] tracking-tight">
-                <span className="flex items-center gap-6 shrink-0">
-                  <span>{message}</span>
-                  <span className="text-[var(--accent)] font-bold text-xs select-none">✦</span>
-                  <span>{message}</span>
-                  <span className="text-[var(--accent)] font-bold text-xs select-none">✦</span>
-                </span>
-                <span className="flex items-center gap-6 shrink-0" aria-hidden="true">
-                  <span>{message}</span>
-                  <span className="text-[var(--accent)] font-bold text-xs select-none">✦</span>
-                  <span>{message}</span>
-                  <span className="text-[var(--accent)] font-bold text-xs select-none">✦</span>
-                </span>
-              </div>
-            </div>
+            <span className="text-[var(--border-color)] select-none">·</span>
 
-            {/* Right: Register Now CTA, WhatsApp & Dismiss */}
-            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-              <Link
-                to="/register"
-                className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1 bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-zinc-950 rounded-full text-[10px] sm:text-[11px] font-mono font-bold tracking-tight shadow-xs transition-all hover:scale-105 cursor-pointer whitespace-nowrap shrink-0"
-              >
-                <span>Register</span>
-                <span className="hidden sm:inline"> Now</span>
-                <ArrowRight className="w-3 h-3" />
-              </Link>
+            {/* Fee Pill */}
+            <span className="font-mono text-[10px] sm:text-[11px] text-[var(--accent)] font-bold shrink-0">
+              <span className="hidden sm:inline">Fee: </span>{feePerPerson}
+            </span>
 
-              {EVENT_CONFIG.whatsappLink && (
+            {/* Official WhatsApp Group Chip */}
+            {EVENT_CONFIG.whatsappLink && (
+              <>
+                <span className="text-[var(--border-color)] select-none">·</span>
                 <a
                   href={EVENT_CONFIG.whatsappLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full text-[11px] font-medium shadow-xs transition-all cursor-pointer whitespace-nowrap shrink-0"
-                  title="PSG Tech Compute 50 WhatsApp Group"
+                  className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 rounded-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 hover:text-emerald-300 border border-emerald-500/25 text-[10px] sm:text-[11px] font-mono font-semibold transition-colors shrink-0"
+                  title="Join official Compute 50 WhatsApp Group"
                 >
-                  <WhatsAppIcon className="w-3.5 h-3.5" color="#ffffff" />
+                  <WhatsAppIcon className="w-3 h-3 shrink-0" color="#10b981" />
                   <span>WhatsApp</span>
+                  <span className="hidden md:inline"> Group</span>
                 </a>
-              )}
+              </>
+            )}
 
-              <button
-                type="button"
-                onClick={() => setIsVisible(false)}
-                className="p-1 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--border-color)]/40 transition-colors cursor-pointer shrink-0"
-                aria-label="Dismiss announcement"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-        </motion.aside>
+            {/* Register CTA (Shown on tablet and desktop, already present in sticky mobile BottomNav) */}
+            <span className="text-[var(--border-color)] select-none hidden sm:inline">·</span>
+            <Link
+              to="/register"
+              className="hidden sm:inline-flex items-center gap-1 text-[var(--text-primary)] hover:text-[var(--accent)] font-mono font-bold text-[11px] transition-colors shrink-0 group/link"
+            >
+              <span>Register</span>
+              <ArrowRight className="w-3.5 h-3.5 text-[var(--accent)] transition-transform duration-200 group-hover/link:translate-x-0.5" />
+            </Link>
+
+            {/* Subtle Divider */}
+            <span className="w-[1px] h-3 bg-[var(--border-color)] shrink-0 select-none mx-0.5" />
+
+            {/* Dismiss Button */}
+            <button
+              type="button"
+              onClick={() => setIsVisible(false)}
+              className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors p-0.5 rounded-full hover:bg-[var(--border-color)]/40 cursor-pointer shrink-0"
+              aria-label="Dismiss announcement"
+              title="Dismiss announcement"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </motion.div>
+        </aside>
       )}
     </AnimatePresence>
   );
 };
-

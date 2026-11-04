@@ -62,7 +62,6 @@ export const SpeakersSection: React.FC = () => {
   const allUnconfirmed = mockSpeakers.every((s) => s.confirmed === false);
   const confirmedGuests = mockSpeakers.filter((s) => s.confirmed !== false);
   const unconfirmedGuests = mockSpeakers.filter((s) => s.confirmed === false);
-  const hasUnconfirmed = unconfirmedGuests.length > 0;
 
   const totalCards = confirmedGuests.length + (unconfirmedGuests.length > 0 ? 1 : 0);
 
@@ -219,7 +218,7 @@ export const SpeakersSection: React.FC = () => {
             <EmptyState
               category="GUESTS & JUDGES"
               title="Guests & Judges Announcing Soon"
-              subtitle="Our speakers and judges will be announced soon."
+              subtitle={allUnconfirmed ? "Our speakers and judges will be announced soon." : "Meet our distinguished industry leaders, alumni, and hackathon judges."}
               icon={<Users className="w-7 h-7" />}
             />
           </Reveal>
@@ -424,7 +423,8 @@ export const SpeakersSection: React.FC = () => {
                 <div className="mt-4 flex flex-col items-center gap-3">
                   <button
                     type="button"
-                    onClick={handleToggleExpand}
+                    data-nosound="true"
+              onClick={handleToggleExpand}
                     className="px-6 py-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-primary)] dark:hover:text-[var(--accent)] text-xs font-semibold transition-all shadow-xs flex items-center gap-2 focus:outline-none cursor-pointer"
                   >
                     {expanded ? (
@@ -652,13 +652,6 @@ export const SpeakersSection: React.FC = () => {
                 </>
               )}
             </button>
-
-            {hasUnconfirmed && (
-              <p className="text-sm text-[var(--text-secondary)] font-medium flex items-center gap-1.5 mt-1">
-                
-                <span>More guests will be announced soon</span>
-              </p>
-            )}
           </div>
         </div>
       </Container>

@@ -170,7 +170,7 @@ export const Footer: React.FC = () => {
               FAQs
             </Link>
             <Link to="/register" className="text-[var(--accent)] font-bold hover:underline">
-              Register Squad →
+              Register →
             </Link>
           </div>
 

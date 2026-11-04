@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Card } from '../common/Card';
-import { Building2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Building2, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 import { Badge } from '../common/Badge';
+import { EVENT_CONFIG } from '../../config/event';
 
 export const AboutPsgTech: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -26,15 +27,26 @@ export const AboutPsgTech: React.FC = () => {
   return (
     <Card className="h-full flex flex-col justify-between space-y-6">
       <div className="space-y-5">
-        {/* Header - One Line Aligned Header */}
-        <div className="flex items-center gap-3 text-[var(--accent)] border-b border-[var(--border-color)] pb-3 min-h-[44px]">
-          <Building2 className="w-6 h-6 shrink-0" />
-          <h3 className="text-xl font-bold text-[var(--text-primary)]">
-            About PSG College of Technology
-          </h3>
+        {/* Header - Aligned Header matching CSEA card */}
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-color)] pb-3 min-h-[44px]">
+          <div className="flex items-center gap-2.5 text-[var(--accent)]">
+            <Building2 className="w-6 h-6 shrink-0" />
+            <h3 className="text-xl font-bold text-[var(--text-primary)]">
+              About PSG College of Technology
+            </h3>
+          </div>
+          <a
+            href={EVENT_CONFIG.collegeWebsite}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[var(--bg-secondary)] hover:bg-[var(--accent-muted)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[12px] font-semibold text-[var(--text-primary)] dark:hover:text-[var(--accent)] rounded-lg transition-colors shrink-0"
+          >
+            <span>Website</span>
+            <ExternalLink className="w-3 h-3" />
+          </a>
         </div>
 
-        {/* Stats / Chips moved to top as large numerals / chips */}
+        {/* Stats / Chips */}
         <div className="flex flex-wrap gap-2 pt-1">
           {psgChips.map((chip, idx) => (
             <Badge
@@ -62,7 +74,7 @@ export const AboutPsgTech: React.FC = () => {
       </div>
 
       {/* Read More Toggle */}
-      <div className="pt-4 border-t border-[var(--border-color)] mt-auto">
+      <div className="pt-4 border-t border-[var(--border-color)] mt-auto flex items-center justify-between">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[var(--accent)] hover:underline focus:outline-none cursor-pointer"

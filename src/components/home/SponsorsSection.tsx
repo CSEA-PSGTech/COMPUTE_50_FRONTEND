@@ -92,7 +92,6 @@ export const SponsorsSection: React.FC = () => {
             <SectionHeading
               badge="SPONSORS & PARTNERS"
               title="Backing Technical Excellence"
-              subtitle="Sponsors and partners will be announced soon."
             />
           </Reveal>
           <Reveal>
@@ -149,7 +148,6 @@ export const SponsorsSection: React.FC = () => {
           <SectionHeading
             badge="SPONSORS & PARTNERS"
             title="Backing Technical Excellence"
-            subtitle="Sponsors and partners will be announced soon."
             className="mb-10 text-center"
           />
         </Reveal>
