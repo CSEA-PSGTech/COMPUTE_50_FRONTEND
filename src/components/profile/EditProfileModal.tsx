@@ -3,6 +3,7 @@ import { Modal } from '../common/Modal';
 import { Input } from '../common/Input';
 import { Button } from '../common/Button';
 import { User } from '../../types/auth';
+import { YEAR_LABELS } from '../../services/mappers';
 
 interface EditProfileModalProps {
   isOpen: boolean;
@@ -58,6 +59,18 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
           onChange={(e) => setFormData({ ...formData, department: e.target.value })}
           required
         />
+        <label className="block text-sm font-medium text-[var(--text-primary)]">
+          Year
+          <select
+            value={formData.year}
+            onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+            className="mt-1.5 block w-full rounded-lg border border-[var(--border-color)] bg-[var(--bg-main)] px-3 py-2 text-sm"
+          >
+            {YEAR_LABELS.map((y) => (
+              <option key={y}>{y}</option>
+            ))}
+          </select>
+        </label>
         <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
           <Button variant="ghost" type="button" onClick={onClose}>
             Cancel

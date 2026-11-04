@@ -12,11 +12,15 @@ import Login from '../pages/Login';
 import Register from '../pages/Register';
 import Profile from '../pages/Profile';
 import NotFound from '../pages/NotFound';
+import AuthCallback from '../pages/AuthCallback';
+import VerifyEmail from '../pages/VerifyEmail';
+import ResetPassword from '../pages/ResetPassword';
+import PaymentStatus from '../pages/PaymentStatus';
 
 export const AppRouter: React.FC = () => {
   return (
     <Routes>
-      {/* Auth Layout for Login: Focused, Cyberpunk, No Footer, No Navbar */}
+
       <Route element={<AuthLayout />}>
         <Route
           path="/login"
@@ -28,14 +32,19 @@ export const AppRouter: React.FC = () => {
         />
       </Route>
 
-      {/* Main Layout for Standard Site Pages */}
       <Route element={<MainLayout />}>
-        {/* Public Routes */}
+
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/hackathon" element={<Hackathon />} />
 
-        {/* Authenticated Routes: User must login first before registering or accessing profile */}
+        <Route path="/auth" element={<AuthCallback />} />
+        <Route path="/verify-email/:token" element={<VerifyEmail />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/payment" element={<PaymentStatus />} />
+        <Route path="/payment/status" element={<PaymentStatus />} />
+
         <Route
           path="/register"
           element={
@@ -53,7 +62,6 @@ export const AppRouter: React.FC = () => {
           }
         />
 
-        {/* 404 Page */}
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

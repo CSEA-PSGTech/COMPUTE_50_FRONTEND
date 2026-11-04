@@ -1,73 +1,119 @@
-import { LoginCredentials, RegisterData, AuthResponse, User } from '../types/auth';
+import { authApi, setAccessToken } from './api';
+import { mapProfileToUser, buildProfileUpdate, yearToNumber } from './mappers';
+import type { LoginCredentials, RegisterData, AuthResponse, User } from '../types/auth';
+import type { BackendAuthResponse, BackendProfile } from '../types/backend';
+import { googleOAuthUrl } from '../config/api';
 
-const MOCK_USER: User = {
-  id: 'usr_mock_123',
-  name: 'Alex Rivera',
-  email: 'alex.rivera@psgtech.ac.in',
-  phone: '+91 9876543210',
-  college: 'PSG College of Technology',
-  department: 'Computer Science and Engineering',
-  year: '3rd Year',
-  role: 'leader',
-  teamId: 'team_c50_001',
+const BASE = '/api/auth/user';
+
+const handleAuthResponse = (data: BackendAuthResponse): AuthResponse => {
+  setAccessToken(data.accessToken);
+  return { user: mapProfileToUser(data.user), token: data.accessToken };
 };
 
-// Frontend Mock Authentication Service (easily replaceable with real API)
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 600));
-
-    const mockToken = 'mock_jwt_token_compute_50_' + Date.now();
-    const user: User = {
-      ...MOCK_USER,
-      email: credentials.email || MOCK_USER.email,
-    };
-
-    localStorage.setItem('compute50_auth_token', mockToken);
-    localStorage.setItem('compute50_user', JSON.stringify(user));
-
-    return { user, token: mockToken };
+    const { data } = await authApi.post<BackendAuthResponse>(`${BASE}/login`, credentials);
+    return handleAuthResponse(data);
   },
 
-  register: async (data: RegisterData): Promise<AuthResponse> => {
-    await new Promise((resolve) => setTimeout(resolve, 800));
+  sendVerificationEmail: async (email: string): Promise<string> => {
+    const { data } = await authApi.post<{ message: string }>(`${BASE}/verify-email`, { email });
+    return data.message;
+  },
 
-    const mockToken = 'mock_jwt_token_compute_50_' + Date.now();
-    const user: User = {
-      id: 'usr_' + Date.now(),
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      college: data.college,
-      department: data.department,
-      year: data.year,
-      role: 'user',
-    };
+  verifyEmailToken: async (token: string): Promise<{ email: string }> => {
+    const { data } = await authApi.get<{ message: string; email: string }>(
+      `${BASE}/verify-email/${encodeURIComponent(token)}`
+    );
+    return { email: data.email };
+  },
 
-    localStorage.setItem('compute50_auth_token', mockToken);
-    localStorage.setItem('compute50_user', JSON.stringify(user));
+  register: async (input: RegisterData): Promise<AuthResponse> => {
+    const source = input.source ?? 'email';
+    const { data } = await authApi.post<BackendAuthResponse>(`${BASE}/register`, {
+      email: input.email,
+      source,
+      ...(source === 'google' ? { googleId: input.googleId } : { password: input.password }),
+      name: input.name,
+      phone: input.phone,
+      college: input.college,
+      department: input.department,
+      year: yearToNumber(input.year),
+      referral: input.referral,
+      accomodation: input.accommodation,
+      discoveryMethod: input.discoveryMethod,
+    });
+    return handleAuthResponse(data);
+  },
 
-    return { user, token: mockToken };
+  startGoogleLogin: () => {
+    window.location.href = googleOAuthUrl();
+  },
+
+  completeGoogleLogin: async (email: string, googleId: string): Promise<AuthResponse> => {
+    const { data } = await authApi.post<BackendAuthResponse>(`${BASE}/login-google`, {
+      email,
+      googleId,
+      existing_user: true,
+    });
+    return handleAuthResponse(data);
+  },
+
+  forgotPassword: async (email: string): Promise<string> => {
+    const { data } = await authApi.post<{ message: string }>(`${BASE}/forgot-password`, { email });
+    return data.message;
+  },
+
+  resetPassword: async (token: string, newPassword: string): Promise<string> => {
+    const { data } = await authApi.post<{ message: string }>(`${BASE}/reset-password`, { token, newPassword });
+    return data.message;
   },
 
   getCurrentUser: async (): Promise<User | null> => {
-    const token = localStorage.getItem('compute50_auth_token');
-    const storedUser = localStorage.getItem('compute50_user');
-
-    if (!token || !storedUser) {
-      return null;
-    }
-
     try {
-      return JSON.parse(storedUser) as User;
+      const { data } = await authApi.get<{ user: BackendProfile }>(`${BASE}/profile`);
+      return mapProfileToUser(data.user);
     } catch {
       return null;
     }
   },
 
+  getProfile: async (): Promise<User> => {
+    const { data } = await authApi.get<{ user: BackendProfile }>(`${BASE}/profile`);
+    return mapProfileToUser(data.user);
+  },
+
+  updateProfile: async (current: User, changes: Partial<User>): Promise<User> => {
+    const { data } = await authApi.put<{ user: BackendProfile }>(
+      `${BASE}/profile`,
+      buildProfileUpdate(current, changes)
+    );
+
+    return { ...current, ...changes, ...mapProfileToUser({ ...data.user, email: data.user.email || current.email }) };
+  },
+
+  uploadProfilePhoto: async (file: File): Promise<string> => {
+    const form = new FormData();
+    form.append('profilePhoto', file);
+    const { data } = await authApi.post<{ profilePhoto: string }>(`${BASE}/profile-photo`, form);
+    return data.profilePhoto;
+  },
+
+  uploadIdCard: async (file: File): Promise<string> => {
+    const form = new FormData();
+    form.append('idCard', file);
+    const { data } = await authApi.post<{ idCardUrl: string }>(`${BASE}/id-card`, form);
+    return data.idCardUrl;
+  },
+
   logout: async (): Promise<void> => {
-    localStorage.removeItem('compute50_auth_token');
-    localStorage.removeItem('compute50_user');
+    try {
+      await authApi.post(`${BASE}/logout`);
+    } finally {
+      setAccessToken(null);
+
+      ['compute50_auth_token', 'compute50_user', 'compute50_profile'].forEach((k) => localStorage.removeItem(k));
+    }
   },
 };

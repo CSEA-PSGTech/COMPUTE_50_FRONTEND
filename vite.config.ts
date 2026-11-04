@@ -10,7 +10,7 @@ export default defineConfig({
     tailwindcss(),
   ],
   server: {
-    allowedHosts: ['subside-punch-alfalfa.ngrok-free.dev'],
+    allowedHosts: ['subside-punch-alfalfa.ngrok-free.dev','stir-identical-cubical.ngrok-free.dev','localhost'],
   },
   resolve: {
     alias: {

@@ -9,6 +9,13 @@ import { ToastContainer } from './components/common/ToastContainer';
 import { SoundEffects } from './components/common/SoundEffects';
 import { AppRouter } from './routes/AppRouter';
 
+try {
+  const ref = new URLSearchParams(window.location.search).get('ref');
+  if (ref) localStorage.setItem('compute50_referral', ref);
+} catch {
+
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

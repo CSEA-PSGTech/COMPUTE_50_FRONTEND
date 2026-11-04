@@ -1,6 +1,7 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 import { User, LoginCredentials, RegisterData } from '../types/auth';
 import { authService } from '../services/auth.service';
+import { getAccessToken, setUnauthorizedHandler } from '../services/api';
 
 export interface AuthContextType {
   user: User | null;
@@ -8,70 +9,73 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: LoginCredentials) => Promise<void>;
+
   register: (data: RegisterData) => Promise<void>;
+
+  completeGoogleLogin: (email: string, googleId: string) => Promise<void>;
   logout: () => Promise<void>;
+
+  refreshUser: () => Promise<User | null>;
   updateUser: (user: User) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const authVersion = useRef(0);
 
-  useEffect(() => {
-    const initAuth = async () => {
-      try {
-        const storedToken = localStorage.getItem('compute50_auth_token');
-        if (storedToken) {
-          const currentUser = await authService.getCurrentUser();
-          if (currentUser) {
-            setUser(currentUser);
-            setToken(storedToken);
-          } else {
-            localStorage.removeItem('compute50_auth_token');
-          }
-        }
-      } catch (err) {
-        console.error('Auth initialization error:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    initAuth();
+  const refreshUser = useCallback(async () => {
+    const version = authVersion.current;
+    const current = await authService.getCurrentUser();
+    if (version !== authVersion.current) return current;
+    setUser(current);
+    setToken(getAccessToken());
+    return current;
   }, []);
 
-  const login = async (credentials: LoginCredentials) => {
-    const response = await authService.login(credentials);
-    setUser(response.user);
-    setToken(response.token);
+  useEffect(() => {
+    setUnauthorizedHandler(() => {
+      setUser(null);
+      setToken(null);
+    });
+    refreshUser()
+      .catch((err) => console.error('Auth initialization error:', err))
+      .finally(() => setIsLoading(false));
+    return () => setUnauthorizedHandler(null);
+  }, [refreshUser]);
+
+  const applyLogin = async (promise: Promise<{ user: User; token: string }>) => {
+    const res = await promise;
+    authVersion.current += 1;
+    setToken(res.token);
+    setUser(res.user);
+
+    authService
+      .getProfile()
+      .then(setUser)
+      .catch(() => undefined);
   };
 
-  const register = async (data: RegisterData) => {
-    const response = await authService.register(data);
-    setUser(response.user);
-    setToken(response.token);
-  };
+  const login = (credentials: LoginCredentials) => applyLogin(authService.login(credentials));
+  const register = (data: RegisterData) => applyLogin(authService.register(data));
+  const completeGoogleLogin = (email: string, googleId: string) =>
+    applyLogin(authService.completeGoogleLogin(email, googleId));
 
   const logout = async () => {
+    authVersion.current += 1;
     setIsLoading(true);
     try {
       await authService.logout();
+    } catch (err) {
+      console.error('Logout request failed (clearing local session anyway):', err);
+    } finally {
       setUser(null);
       setToken(null);
-    } finally {
       setIsLoading(false);
     }
-  };
-
-  const updateUser = (updatedUser: User) => {
-    setUser(updatedUser);
   };
 
   return (
@@ -83,8 +87,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         isLoading,
         login,
         register,
+        completeGoogleLogin,
         logout,
-        updateUser,
+        refreshUser,
+        updateUser: setUser,
       }}
     >
       {children}

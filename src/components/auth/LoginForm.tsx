@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Eye, EyeOff, Mail, Lock, User, School, LogIn, UserPlus } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, LogIn, UserPlus } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { authService } from '../../services/auth.service';
+import { getApiErrorMessage } from '../../services/api';
 import { useToast } from '../../hooks/useToast';
 import { GoogleIcon } from '../common/GoogleIcon';
 import { DecryptText } from '../common/DecryptText';
@@ -12,8 +14,7 @@ export const LoginForm: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [name, setName] = useState<string>('');
-  const [college, setCollege] = useState<string>('');
+  const [verificationSent, setVerificationSent] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string | undefined }>({});
@@ -21,7 +22,7 @@ export const LoginForm: React.FC = () => {
   const [isExiting, setIsExiting] = useState<boolean>(false);
 
   const shouldReduceMotion = useReducedMotion();
-  const { login, register } = useAuth();
+  const { login } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,11 +30,6 @@ export const LoginForm: React.FC = () => {
   const stateFrom = (location.state as { from?: { pathname?: string } })?.from?.pathname;
   const targetDestination = stateFrom && stateFrom !== '/' && stateFrom !== '/login' ? stateFrom : '/register';
   const isFromRegister = stateFrom === '/register';
-
-
-
-
-
 
   const validateForm = () => {
     const errors: { [key: string]: string | undefined } = {};
@@ -43,18 +39,11 @@ export const LoginForm: React.FC = () => {
       errors.email = 'Please enter a valid email address';
     }
 
-    if (!password) {
-      errors.password = 'Password is required';
-    } else if (password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
-    }
-
-    if (isSignUp) {
-      if (!name.trim()) {
-        errors.name = 'Full name is required';
-      }
-      if (!college.trim()) {
-        errors.college = 'College name is required';
+    if (!isSignUp) {
+      if (!password) {
+        errors.password = 'Password is required';
+      } else if (password.length < 6) {
+        errors.password = 'Password must be at least 6 characters';
       }
     }
 
@@ -65,7 +54,7 @@ export const LoginForm: React.FC = () => {
   const handleAuthSuccess = (toastMsg: string) => {
     addToast(toastMsg, 'success');
     soundSuccess();
-    // Trigger sci-fi laser roll-up / ascending wipe (bottom to top)
+
     setIsExiting(true);
     setTimeout(() => {
       navigate(targetDestination, { replace: true });
@@ -85,46 +74,52 @@ export const LoginForm: React.FC = () => {
 
     try {
       if (isSignUp) {
-        await register({
-          name: name.trim(),
-          email: email.trim(),
-          college: college.trim(),
-          phone: '+91 9876543210',
-          department: 'Computer Science & Engineering',
-          year: '3rd Year',
-          password,
-        });
-        handleAuthSuccess('Account created! Welcome to Compute 50.');
+
+        await authService.sendVerificationEmail(email.trim());
+        setVerificationSent(true);
+        soundSuccess();
+        addToast('Verification link sent! Check your inbox to finish creating your account.', 'success');
+        setLoading(false);
       } else {
-        await login({ email, password });
+        await login({ email: email.trim(), password });
         handleAuthSuccess('Welcome back! Login successful.');
       }
-    } catch {
+    } catch (err) {
       soundWarning();
-      const msg = isSignUp
-        ? 'Account creation failed. Please try again.'
+      const fallback = isSignUp
+        ? 'Could not send verification email. Please try again.'
         : 'Invalid credentials. Please verify your email & password.';
+      const msg = getApiErrorMessage(err, fallback);
       setError(msg);
       addToast(msg, 'error');
       setLoading(false);
     }
   };
 
-  const handleGoogleAuth = async () => {
+  const handleGoogleAuth = () => {
+
     setLoading(true);
-    try {
-      await login({ email: 'google.user@psgtech.ac.in' });
-      handleAuthSuccess('Welcome! Authenticated with Google.');
-    } catch {
+    if (targetDestination) sessionStorage.setItem('compute50_post_login_redirect', targetDestination);
+    authService.startGoogleLogin();
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      setFieldErrors({ ...fieldErrors, email: 'Enter your email above first' });
       soundWarning();
-      addToast('Google authentication failed. Please try again.', 'error');
-      setLoading(false);
+      return;
+    }
+    try {
+      const msg = await authService.forgotPassword(email.trim());
+      addToast(msg || 'If the email exists, a password reset link has been sent.', 'info');
+    } catch (err) {
+      addToast(getApiErrorMessage(err, 'Failed to send password reset email.'), 'error');
     }
   };
 
   return (
     <div className="relative w-full max-w-[420px] mx-auto select-none">
-      {/* Sci-Fi Hologram Laser Scanline (Sweeping Down on Enter, Sweeping UP on Exit) */}
+
       {!shouldReduceMotion && (
         <motion.div
           initial={{ top: '0%', opacity: 1 }}
@@ -140,7 +135,7 @@ export const LoginForm: React.FC = () => {
           }
           className="absolute -left-3 -right-3 h-[2px] bg-[var(--accent)] shadow-[0_0_15px_var(--accent),0_0_30px_var(--accent),0_0_6px_#ffffff] z-30 pointer-events-none"
         >
-          {/* Laser light flare fan trailing behind the beam */}
+
           <div
             className={`w-full ${
               isExiting
@@ -151,7 +146,6 @@ export const LoginForm: React.FC = () => {
         </motion.div>
       )}
 
-      {/* Top Cyber Circuit Line with Yellow/Gold Accents (Expanding on Entry, Retracting on Exit) */}
       <div className="flex items-center justify-between mb-1.5 px-1 select-none">
         <div className="flex items-center gap-2">
           <span className="font-mono text-xs sm:text-sm font-black text-[var(--accent)] tracking-tighter animate-pulse">
@@ -177,7 +171,6 @@ export const LoginForm: React.FC = () => {
         </div>
       </div>
 
-      {/* Holographic Projected Cyber Card (Top-to-Bottom on Enter, Rolling UP on Exit) */}
       <motion.div
         initial={
           shouldReduceMotion
@@ -201,13 +194,12 @@ export const LoginForm: React.FC = () => {
         }
         className="relative bg-[var(--bg-surface)]/90 backdrop-blur-md border border-[var(--border-color)] rounded-2xl p-4 sm:p-5 shadow-2xl transition-all overflow-hidden"
       >
-        {/* Subtle Sci-Fi CRT scanline texture overlay */}
+
         <div
           className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.06] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.4)_50%)] bg-[length:100%_4px]"
           aria-hidden="true"
         />
 
-        {/* Redirect Notice if coming from Register */}
         {isFromRegister && (
           <div className="mb-3 py-1.5 px-3 rounded-xl bg-[var(--accent-muted)] border border-[var(--accent)]/40 text-[10px] sm:text-[11px] font-mono font-bold text-[var(--accent)] text-center flex items-center justify-center gap-2 shadow-[0_0_12px_rgba(var(--accent-rgb),0.12)]">
             <span className="relative flex h-1.5 w-1.5 shrink-0">
@@ -218,7 +210,6 @@ export const LoginForm: React.FC = () => {
           </div>
         )}
 
-        {/* Terminal Header with Decrypt Animation */}
         <div className="text-center mb-3">
           <h2 className="text-xl sm:text-2xl font-black font-mono tracking-[0.25em] text-[var(--text-primary)] uppercase flex items-center justify-center">
             <DecryptText
@@ -239,32 +230,7 @@ export const LoginForm: React.FC = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-2.5">
-          {/* Sign Up: Full Name */}
-          {isSignUp && (
-            <div className="space-y-1 text-left">
-              <div className="relative rounded-lg bg-[var(--bg-main)]/80 border border-[var(--border-color)] focus-within:border-[var(--accent)] focus-within:shadow-[0_0_10px_rgba(var(--accent-rgb),0.2)] transition-all">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[var(--text-secondary)]">
-                  <User className="w-3.5 h-3.5 text-[var(--accent)]" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="FULL NAME"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    if (fieldErrors.name) setFieldErrors({ ...fieldErrors, name: undefined });
-                  }}
-                  className="block w-full pl-9 pr-3.5 py-1.5 sm:py-2 bg-transparent text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/60 text-xs font-mono tracking-wider focus:outline-none"
-                  required
-                />
-              </div>
-              {fieldErrors.name && (
-                <p className="text-[10px] font-mono text-red-500 mt-0.5 pl-1">{fieldErrors.name}</p>
-              )}
-            </div>
-          )}
 
-          {/* Email Address */}
           <div className="space-y-1 text-left">
             <div className="relative rounded-lg bg-[var(--bg-main)]/80 border border-[var(--border-color)] focus-within:border-[var(--accent)] focus-within:shadow-[0_0_10px_rgba(var(--accent-rgb),0.2)] transition-all">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[var(--text-secondary)]">
@@ -287,32 +253,7 @@ export const LoginForm: React.FC = () => {
             )}
           </div>
 
-          {/* Sign Up: College Name */}
-          {isSignUp && (
-            <div className="space-y-1 text-left">
-              <div className="relative rounded-lg bg-[var(--bg-main)]/80 border border-[var(--border-color)] focus-within:border-[var(--accent)] focus-within:shadow-[0_0_10px_rgba(var(--accent-rgb),0.2)] transition-all">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[var(--text-secondary)]">
-                  <School className="w-3.5 h-3.5 text-[var(--accent)]" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="COLLEGE / INSTITUTION"
-                  value={college}
-                  onChange={(e) => {
-                    setCollege(e.target.value);
-                    if (fieldErrors.college) setFieldErrors({ ...fieldErrors, college: undefined });
-                  }}
-                  className="block w-full pl-9 pr-3.5 py-1.5 sm:py-2 bg-transparent text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]/60 text-xs font-mono tracking-wider focus:outline-none"
-                  required
-                />
-              </div>
-              {fieldErrors.college && (
-                <p className="text-[10px] font-mono text-red-500 mt-0.5 pl-1">{fieldErrors.college}</p>
-              )}
-            </div>
-          )}
-
-          {/* Password */}
+          {!isSignUp && (
           <div className="space-y-1 text-left">
             <div className="relative rounded-lg bg-[var(--bg-main)]/80 border border-[var(--border-color)] focus-within:border-[var(--accent)] focus-within:shadow-[0_0_10px_rgba(var(--accent-rgb),0.2)] transition-all">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[var(--text-secondary)]">
@@ -342,15 +283,19 @@ export const LoginForm: React.FC = () => {
               <p className="text-[10px] font-mono text-red-500 mt-0.5 pl-1">{fieldErrors.password}</p>
             )}
           </div>
+          )}
 
-          {/* Forgot Password (Sign-In Mode Only) */}
+          {isSignUp && verificationSent && (
+            <p className="text-[10px] font-mono text-[var(--accent)] text-center">
+              LINK SENT TO {email.toUpperCase()} — OPEN IT TO SET YOUR PASSWORD. (VALID 15 MIN)
+            </p>
+          )}
+
           {!isSignUp && (
             <div className="text-right">
               <button
                 type="button"
-                onClick={() => {
-                  addToast('Password reset instructions sent to your email address.', 'info');
-                }}
+                onClick={handleForgotPassword}
                 className="text-[10px] font-mono font-bold tracking-wider uppercase text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors cursor-pointer"
               >
                 FORGOT PASSWORD?
@@ -358,7 +303,6 @@ export const LoginForm: React.FC = () => {
             </div>
           )}
 
-          {/* Action Button: LOGIN / CREATE ACCOUNT */}
           <button
             type="submit"
             disabled={loading || isExiting}
@@ -369,7 +313,7 @@ export const LoginForm: React.FC = () => {
             ) : isSignUp ? (
               <>
                 <UserPlus className="w-3.5 h-3.5" />
-                <span>CREATE ACCOUNT</span>
+                <span>{verificationSent ? 'RESEND VERIFICATION LINK' : 'SEND VERIFICATION LINK'}</span>
               </>
             ) : (
               <>
@@ -380,7 +324,6 @@ export const LoginForm: React.FC = () => {
           </button>
         </form>
 
-        {/* Divider */}
         <div className="relative my-2.5 text-center select-none">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-[var(--border-color)]" />
@@ -390,7 +333,6 @@ export const LoginForm: React.FC = () => {
           </span>
         </div>
 
-        {/* Google Authentication */}
         <button
           type="button"
           onClick={handleGoogleAuth}
@@ -401,7 +343,6 @@ export const LoginForm: React.FC = () => {
           <span>{isSignUp ? 'SIGN UP WITH GOOGLE' : 'LOGIN WITH GOOGLE'}</span>
         </button>
 
-        {/* Mode Switch Footer */}
         <div className="text-center mt-2.5 pt-2 border-t border-[var(--border-color)]/70 text-[11px] font-mono">
           <span className="text-[var(--text-secondary)]">
             {isSignUp ? 'Already have an account ? ' : "Don't have an account ? "}
@@ -410,6 +351,7 @@ export const LoginForm: React.FC = () => {
             type="button"
             onClick={() => {
               setIsSignUp(!isSignUp);
+              setVerificationSent(false);
               setError('');
               setFieldErrors({});
             }}
@@ -420,7 +362,6 @@ export const LoginForm: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Bottom Cyber Circuit Line with Yellow/Gold Accents (Expanding on Entry) */}
       <div className="flex items-center justify-between mt-1.5 px-1 select-none">
         <div className="flex items-center gap-2">
           <span className="font-mono text-xs sm:text-sm font-black text-[var(--accent)] tracking-tighter animate-pulse">

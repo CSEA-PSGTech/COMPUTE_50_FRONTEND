@@ -26,3 +26,5 @@ dist-ssr
 # Repomix outputs
 repomix-output*
 repomix.config.json
+
+.env

@@ -14,10 +14,11 @@ import { useToast } from '../hooks/useToast';
 import { userService } from '../services/user.service';
 import { UserProfile } from '../types/user';
 import { User } from '../types/auth';
+import { getApiErrorMessage } from '../services/api';
 import { LogOut } from 'lucide-react';
 
 export const Profile: React.FC = () => {
-  const { user, logout, updateUser } = useAuth();
+  const { logout, updateUser } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
 
@@ -28,12 +29,6 @@ export const Profile: React.FC = () => {
   const fetchProfileData = useCallback(async () => {
     try {
       const data = await userService.getUserProfile();
-      if (user) {
-        data.user = {
-          ...user,
-          ...data.user,
-        };
-      }
       setProfile(data);
     } catch (err) {
       console.error('Failed to load profile:', err);
@@ -41,7 +36,7 @@ export const Profile: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [user, addToast]);
+  }, [addToast]);
 
   useEffect(() => {
     fetchProfileData();
@@ -62,24 +57,34 @@ export const Profile: React.FC = () => {
   const handleSaveProfile = async (updatedData: Partial<User>) => {
     if (profile) {
       try {
-        const updatedUser = await userService.updateUserProfile(updatedData);
+        const updatedUser = await userService.updateUserProfile(profile.user, updatedData);
         updateUser(updatedUser);
-        setProfile({ ...profile, user: updatedUser });
+        setProfile({ ...profile, user: { ...profile.user, ...updatedUser } });
         addToast('Profile updated successfully!', 'success');
-      } catch {
-        addToast('Failed to update profile.', 'error');
+      } catch (err) {
+        addToast(getApiErrorMessage(err, 'Failed to update profile.'), 'error');
       }
+    }
+  };
+
+  const handleRegisterHackathon = async () => {
+    try {
+      const msg = await userService.registerForHackathon();
+      addToast(msg || 'Registered for the hackathon!', 'success');
+      await fetchProfileData();
+    } catch (err) {
+      addToast(getApiErrorMessage(err, 'Registration failed.'), 'error');
     }
   };
 
   const handleCreateTeam = async (teamName: string) => {
     if (profile) {
       try {
-        const newTeam = await userService.createTeam(teamName);
+        const newTeam = await userService.createTeam(teamName, profile.user);
         setProfile({ ...profile, team: newTeam });
         addToast(`Team "${teamName}" created successfully!`, 'success');
-      } catch {
-        addToast('Failed to create team.', 'error');
+      } catch (err) {
+        addToast(getApiErrorMessage(err, 'Failed to create team.'), 'error');
       }
     }
   };
@@ -112,8 +117,19 @@ export const Profile: React.FC = () => {
         </div>
 
         <div className="space-y-8">
-          <PersonalDetails user={profile.user} onEdit={() => setIsEditModalOpen(true)} />
-          <StatusCards registrationStatus={profile.registrationStatus} />
+          <PersonalDetails
+            user={profile.user}
+            onEdit={() => setIsEditModalOpen(true)}
+            onPhotoChange={(url) => {
+              const updated = { ...profile.user, profilePhoto: url };
+              setProfile({ ...profile, user: updated });
+              updateUser(updated);
+            }}
+          />
+          <StatusCards registrationStatus={profile.registrationStatus} paymentStatus={profile.paymentStatus}
+            onRegister={handleRegisterHackathon}
+            hackathon={profile.hackathon}
+          />
           <TeamSection team={profile.team} onCreateTeam={handleCreateTeam} />
         </div>
 
@@ -129,11 +145,11 @@ export const Profile: React.FC = () => {
 
   return (
     <>
-      {/* Mobile: pull-to-refresh wrapping */}
+
       <div className="block md:hidden">
         <PullToRefresh onRefresh={handleRefresh}>{content}</PullToRefresh>
       </div>
-      {/* Desktop: regular rendering */}
+
       <div className="hidden md:block">{content}</div>
     </>
   );

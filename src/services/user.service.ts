@@ -1,9 +1,22 @@
-import { UserProfile, HackathonTeam } from '../types/user';
-import { User } from '../types/auth';
+import { authService } from './auth.service';
+import { hackathonService } from './hackathon.service';
+import { paymentService, isSuccessfulPayment } from './payment.service';
+import { API_CONFIG } from '../config/api';
+import type { UserProfile, HackathonTeam, PaymentStatus, RegistrationStatus } from '../types/user';
+import type { User } from '../types/auth';
+
+const readLocalTeam = (): HackathonTeam | undefined => {
+  try {
+    return (JSON.parse(localStorage.getItem('compute50_profile') || 'null') as UserProfile | null)?.team;
+  } catch {
+    return undefined;
+  }
+};
 
 const MOCK_PROFILE: UserProfile = {
   user: {
     id: 'usr_mock_123',
+    uniqueId: 'usr_mock_123',
     name: 'Alex Rivera',
     email: 'alex.rivera@psgtech.ac.in',
     phone: '+91 9876543210',
@@ -52,24 +65,38 @@ const MOCK_PROFILE: UserProfile = {
 
 export const userService = {
   getUserProfile: async (): Promise<UserProfile> => {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    const saved = localStorage.getItem('compute50_profile');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        // fallback
-      }
-    }
-    return MOCK_PROFILE;
+    const user = await authService.getProfile();
+
+    const [payments, hackathon] = await Promise.all([
+      paymentService.getMyPayments().catch(() => []),
+      hackathonService
+        .getStatus()
+        .catch(() => ({ exists: true, closed: false, registered: false })),
+    ]);
+
+    let paymentStatus: PaymentStatus;
+    if (user.generalFeePaid || payments.some(isSuccessfulPayment)) paymentStatus = 'Paid';
+    else if (payments.length > 0 && payments.every((p) => /ERROR|FAIL/i.test(String(p.status)))) paymentStatus = 'Failed';
+    else paymentStatus = API_CONFIG.requireGeneralFee ? 'Pending' : 'Not Applicable';
+
+    const registrationStatus: RegistrationStatus = hackathon.registered ? 'Confirmed' : 'Pending';
+
+    return {
+      user,
+      registrationStatus,
+      paymentStatus,
+      accommodationStatus: user.accommodation ? 'Pending' : 'Not Requested',
+      team: readLocalTeam(),
+      payments,
+      hackathon,
+    };
   },
 
-  updateUserProfile: async (updatedData: Partial<User>): Promise<User> => {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    const current = MOCK_PROFILE.user;
-    const newUser = { ...current, ...updatedData };
-    localStorage.setItem('compute50_user', JSON.stringify(newUser));
-    return newUser;
+  updateUserProfile: async (current: User, changes: Partial<User>): Promise<User> =>
+    authService.updateProfile(current, changes),
+
+  registerForHackathon: async (): Promise<string> => {
+    return hackathonService.register();
   },
 
   createTeam: async (teamName: string, leaderData?: Partial<User>): Promise<HackathonTeam> => {
@@ -98,14 +125,12 @@ export const userService = {
       ],
     };
 
-    // Store team in localStorage
     const storedTeams: Record<string, HackathonTeam> = JSON.parse(
       localStorage.getItem('compute50_teams') || '{}'
     );
     storedTeams[teamCode.toUpperCase()] = newTeam;
     localStorage.setItem('compute50_teams', JSON.stringify(storedTeams));
 
-    // Update active profile
     const currentProfile: UserProfile = {
       ...MOCK_PROFILE,
       user: { ...MOCK_PROFILE.user, ...leaderUser, role: 'leader', teamId: newTeam.id },
@@ -133,7 +158,6 @@ export const userService = {
     await new Promise((resolve) => setTimeout(resolve, 500));
     const cleanCode = teamCode.trim().toUpperCase();
 
-    // Check stored teams or mock profile
     const storedTeams: Record<string, HackathonTeam> = JSON.parse(
       localStorage.getItem('compute50_teams') || '{}'
     );
@@ -144,7 +168,7 @@ export const userService = {
       if (cleanCode === MOCK_PROFILE.team?.code.toUpperCase()) {
         targetTeam = { ...MOCK_PROFILE.team };
       } else {
-        // Dynamically instantiate team if code is valid syntax
+
         targetTeam = {
           id: 'team_' + Date.now(),
           name: `Squad ${cleanCode}`,
@@ -168,7 +192,6 @@ export const userService = {
       throw new Error(`Team ${targetTeam.name} is already full (maximum ${targetTeam.maxMembers} members).`);
     }
 
-    // Add new member
     const newMemberId = 'usr_' + Date.now();
     targetTeam.members.push({
       id: newMemberId,
@@ -185,7 +208,6 @@ export const userService = {
     storedTeams[cleanCode] = targetTeam;
     localStorage.setItem('compute50_teams', JSON.stringify(storedTeams));
 
-    // Update active profile
     const currentProfile: UserProfile = {
       ...MOCK_PROFILE,
       user: {
