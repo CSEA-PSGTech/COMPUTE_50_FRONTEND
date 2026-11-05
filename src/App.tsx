@@ -32,7 +32,7 @@ export const App: React.FC = () => {
       <ThemeProvider>
         <AuthProvider>
           <ToastProvider>
-            <BrowserRouter>
+            <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || '/'}>
               <SmoothScrollProvider>
                 <SoundEffects />
                 <AppRouter />

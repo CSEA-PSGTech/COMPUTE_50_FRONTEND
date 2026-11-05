@@ -5,7 +5,6 @@ import { Button } from '../common/Button';
 import { CheckCircle2 } from 'lucide-react';
 import { PaymentStatus, RegistrationStatus, UserProfile } from '../../types/user';
 import { FeePaymentCard } from './FeePaymentCard';
-import type { BackendPaymentReceipt } from '../../types/backend';
 import type { User } from '../../types/auth';
 
 interface StatusCardsProps {
@@ -13,7 +12,6 @@ interface StatusCardsProps {
   paymentStatus?: PaymentStatus;
   onRegister?: () => Promise<void>;
   hackathon?: UserProfile['hackathon'];
-  feeReceipt?: BackendPaymentReceipt;
   user?: User;
   onFeeUpdated?: () => Promise<void> | void;
   photoOk?: boolean;
@@ -31,7 +29,6 @@ export const StatusCards: React.FC<StatusCardsProps> = ({
   paymentStatus,
   onRegister,
   hackathon,
-  feeReceipt,
   user,
   onFeeUpdated,
   photoOk = true,
@@ -95,7 +92,7 @@ export const StatusCards: React.FC<StatusCardsProps> = ({
       </Card>
 
       {paymentStatus && (
-        <FeePaymentCard paymentStatus={paymentStatus} feeReceipt={feeReceipt} user={user} onUpdated={onFeeUpdated} />
+        <FeePaymentCard paymentStatus={paymentStatus} user={user} onUpdated={onFeeUpdated} />
       )}
     </div>
   );

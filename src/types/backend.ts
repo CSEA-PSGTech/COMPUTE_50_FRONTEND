@@ -60,24 +60,6 @@ export interface BackendProfileUpdateBody {
   discoveryMethod?: string;
 }
 
-export interface BackendPaymentReceipt {
-  fileName: string;
-  type: 'STUDENT' | 'WORKSHOP';
-  verified: boolean;
-  receiptNumber: string | null;
-  email: string | null;
-  mobile: string | null;
-  name: string | null;
-}
-
-export interface BackendReceiptUploadResponse {
-  message: string;
-  fileName: string;
-  fileUrl: string;
-  verified: boolean;
-  receiptData?: { receiptNumber: string | null; name: string | null; email: string | null; phone: string | null };
-}
-
 export interface BackendRound {
   title: string;
   description: string;
@@ -101,4 +83,28 @@ export interface BackendEvent {
   date?: string;
   closed?: boolean;
   timing?: string;
+}
+
+export interface BackendPaymentRecord {
+  _id: string;
+  receiptNo: string | null;
+  category: string;
+  amount: number;
+  time: string | null;
+  status: string;
+}
+
+export interface BackendPaymentRecordsResponse {
+  success: boolean;
+  data?: {
+    records: BackendPaymentRecord[];
+    summary: { totalRecords: number; totalAmount: number };
+  };
+}
+
+export interface BackendPaymentCheckResponse {
+  success: boolean;
+  message?: string;
+  generalFeePaid?: boolean;
+  summary?: { totalRegistrations: number; recordsCreated: number; recordsSkipped: number };
 }

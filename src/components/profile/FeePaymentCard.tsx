@@ -1,81 +1,96 @@
-import React, { useRef, useState } from 'react';
-import axios from 'axios';
-import { CreditCard, Upload, Clock, CheckCircle2 } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { CreditCard, RefreshCw, CheckCircle2, Clock, Info, AlertCircle } from 'lucide-react';
 import { Card } from '../common/Card';
 import { Badge } from '../common/Badge';
 import { Button } from '../common/Button';
 import { PaymentGuidelinesModal } from './PaymentGuidelinesModal';
-import { authService } from '../../services/auth.service';
+import { paymentService } from '../../services/payment.service';
 import { getApiErrorMessage } from '../../services/api';
-import { useToast } from '../../hooks/useToast';
 import type { PaymentStatus } from '../../types/user';
-import type { BackendPaymentReceipt } from '../../types/backend';
+import type { BackendPaymentRecord } from '../../types/backend';
 import type { User } from '../../types/auth';
 
 interface FeePaymentCardProps {
   paymentStatus: PaymentStatus;
-  feeReceipt?: BackendPaymentReceipt;
   user?: User;
   onUpdated?: () => Promise<void> | void;
 }
 
-const MAX_BYTES = 10 * 1024 * 1024;
+type StatusMessage = { type: 'success' | 'info' | 'error'; text: string } | null;
 
-export const FeePaymentCard: React.FC<FeePaymentCardProps> = ({ paymentStatus, feeReceipt, user, onUpdated }) => {
-  const { addToast } = useToast();
-  const inputRef = useRef<HTMLInputElement>(null);
+const formatDate = (value: string | null) =>
+  value
+    ? new Date(value).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
+    : '—';
+
+export const FeePaymentCard: React.FC<FeePaymentCardProps> = ({ paymentStatus, user, onUpdated }) => {
   const [showGuide, setShowGuide] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [checking, setChecking] = useState(false);
+  const [records, setRecords] = useState<BackendPaymentRecord[]>([]);
+  const [message, setMessage] = useState<StatusMessage>(null);
 
   const paid = paymentStatus === 'Paid';
   const notApplicable = paymentStatus === 'Not Applicable';
-  const awaitingVerification = !paid && !!feeReceipt && !feeReceipt.verified;
 
-  const badge = paid ? 'Paid' : notApplicable ? 'Not Required' : awaitingVerification ? 'Verifying' : 'Pending';
-  const badgeVariant = paid ? 'success' : notApplicable ? 'secondary' : awaitingVerification ? 'info' : 'warning';
-
-  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    e.target.value = '';
-    if (!file) return;
-    if (file.type !== 'application/pdf') {
-      addToast('Please upload the PDF receipt downloaded from the payment portal.', 'error');
-      return;
-    }
-    if (file.size > MAX_BYTES) {
-      addToast('Receipt must be 10 MB or smaller.', 'error');
-      return;
-    }
-    setUploading(true);
+  const loadRecords = useCallback(async () => {
     try {
-      const res = await authService.uploadFeeReceipt(file);
-      addToast(
-        res.verified
-          ? 'Receipt verified! Your registration fee is confirmed.'
-          : 'Receipt uploaded. It will be verified by the team shortly.',
-        res.verified ? 'success' : 'info'
-      );
-      await onUpdated?.();
-    } catch (err) {
-      const data = axios.isAxiosError(err) ? (err.response?.data as { message?: string; details?: string }) : undefined;
-      if (data?.message === 'Receipt already exists and is verified') {
-        addToast('Your receipt is already verified.', 'info');
+      setRecords(await paymentService.records());
+    } catch {
+      setRecords([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!notApplicable) loadRecords();
+  }, [notApplicable, loadRecords]);
+
+  const handleCheck = async () => {
+    setChecking(true);
+    setMessage(null);
+    try {
+      const res = await paymentService.check();
+      const total = res.summary?.totalRegistrations ?? 0;
+      if (res.generalFeePaid) {
+        setMessage({
+          type: 'success',
+          text: (res.summary?.recordsCreated ?? 0) > 0
+            ? 'Payment verified! Your registration fee is confirmed.'
+            : 'Your payment is already verified.',
+        });
         await onUpdated?.();
+      } else if (total === 0) {
+        setMessage({
+          type: 'info',
+          text: 'No payment found yet. If you just paid, wait a few minutes and check again.',
+        });
       } else {
-        addToast(data?.details || getApiErrorMessage(err, 'Could not upload the receipt.'), 'error');
+        setMessage({
+          type: 'info',
+          text: 'We found a payment, but not the registration fee. Contact the organizers if this looks wrong.',
+        });
       }
+      await loadRecords();
+    } catch (err) {
+      setMessage({ type: 'error', text: getApiErrorMessage(err, 'Could not check payment status. Please try again.') });
     } finally {
-      setUploading(false);
+      setChecking(false);
     }
   };
 
+  const badge = paid ? 'Paid' : notApplicable ? 'Not Required' : 'Pending';
+  const badgeVariant = paid ? 'success' : notApplicable ? 'secondary' : 'warning';
   const hint = paid
     ? 'Your registration fee is confirmed.'
     : notApplicable
     ? 'No registration fee is required.'
-    : awaitingVerification
-    ? 'Receipt received — it will be verified shortly. Registration unlocks once it is approved.'
-    : 'Pay on the college fee portal, then upload your receipt here.';
+    : 'Pay on the college fee portal, then click “Check Payment Status”.';
+
+  const messageStyles = {
+    success: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+    info: 'border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--text-secondary)]',
+    error: 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400',
+  };
+  const MessageIcon = message?.type === 'success' ? CheckCircle2 : message?.type === 'error' ? AlertCircle : Info;
 
   return (
     <Card className="p-5 sm:p-6">
@@ -84,40 +99,67 @@ export const FeePaymentCard: React.FC<FeePaymentCardProps> = ({ paymentStatus, f
           <div className="p-2.5 rounded-xl bg-[var(--accent-muted)] border border-[var(--accent)]/30 text-[var(--accent)] shrink-0">
             <CreditCard className="w-5 h-5" />
           </div>
-          <div>
-            <div className="flex items-center gap-2.5">
-              <h4 className="text-[15px] font-semibold text-[var(--text-primary)]">Registration Fee</h4>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+              <h4 className="text-[15px] font-semibold text-[var(--text-primary)] whitespace-nowrap">Registration Fee</h4>
               <Badge variant={badgeVariant}>{badge}</Badge>
             </div>
             <p className="text-[13px] text-[var(--text-secondary)] mt-0.5 leading-relaxed">{hint}</p>
-            {feeReceipt?.receiptNumber && (
-              <p className="mt-1.5 flex items-center gap-1.5 text-[12px] font-mono text-[var(--text-secondary)]">
-                {feeReceipt.verified ? (
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                ) : (
-                  <Clock className="w-3.5 h-3.5 text-amber-500" />
-                )}
-                Receipt #{feeReceipt.receiptNumber}
-              </p>
-            )}
           </div>
         </div>
 
         {!paid && !notApplicable && (
           <div className="flex flex-col sm:flex-row gap-2.5">
-            <Button size="sm" onClick={() => setShowGuide(true)}>
+            <Button size="sm" onClick={() => setShowGuide(true)} className="whitespace-nowrap">
               Pay Now
             </Button>
             <Button
               size="sm"
               variant="outline"
-              onClick={() => inputRef.current?.click()}
-              isLoading={uploading}
-              leftIcon={!uploading ? <Upload className="w-4 h-4" /> : undefined}
+              onClick={handleCheck}
+              isLoading={checking}
+              leftIcon={!checking ? <RefreshCw className="w-4 h-4" /> : undefined}
+              className="whitespace-nowrap"
             >
-              {feeReceipt ? 'Re-upload Receipt' : 'Upload Receipt'}
+              Check Payment Status
             </Button>
-            <input ref={inputRef} type="file" accept="application/pdf" className="hidden" onChange={handleFile} />
+          </div>
+        )}
+
+        {message && (
+          <div className={`flex items-start gap-2 rounded-xl border px-3.5 py-2.5 text-[13px] leading-relaxed ${messageStyles[message.type]}`}>
+            <MessageIcon className="w-4 h-4 mt-0.5 shrink-0" />
+            <span>{message.text}</span>
+          </div>
+        )}
+
+        {records.length > 0 && (
+          <div className="rounded-xl border border-[var(--border-color)] divide-y divide-[var(--border-color)]">
+            {records.map((r) => {
+              const ok = r.status === '1';
+              return (
+                <div key={r._id} className="flex items-center justify-between gap-3 px-3.5 py-2.5 text-[13px]">
+                  <div className="min-w-0">
+                    <p className="font-medium text-[var(--text-primary)] truncate">{r.category}</p>
+                    <p className="font-mono text-[11px] text-[var(--text-secondary)]">
+                      {formatDate(r.time)}
+                      {r.receiptNo ? ` · #${r.receiptNo}` : ''}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    <span className="font-mono font-semibold text-[var(--text-primary)]">₹{r.amount}</span>
+                    <span
+                      className={`inline-flex items-center gap-1 text-[11px] font-semibold ${
+                        ok ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'
+                      }`}
+                    >
+                      {ok ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Clock className="w-3.5 h-3.5" />}
+                      {ok ? 'Paid' : 'Pending'}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

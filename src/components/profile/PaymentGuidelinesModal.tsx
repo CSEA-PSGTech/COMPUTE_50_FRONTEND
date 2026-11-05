@@ -24,25 +24,25 @@ export const PaymentGuidelinesModal: React.FC<PaymentGuidelinesModalProps> = ({ 
 
   const steps: Array<[string, React.ReactNode]> = [
     ['Official portal only', 'Pay only through the PSG College of Technology fee portal using the button below.'],
-    ['Choose “Student”', 'Select the Student participant category. Your receipt must show “Student” to be accepted.'],
+    ['Choose “Student”', 'Select the Student participant category. Payments in the wrong category are not refunded.'],
     [
       'Use your Compute 50 details',
       <>
-        Enter the same name, email and mobile number as your Compute 50 account
+        Enter the same email and mobile number as your Compute 50 account
         {(name || email || phone) && (
           <span className="block mt-1 font-mono text-[12px] text-[var(--text-primary)]">
             {[name, email, phone].filter(Boolean).join(' · ')}
           </span>
         )}
-        Receipts are matched against these details.
+        Payments are matched to your account using these details — a different number means it won't show up.
       </>,
     ],
     [
-      'Upload your receipt here',
-      'After paying, download the PDF receipt from the portal, come back to this page and click “Upload Receipt”. Hackathon registration unlocks once it is verified.',
+      'Check your payment status',
+      'After paying, come back to this page and click “Check Payment Status”. Once it shows Paid, register for the hackathon.',
     ],
-    ['Pay only once', 'If your payment takes time to reflect, upload the receipt instead of paying again.'],
-    ['No refunds', 'All payments are non-refundable. Duplicate or edited receipts will lead to disqualification.'],
+    ['Pay only once', 'Payments can take a few minutes to reflect. Check again later instead of paying twice.'],
+    ['No refunds', 'All payments are non-refundable. Paying the fee alone does not register you — register for the hackathon afterwards.'],
   ];
 
   return createPortal(
@@ -65,7 +65,7 @@ export const PaymentGuidelinesModal: React.FC<PaymentGuidelinesModalProps> = ({ 
         <div className="flex gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 text-[12.5px] leading-relaxed text-amber-800 dark:text-amber-300">
           <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
           <span>
-            The portal opens in a new tab. Keep this tab open so you can upload your receipt right after paying.
+            The portal opens in a new tab. Keep this tab open so you can check your payment status right after paying.
           </span>
         </div>
 

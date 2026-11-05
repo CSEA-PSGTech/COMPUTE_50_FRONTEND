@@ -7,6 +7,7 @@ export const API_CONFIG = {
   authBaseUrl: trim(import.meta.env.VITE_AUTH_API_URL || GATEWAY),
 
   eventBaseUrl: trim(import.meta.env.VITE_EVENT_API_URL || GATEWAY),
+  paymentEventKey: (import.meta.env.VITE_PAYMENT_EVENT_KEY || '').trim(),
 
   hackathonEventId: import.meta.env.VITE_HACKATHON_EVENT_ID || '',
 

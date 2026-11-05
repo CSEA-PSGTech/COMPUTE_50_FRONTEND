@@ -22,7 +22,7 @@ const steps = [
   {
     icon: CreditCard,
     title: 'Pay the ₹150 registration fee',
-    text: 'Pay through the college fee portal, then upload the receipt on your profile.',
+    text: 'Pay through the college fee portal with the same phone number and email, then click “Check Payment Status” on your profile.',
   },
   {
     icon: ClipboardCheck,

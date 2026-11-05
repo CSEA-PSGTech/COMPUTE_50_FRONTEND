@@ -88,7 +88,6 @@ export const Register: React.FC = () => {
                 paymentStatus={profile.paymentStatus}
                 onRegister={handleRegister}
                 hackathon={profile.hackathon}
-                feeReceipt={profile.feeReceipt}
                 user={profile.user}
                 onFeeUpdated={load}
                 photoOk={hasProfilePhoto(profile.user.profilePhoto)}

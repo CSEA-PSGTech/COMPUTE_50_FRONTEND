@@ -77,12 +77,12 @@ export type SoundEffectName =
   | 'success';
 
 const SOUND_CONFIG: Record<SoundEffectName, { url: string; volume: number }> = {
-  tick: { url: '/sounds/foley-tick.wav', volume: 0.22 },
-  hover: { url: '/sounds/foley-hover.wav', volume: 0.12 },
-  swoosh: { url: '/sounds/foley-tick.wav', volume: 0.20 },
-  on: { url: '/sounds/foley-on.wav', volume: 0.25 },
-  warning: { url: '/sounds/foley-warning.wav', volume: 0.35 },
-  success: { url: '/sounds/foley-success.wav', volume: 0.35 },
+  tick: { url: `${import.meta.env.BASE_URL}sounds/foley-tick.wav`, volume: 0.22 },
+  hover: { url: `${import.meta.env.BASE_URL}sounds/foley-hover.wav`, volume: 0.12 },
+  swoosh: { url: `${import.meta.env.BASE_URL}sounds/foley-tick.wav`, volume: 0.20 },
+  on: { url: `${import.meta.env.BASE_URL}sounds/foley-on.wav`, volume: 0.25 },
+  warning: { url: `${import.meta.env.BASE_URL}sounds/foley-warning.wav`, volume: 0.35 },
+  success: { url: `${import.meta.env.BASE_URL}sounds/foley-success.wav`, volume: 0.35 },
 };
 
 const audioBufferCache: Partial<Record<SoundEffectName, AudioBuffer>> = {};

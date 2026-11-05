@@ -1,5 +1,4 @@
 import { User } from './auth';
-import type { BackendPaymentReceipt } from './backend';
 
 export type RegistrationStatus = 'Pending' | 'Confirmed' | 'Waitlisted' | 'Cancelled';
 export type PaymentStatus = 'Pending' | 'Paid' | 'Not Applicable' | 'Failed';
@@ -32,9 +31,7 @@ export interface UserProfile {
   registrationStatus: RegistrationStatus;
   paymentStatus: PaymentStatus;
   accommodationStatus: AccommodationStatus;
-  receiptUrl?: string;
   team?: HackathonTeam;
-  feeReceipt?: BackendPaymentReceipt;
   hackathon?: {
     exists: boolean;
     closed: boolean;

@@ -28,7 +28,6 @@ const MOCK_PROFILE: UserProfile = {
   registrationStatus: 'Confirmed',
   paymentStatus: 'Paid',
   accommodationStatus: 'Confirmed',
-  receiptUrl: '#',
   team: {
     id: 'team_c50_001',
     name: 'CyberPunks 50',
@@ -66,14 +65,10 @@ export const userService = {
   getUserProfile: async (): Promise<UserProfile> => {
     const user = await authService.getProfile();
 
-    const [receipts, hackathon] = await Promise.all([
-      authService.getPaymentReceipts().catch(() => []),
-      hackathonService
-        .getStatus()
-        .catch(() => ({ exists: true, closed: false, registered: false })),
-    ]);
+    const hackathon = await hackathonService
+      .getStatus()
+      .catch(() => ({ exists: true, closed: false, registered: false }));
 
-    const feeReceipt = receipts.find((r) => r.type === 'STUDENT');
     let paymentStatus: PaymentStatus;
     if (user.generalFeePaid) paymentStatus = 'Paid';
     else paymentStatus = API_CONFIG.requireGeneralFee ? 'Pending' : 'Not Applicable';
@@ -86,7 +81,6 @@ export const userService = {
       paymentStatus,
       accommodationStatus: user.accommodation ? 'Pending' : 'Not Requested',
       team: readLocalTeam(),
-      feeReceipt,
       hackathon,
     };
   },

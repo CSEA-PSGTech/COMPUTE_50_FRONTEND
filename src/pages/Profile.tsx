@@ -122,7 +122,6 @@ export const Profile: React.FC = () => {
           <StatusCards registrationStatus={profile.registrationStatus} paymentStatus={profile.paymentStatus}
             onRegister={handleRegisterHackathon}
             hackathon={profile.hackathon}
-            feeReceipt={profile.feeReceipt}
             user={profile.user}
             onFeeUpdated={fetchProfileData}
             photoOk={hasProfilePhoto(profile.user.profilePhoto)}

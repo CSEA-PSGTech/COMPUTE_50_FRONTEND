@@ -4,8 +4,6 @@ import type { LoginCredentials, RegisterData, AuthResponse, User } from '../type
 import type {
   BackendAuthResponse,
   BackendProfile,
-  BackendPaymentReceipt,
-  BackendReceiptUploadResponse,
 } from '../types/backend';
 import { googleOAuthUrl } from '../config/api';
 
@@ -110,21 +108,6 @@ export const authService = {
     form.append('idCard', file);
     const { data } = await authApi.post<{ idCardUrl: string }>(`${BASE}/id-card`, form);
     return data.idCardUrl;
-  },
-
-  uploadFeeReceipt: async (file: File): Promise<BackendReceiptUploadResponse> => {
-    const form = new FormData();
-    form.append('receipt', file);
-    form.append('type', 'STUDENT');
-    const { data } = await authApi.post<BackendReceiptUploadResponse>(`${BASE}/upload-payment-receipt`, form, {
-      timeout: 60000,
-    });
-    return data;
-  },
-
-  getPaymentReceipts: async (): Promise<BackendPaymentReceipt[]> => {
-    const { data } = await authApi.get<{ receipts: BackendPaymentReceipt[] }>(`${BASE}/payment-receipts`);
-    return data.receipts ?? [];
   },
 
   logout: async (): Promise<void> => {
