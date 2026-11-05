@@ -1,25 +1,33 @@
 const trim = (url: string) => url.replace(/\/+$/, '');
 
-const GATEWAY = trim(import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000');
+const runtimeEnv: Record<string, string | undefined> =
+  (typeof window !== 'undefined' && (window as unknown as { __ENV__?: Record<string, string> }).__ENV__) || {};
+
+const env = (name: string, buildValue: string | undefined): string | undefined => {
+  const value = runtimeEnv[name];
+  return value !== undefined && value !== '' ? value : buildValue;
+};
+
+const GATEWAY = trim(env('VITE_API_BASE_URL', import.meta.env.VITE_API_BASE_URL) || 'http://localhost:5000');
 
 export const API_CONFIG = {
 
-  authBaseUrl: trim(import.meta.env.VITE_AUTH_API_URL || GATEWAY),
+  authBaseUrl: trim(env('VITE_AUTH_API_URL', import.meta.env.VITE_AUTH_API_URL) || GATEWAY),
 
-  eventBaseUrl: trim(import.meta.env.VITE_EVENT_API_URL || GATEWAY),
-  paymentEventKey: (import.meta.env.VITE_PAYMENT_EVENT_KEY || '').trim(),
+  eventBaseUrl: trim(env('VITE_EVENT_API_URL', import.meta.env.VITE_EVENT_API_URL) || GATEWAY),
+  paymentEventKey: (env('VITE_PAYMENT_EVENT_KEY', import.meta.env.VITE_PAYMENT_EVENT_KEY) || '').trim(),
 
-  hackathonEventId: import.meta.env.VITE_HACKATHON_EVENT_ID || '',
+  hackathonEventId: env('VITE_HACKATHON_EVENT_ID', import.meta.env.VITE_HACKATHON_EVENT_ID) || '',
 
-  requireGeneralFee: (import.meta.env.VITE_REQUIRE_GENERAL_FEE ?? 'true') === 'true',
+  requireGeneralFee: (env('VITE_REQUIRE_GENERAL_FEE', import.meta.env.VITE_REQUIRE_GENERAL_FEE) ?? 'true') === 'true',
 
-  sendBearer: (import.meta.env.VITE_SEND_BEARER ?? 'false') === 'true',
+  sendBearer: (env('VITE_SEND_BEARER', import.meta.env.VITE_SEND_BEARER) ?? 'false') === 'true',
 
-  profileEditEnabled: (import.meta.env.VITE_PROFILE_EDIT ?? 'false') === 'true',
+  profileEditEnabled: (env('VITE_PROFILE_EDIT', import.meta.env.VITE_PROFILE_EDIT) ?? 'false') === 'true',
 
-  participantWhatsappUrl: import.meta.env.VITE_PARTICIPANT_WHATSAPP_URL || '',
+  participantWhatsappUrl: env('VITE_PARTICIPANT_WHATSAPP_URL', import.meta.env.VITE_PARTICIPANT_WHATSAPP_URL) || '',
 
-  paymentPortalUrl: import.meta.env.VITE_PAYMENT_PORTAL_URL || '',
+  paymentPortalUrl: env('VITE_PAYMENT_PORTAL_URL', import.meta.env.VITE_PAYMENT_PORTAL_URL) || '',
 
   timeoutMs: 15000,
 } as const;

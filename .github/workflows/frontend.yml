@@ -3,6 +3,20 @@ name: Frontend
 on:
   push:
     branches: [main]
+    paths:
+      - "src/**"
+      - "public/**"
+      - "docker/**"
+      - "index.html"
+      - "package.json"
+      - "package-lock.json"
+      - "vite.config.ts"
+      - "tsconfig*.json"
+      - "Dockerfile"
+      - ".dockerignore"
+      - "nginx.conf"
+      - "security-headers.conf"
+      - ".github/workflows/frontend.yml"
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -11,16 +25,11 @@ concurrency:
   group: frontend-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
-  packages: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      VITE_API_BASE_URL: https://kriyabackend.psgtech.ac.in/inf
       VITE_BASE_PATH: ${{ vars.VITE_BASE_PATH || '/compute50/' }}
     steps:
       - uses: actions/checkout@v4
@@ -43,11 +52,11 @@ jobs:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
-
-      - id: name
-        run: echo "image=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
 
       - uses: docker/setup-buildx-action@v3
 
@@ -57,20 +66,28 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: docker/build-push-action@v6
+      - name: Build and push
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: |
-            ${{ steps.name.outputs.image }}:latest
-            ${{ steps.name.outputs.image }}:${{ github.sha }}
           build-args: |
             VITE_BASE_PATH=${{ vars.VITE_BASE_PATH || '/compute50/' }}
-            VITE_API_BASE_URL=${{ vars.VITE_API_BASE_URL || 'https://kriyabackend.psgtech.ac.in/inf' }}
-            VITE_HACKATHON_EVENT_ID=${{ vars.VITE_HACKATHON_EVENT_ID || 'EVNT01' }}
-            VITE_REQUIRE_GENERAL_FEE=${{ vars.VITE_REQUIRE_GENERAL_FEE || 'true' }}
-            VITE_PAYMENT_PORTAL_URL=${{ vars.VITE_PAYMENT_PORTAL_URL }}
-            VITE_PARTICIPANT_WHATSAPP_URL=${{ vars.VITE_PARTICIPANT_WHATSAPP_URL }}
-            VITE_PAYMENT_EVENT_KEY=${{ vars.VITE_PAYMENT_EVENT_KEY || 'compute50' }}
+          tags: |
+            ghcr.io/csea-psgtech/compute_50_frontend:latest
+            ghcr.io/csea-psgtech/compute_50_frontend:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Trigger Jenkins deployment
+        env:
+          JENKINS_WEBHOOK_TOKEN: ${{ secrets.JENKINS_WEBHOOK_TOKEN }}
+        run: |
+          if [ -z "$JENKINS_WEBHOOK_TOKEN" ]; then
+            echo "JENKINS_WEBHOOK_TOKEN not set - skipping deploy trigger"
+            exit 0
+          fi
+          curl -fsS -k -X POST \
+            "https://jendc.psgtech.ac.in/generic-webhook-trigger/invoke?token=${JENKINS_WEBHOOK_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '{"service":"compute50-frontend","image_tag":"${{ github.sha }}"}'

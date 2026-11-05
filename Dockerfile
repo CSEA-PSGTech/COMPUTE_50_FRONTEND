@@ -1,4 +1,4 @@
-FROM node:22-alpine AS build
+FROM node:22-alpine AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json ./
@@ -7,37 +7,25 @@ RUN npm ci
 COPY . .
 
 ARG VITE_BASE_PATH=/compute50/
-ARG VITE_API_BASE_URL=https://kriyabackend.psgtech.ac.in/inf
-ARG VITE_HACKATHON_EVENT_ID=EVNT01
-ARG VITE_REQUIRE_GENERAL_FEE=true
-ARG VITE_PAYMENT_PORTAL_URL=
-ARG VITE_PARTICIPANT_WHATSAPP_URL=
-ARG VITE_PROFILE_EDIT=false
-ARG VITE_SEND_BEARER=false
-ARG VITE_PAYMENT_EVENT_KEY=compute50
-
-ENV VITE_BASE_PATH=$VITE_BASE_PATH \
-    VITE_API_BASE_URL=$VITE_API_BASE_URL \
-    VITE_HACKATHON_EVENT_ID=$VITE_HACKATHON_EVENT_ID \
-    VITE_REQUIRE_GENERAL_FEE=$VITE_REQUIRE_GENERAL_FEE \
-    VITE_PAYMENT_PORTAL_URL=$VITE_PAYMENT_PORTAL_URL \
-    VITE_PARTICIPANT_WHATSAPP_URL=$VITE_PARTICIPANT_WHATSAPP_URL \
-    VITE_PROFILE_EDIT=$VITE_PROFILE_EDIT \
-    VITE_SEND_BEARER=$VITE_SEND_BEARER \
-    VITE_PAYMENT_EVENT_KEY=$VITE_PAYMENT_EVENT_KEY
+ENV VITE_BASE_PATH=$VITE_BASE_PATH
 
 RUN npm run build
 
-FROM nginx:1.27-alpine
-ARG VITE_BASE_PATH=/compute50/
-COPY nginx.conf /tmp/nginx.conf
-RUN BASE="/$(echo "$VITE_BASE_PATH" | sed -e 's#^/*##' -e 's#/*$##')/" \
- && BASE="$(echo "$BASE" | sed 's#^//$#/#')" \
- && sed "s#__BASE__#${BASE}#g" /tmp/nginx.conf > /etc/nginx/conf.d/default.conf \
- && if [ "$BASE" = "/" ]; then sed -i '/location = \/ {/,/}/d' /etc/nginx/conf.d/default.conf; fi \
- && mkdir -p "/usr/share/nginx/html${BASE}" \
- && echo "$BASE" > /tmp/base
-COPY --from=build /app/dist /tmp/dist
-RUN cp -r /tmp/dist/. "/usr/share/nginx/html$(cat /tmp/base)" && rm -rf /tmp/dist
+FROM nginx:alpine AS runner
+WORKDIR /usr/share/nginx/html
+RUN rm -rf ./*
+
+COPY --from=builder /app/dist ./
+
+RUN mkdir -p /etc/nginx/snippets
+COPY security-headers.conf /etc/nginx/snippets/security-headers.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY docker/40-env-config.sh /docker-entrypoint.d/40-env-config.sh
+RUN sed -i 's/\r$//' /docker-entrypoint.d/40-env-config.sh && chmod +x /docker-entrypoint.d/40-env-config.sh
+
 EXPOSE 80
-HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://127.0.0.1/ >/dev/null || exit 1
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1/healthz || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]
