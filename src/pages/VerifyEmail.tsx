@@ -1,4 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { COLLEGES } from '../data/colleges';
+import { DEPARTMENTS, psgCollegeForEmail } from '../data/departments';
+import { isStrongPassword, PASSWORD_RULES_MESSAGE } from '../lib/password';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useToast } from '../hooks/useToast';
@@ -25,10 +28,11 @@ export const CompleteRegistration: React.FC<CompleteRegistrationProps> = ({ emai
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const psgCollege = psgCollegeForEmail(email);
   const [form, setForm] = useState({
     name: '',
     phone: '',
-    college: '',
+    college: psgCollege ?? '',
     department: '',
     year: '3rd Year',
     password: '',
@@ -62,7 +66,7 @@ export const CompleteRegistration: React.FC<CompleteRegistrationProps> = ({ emai
     e.preventDefault();
     setError('');
     if (source === 'email') {
-      if (form.password.length < 6) return setError('Password must be at least 6 characters.');
+      if (!isStrongPassword(form.password)) return setError(PASSWORD_RULES_MESSAGE);
       if (form.password !== form.confirm) return setError('Passwords do not match.');
     }
     const phone = form.phone.replace(/\D/g, '').slice(-10);
@@ -135,10 +139,38 @@ export const CompleteRegistration: React.FC<CompleteRegistrationProps> = ({ emai
             <p className="text-xs text-[var(--text-secondary)]">A clear photo of your face. JPEG, PNG or WebP, up to 5 MB.</p>
           </div>
           <Input label="Phone (WhatsApp)" value={form.phone} onChange={set('phone')} required />
-          <Input label="College" value={form.college} onChange={set('college')} required />
-          <Input label="Department" value={form.department} onChange={set('department')} required />
+          <Input
+            label="College"
+            value={form.college}
+            onChange={set('college')}
+            list="college-options"
+            placeholder="Start typing your college name"
+            autoComplete="off"
+            readOnly={!!psgCollege}
+            helperText={psgCollege ? 'Set from your PSG email address.' : 'Pick from the list, or type it if your college is not listed.'}
+            required
+          />
+          <datalist id="college-options">
+            {COLLEGES.map((c) => (
+              <option key={c} value={c} />
+            ))}
+          </datalist>
+          <Input
+            label="Department"
+            value={form.department}
+            onChange={set('department')}
+            list="department-options"
+            placeholder="Select or type your department"
+            autoComplete="off"
+            required
+          />
+          <datalist id="department-options">
+            {DEPARTMENTS.map((d) => (
+              <option key={d} value={d} />
+            ))}
+          </datalist>
           <label className="block text-sm font-medium text-[var(--text-primary)]">
-            Year
+            Year <span className="text-red-500">*</span>
             <select
               value={form.year}
               onChange={set('year')}

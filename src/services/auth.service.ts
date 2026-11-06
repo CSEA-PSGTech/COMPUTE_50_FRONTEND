@@ -1,4 +1,5 @@
 import { authApi, setAccessToken } from './api';
+import { normalizeEmail } from '../lib/password';
 import { mapProfileToUser, buildProfileUpdate, yearToNumber } from './mappers';
 import type { LoginCredentials, RegisterData, AuthResponse, User } from '../types/auth';
 import type {
@@ -16,12 +17,17 @@ const handleAuthResponse = (data: BackendAuthResponse): AuthResponse => {
 
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-    const { data } = await authApi.post<BackendAuthResponse>(`${BASE}/login`, credentials);
+    const { data } = await authApi.post<BackendAuthResponse>(`${BASE}/login`, {
+      ...credentials,
+      email: normalizeEmail(credentials.email),
+    });
     return handleAuthResponse(data);
   },
 
   sendVerificationEmail: async (email: string): Promise<string> => {
-    const { data } = await authApi.post<{ message: string }>(`${BASE}/verify-email`, { email });
+    const { data } = await authApi.post<{ message: string }>(`${BASE}/verify-email`, {
+      email: normalizeEmail(email),
+    });
     return data.message;
   },
 
@@ -35,7 +41,7 @@ export const authService = {
   register: async (input: RegisterData): Promise<AuthResponse> => {
     const source = input.source ?? 'email';
     const { data } = await authApi.post<BackendAuthResponse>(`${BASE}/register`, {
-      email: input.email,
+      email: normalizeEmail(input.email),
       source,
       ...(source === 'google' ? { googleId: input.googleId } : { password: input.password }),
       name: input.name,
@@ -56,7 +62,7 @@ export const authService = {
 
   completeGoogleLogin: async (email: string, googleId: string): Promise<AuthResponse> => {
     const { data } = await authApi.post<BackendAuthResponse>(`${BASE}/login-google`, {
-      email,
+      email: normalizeEmail(email),
       googleId,
       existing_user: true,
     });
@@ -64,7 +70,9 @@ export const authService = {
   },
 
   forgotPassword: async (email: string): Promise<string> => {
-    const { data } = await authApi.post<{ message: string }>(`${BASE}/forgot-password`, { email });
+    const { data } = await authApi.post<{ message: string }>(`${BASE}/forgot-password`, {
+      email: normalizeEmail(email),
+    });
     return data.message;
   },
 

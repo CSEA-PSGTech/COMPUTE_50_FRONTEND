@@ -6,6 +6,8 @@ import { useToast } from '../hooks/useToast';
 import { Input } from '../components/common/Input';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
+import { PasswordStrength } from '../components/auth/PasswordStrength';
+import { isStrongPassword, PASSWORD_RULES_MESSAGE } from '../lib/password';
 
 export const ResetPassword: React.FC = () => {
   const { token: pathToken } = useParams();
@@ -20,7 +22,8 @@ export const ResetPassword: React.FC = () => {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 6) return setError('Password must be at least 6 characters.');
+    setError('');
+    if (!isStrongPassword(password)) return setError(PASSWORD_RULES_MESSAGE);
     if (password !== confirm) return setError('Passwords do not match.');
     setLoading(true);
     try {
@@ -42,6 +45,7 @@ export const ResetPassword: React.FC = () => {
         {error && <p className="text-xs font-mono text-red-500">{error}</p>}
         <form onSubmit={submit} className="space-y-3">
           <Input label="New Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <PasswordStrength password={password} />
           <Input label="Confirm Password" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} required />
           <Button type="submit" fullWidth isLoading={loading} disabled={!token}>
             Reset Password
