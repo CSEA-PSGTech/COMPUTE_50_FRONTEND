@@ -43,7 +43,7 @@ export const mockSpeakers: Speaker[] = [
     organization: 'IBM Bangalore',
     bio: 'Software Engineer at IBM Bangalore · BE CSE 2026 Alumnus',
     image: mahimaaImg,
-    type: 'speaker',
+    type: 'judge',
     confirmed: true,
   },
   {
