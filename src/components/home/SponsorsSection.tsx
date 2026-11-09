@@ -10,6 +10,9 @@ import { useReducedMotion } from 'framer-motion';
 import { Handshake } from 'lucide-react';
 import { Sponsor } from '../../types/hackathon';
 
+const SPONSORS_ANNOUNCED = false; // set to true once sponsors are confirmed
+const sponsors: Sponsor[] = SPONSORS_ANNOUNCED ? mockSponsors : [];
+
 interface SponsorCardProps {
   sponsor: Sponsor;
   isDuplicate?: boolean;
@@ -73,14 +76,14 @@ export const SponsorsSection: React.FC = () => {
 
   // Ensure each rendered track has sufficient items to span wide displays without breaks
   const trackSponsors = useMemo(() => {
-    if (!mockSponsors || mockSponsors.length === 0) return [];
+    if (sponsors.length === 0) return [];
     const minItemsNeeded = 10;
-    const repeatCount = Math.max(2, Math.ceil(minItemsNeeded / mockSponsors.length));
-    return Array.from({ length: repeatCount }).flatMap(() => mockSponsors);
+    const repeatCount = Math.max(2, Math.ceil(minItemsNeeded / sponsors.length));
+    return Array.from({ length: repeatCount }).flatMap(() => sponsors);
   }, []);
 
-  // Empty state if no sponsors
-  if (!mockSponsors || mockSponsors.length === 0) {
+  // Empty state if no sponsors announced yet
+  if (sponsors.length === 0) {
     return (
       <section
         id="sponsors"
@@ -120,11 +123,10 @@ export const SponsorsSection: React.FC = () => {
             <SectionHeading
               badge="SPONSORS & PARTNERS"
               title="Backing Technical Excellence"
-              subtitle="Sponsors and partners will be announced soon."
             />
           </Reveal>
           <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-thin">
-            {mockSponsors.map((sponsor) => (
+            {sponsors.map((sponsor) => (
               <SponsorCard key={sponsor.id} sponsor={sponsor} />
             ))}
           </div>

@@ -1,5 +1,9 @@
 import { Speaker } from '../types/hackathon';
 import arulkumaraImg from '../assets/images/speakers/arulkumara.jpg';
+import mithunImg from '../assets/images/speakers/Mithun_karthik.jpeg';
+import hariniImg from '../assets/images/speakers/Harini.jpeg';
+import mahimaaImg from '../assets/images/speakers/Mahimaa.jpeg';
+import shananthikaImg from '../assets/images/speakers/Shananthika.jpeg';
 
 export const mockSpeakers: Speaker[] = [
   {
@@ -14,43 +18,43 @@ export const mockSpeakers: Speaker[] = [
   },
   {
     id: 'spk-2',
-    name: 'Dr. R. Sudha',
-    role: 'Professor & Head, CSE',
-    organization: 'PSG College of Technology',
-    bio: 'Academic director and keynote advisor overseeing advanced computing research and student symposiums.',
-    image: '',
-    type: 'speaker',
-    confirmed: false,
+    name: 'Mr.Mithun Karthik A S',
+    role: 'Associate Software Engineer',
+    organization: 'Birla Pivot Bangalore',
+    bio: 'Associate Software Engineer at Birla Pivot Bangalore · BE CSE 2026 Alumnus',
+    image: mithunImg,
+    type: 'judge',
+    confirmed: true,
   },
   {
     id: 'spk-3',
-    name: 'Vikram Sundaram',
-    role: 'VP of Software Engineering',
-    organization: 'Cloud Enterprise Systems',
-    bio: 'Industry veteran with 18+ years leading cloud architecture, microservices, and distributed data at scale.',
-    image: '',
+    name: 'Ms. Harini R',
+    role: 'ERP Technical Analyst',
+    organization: 'Schneider Electric Bangalore',
+    bio: 'ERP Technical Analyst , Schneider Electric Bangalore · BE CSE 2026 Alumnus',
+    image: hariniImg,
     type: 'judge',
-    confirmed: false,
+    confirmed: true,
   },
   {
     id: 'spk-4',
-    name: 'Ananya Ramakrishnan',
-    role: 'Lead AI Researcher',
-    organization: 'DeepVision AI Labs',
-    bio: 'Specialist in Computer Vision and Edge Inference models. Keynote speaker and open-source AI contributor.',
-    image: '',
+    name: 'Ms. Mahimaa U',
+    role: 'Software Engineer',
+    organization: 'IBM Bangalore',
+    bio: 'Software Engineer at IBM Bangalore · BE CSE 2026 Alumnus',
+    image: mahimaaImg,
     type: 'speaker',
-    confirmed: false,
+    confirmed: true,
   },
   {
     id: 'spk-5',
-    name: 'Karthik Natarajan',
-    role: 'Chief Technology Officer',
-    organization: 'NextGen CyberSec',
-    bio: 'Hackathon judge specializing in zero-trust cybersecurity protocols, cryptography, and Web3 systems.',
-    image: '',
+    name: 'Ms. Shananthika S',
+    role: 'Data Integration Engineer',
+    organization: 'ExxonMobil',
+    bio: 'Data Integration Engineer at ExxonMobil · BE CSE 2026 Alumnus.',
+    image: shananthikaImg,
     type: 'judge',
-    confirmed: false,
+    confirmed: true,
   },
   {
     id: 'spk-6',

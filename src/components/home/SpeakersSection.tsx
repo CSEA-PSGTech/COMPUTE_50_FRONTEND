@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { Container } from '../common/Container';
 import { SectionHeading } from '../common/SectionHeading';
 import { Card } from '../common/Card';
@@ -6,11 +7,78 @@ import { mockSpeakers } from '../../data/speakers';
 import { Badge } from '../common/Badge';
 import { Reveal } from '../common/Reveal';
 import { EmptyState } from '../common/EmptyState';
-import { motion, useInView, useReducedMotion } from 'framer-motion';
-import { Users, User, Layers, ChevronRight, ChevronLeft, RotateCcw } from 'lucide-react';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
+import { Users, User, Layers, ChevronRight, ChevronLeft, RotateCcw, X } from 'lucide-react';
 import { soundReveal } from '../../lib/sound';
+import { Speaker } from '../../types/hackathon';
 
-const SpeakerAvatar: React.FC<{ name: string; image?: string; confirmed?: boolean }> = ({ name, image, confirmed }) => {
+// Only confirmed guests are shown; anyone with confirmed: false is hidden entirely.
+const speakers: Speaker[] = mockSpeakers.filter((s) => s.confirmed !== false);
+
+/* Fullscreen photo card shown when a speaker photo is clicked.
+   Rendered through a portal so parent transforms (deck/flip animations) can't break fixed positioning. */
+const SpeakerPhotoModal: React.FC<{ speaker: Speaker | null; onClose: () => void }> = ({ speaker, onClose }) => {
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
+    <AnimatePresence>
+      {speaker && (
+        <motion.div
+          key="speaker-photo-backdrop"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          onClick={onClose}
+          data-lenis-prevent="true"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/75 backdrop-blur-sm p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Photo of ${speaker.name}`}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.85, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 10 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-sm overflow-hidden rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] shadow-2xl"
+          >
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close photo"
+              className="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <img
+              src={speaker.image}
+              alt={speaker.name}
+              className="w-full aspect-square object-cover object-[center_20%] bg-[var(--bg-secondary)]"
+            />
+
+            <div className="p-5 text-center">
+              <Badge
+                variant="outline"
+                className="mb-2 uppercase text-[10px] font-mono tracking-wider font-bold border-[var(--accent)]/40 text-[var(--accent)] bg-[var(--accent)]/10"
+              >
+                {speaker.type}
+              </Badge>
+              <h3 className="text-lg font-extrabold text-[var(--text-primary)]">{speaker.name}</h3>
+              <p className="text-sm text-[var(--accent)] font-bold mt-1">{speaker.role}</p>
+              <p className="text-sm text-[var(--text-secondary)] font-medium">{speaker.organization}</p>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>,
+    document.body
+  );
+};
+
+const SpeakerAvatar: React.FC<{ name: string; image?: string; confirmed?: boolean; onOpen?: () => void }> = ({ name, image, confirmed, onOpen }) => {
   const [imgError, setImgError] = React.useState(false);
 
   if (confirmed === false) {
@@ -31,16 +99,36 @@ const SpeakerAvatar: React.FC<{ name: string; image?: string; confirmed?: boolea
     );
   }
 
+  const photo = (
+    <motion.img
+      whileHover={{ scale: 1.08 }}
+      transition={{ duration: 0.3 }}
+      src={image}
+      alt={name}
+      onError={() => setImgError(true)}
+      className="w-24 h-24 rounded-full object-cover object-[center_20%] bg-[var(--bg-secondary)]"
+    />
+  );
+
+  if (onOpen) {
+    return (
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onOpen();
+        }}
+        aria-label={`View photo of ${name}`}
+        className="relative overflow-hidden rounded-full mb-4 border-2 border-[var(--border-color)] group-hover:border-[var(--accent)] transition-colors cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+      >
+        {photo}
+      </button>
+    );
+  }
+
   return (
     <div className="relative overflow-hidden rounded-full mb-4 border-2 border-[var(--border-color)] group-hover:border-[var(--accent)] transition-colors">
-      <motion.img
-        whileHover={{ scale: 1.08 }}
-        transition={{ duration: 0.3 }}
-        src={image}
-        alt={name}
-        onError={() => setImgError(true)}
-        className="w-24 h-24 rounded-full object-cover object-[center_20%] bg-[var(--bg-secondary)]"
-      />
+      {photo}
     </div>
   );
 };
@@ -58,12 +146,24 @@ export const SpeakersSection: React.FC = () => {
   const [cardOffsets, setCardOffsets] = useState<{ x: number; y: number }[]>([]);
   const [activeMobileIndex, setActiveMobileIndex] = useState<number>(0);
   const autoExpandedRef = useRef<boolean>(false);
+  const [activePhoto, setActivePhoto] = useState<Speaker | null>(null);
 
-  const allUnconfirmed = mockSpeakers.every((s) => s.confirmed === false);
-  const confirmedGuests = mockSpeakers.filter((s) => s.confirmed !== false);
-  const unconfirmedGuests = mockSpeakers.filter((s) => s.confirmed === false);
+  // Photo modal: close on Escape, lock page scroll while open
+  useEffect(() => {
+    if (!activePhoto) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setActivePhoto(null);
+    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [activePhoto]);
 
-  const totalCards = confirmedGuests.length + (unconfirmedGuests.length > 0 ? 1 : 0);
+  const totalCards = speakers.length;
 
   // Handle mobile horizontal scroll indicator
   const handleMobileScroll = () => {
@@ -110,7 +210,7 @@ export const SpeakersSection: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!expanded || shouldReduceMotion || allUnconfirmed || totalCards <= 1 || isUserInteracting) {
+    if (!expanded || shouldReduceMotion || totalCards <= 1 || isUserInteracting || activePhoto) {
       return;
     }
 
@@ -128,7 +228,7 @@ export const SpeakersSection: React.FC = () => {
     }, 3500);
 
     return () => clearInterval(interval);
-  }, [expanded, shouldReduceMotion, allUnconfirmed, totalCards, isUserInteracting]);
+  }, [expanded, shouldReduceMotion, totalCards, isUserInteracting, activePhoto]);
 
   // Synchronize overlay label: hide immediately when expanding, delay when collapsing
   useEffect(() => {
@@ -158,7 +258,7 @@ export const SpeakersSection: React.FC = () => {
       targetY = firstRect.top + firstRect.height / 2;
     }
 
-    const newOffsets = mockSpeakers.map((_, idx) => {
+    const newOffsets = speakers.map((_, idx) => {
       const el = cardRefs.current[idx];
       if (!el) return { x: 0, y: 0 };
       const rect = el.getBoundingClientRect();
@@ -203,7 +303,7 @@ export const SpeakersSection: React.FC = () => {
     }
   }, [isInView, shouldReduceMotion]);
 
-  if (!mockSpeakers || mockSpeakers.length === 0) {
+  if (speakers.length === 0) {
     return (
       <section id="speakers" ref={sectionRef} className="py-16 md:py-24 bg-[var(--bg-main)] border-b border-[var(--border-color)] transition-colors">
         <Container size="lg">
@@ -211,14 +311,13 @@ export const SpeakersSection: React.FC = () => {
             <SectionHeading
               badge="GUESTS & JUDGES"
               title="Guests & Judges"
-              subtitle={allUnconfirmed ? "Our speakers and judges will be announced soon." : "Meet our distinguished industry leaders, alumni, and hackathon judges."}
             />
           </Reveal>
           <Reveal>
             <EmptyState
               category="GUESTS & JUDGES"
               title="Guests & Judges Announcing Soon"
-              subtitle={allUnconfirmed ? "Our speakers and judges will be announced soon." : "Meet our distinguished industry leaders, alumni, and hackathon judges."}
+              subtitle="Our speakers and judges will be announced soon. Check back later!"
               icon={<Users className="w-7 h-7" />}
             />
           </Reveal>
@@ -248,30 +347,13 @@ export const SpeakersSection: React.FC = () => {
           <SectionHeading
             badge="GUESTS & JUDGES"
             title="Guests & Judges"
-            subtitle="Our speakers and judges will be announced soon."
+            subtitle="Meet our distinguished industry leaders, alumni, and hackathon judges."
           />
         </Reveal>
 
         {/* MOBILE VIEW (< 640px): Normal-flow height, single card when collapsed / swipeable carousel when expanded */}
         <div className="block sm:hidden w-full my-4">
-          {allUnconfirmed ? (
-            /* All Unconfirmed: Single static deck card, no expand controls */
-            <div className="w-full rounded-2xl bg-[var(--bg-surface)] border-2 border-[var(--border-color)] p-6 text-center flex flex-col items-center justify-center shadow-xs min-h-[220px]">
-              <div className="w-12 h-12 rounded-xl bg-[var(--accent)]/15 border border-[var(--accent)]/40 flex items-center justify-center text-[var(--accent)] mb-3">
-                <Users className="w-6 h-6 text-[var(--accent)]" />
-              </div>
-              <span className="px-3 py-1 rounded-full bg-[var(--accent)]/15 text-[var(--accent)] border border-[var(--accent)]/40 text-[10px] font-bold font-mono tracking-widest uppercase mb-2">
-                GUESTS & JUDGES
-              </span>
-              <h3 className="text-lg font-extrabold text-[var(--text-primary)]">
-                Guests & judges will be announced soon
-              </h3>
-              <p className="text-xs text-[var(--text-secondary)] mt-1.5 font-medium">
-                Check back later for confirmed speakers and event judges.
-              </p>
-            </div>
-          ) : (
-            /* Confirmed guests present: Normal-flow collapsible deck */
+          {/* Normal-flow collapsible deck */}
             <motion.div layout className="w-full overflow-hidden">
               {!expanded ? (
                 /* Collapsed Mobile Deck (~220px height) */
@@ -287,7 +369,7 @@ export const SpeakersSection: React.FC = () => {
                     GUESTS & JUDGES
                   </span>
                   <h3 className="text-2xl font-black text-[var(--text-primary)] mb-1">
-                    {mockSpeakers.length} Guests
+                    {speakers.length} {speakers.length === 1 ? 'Guest' : 'Guests'}
                   </h3>
                   <p className="text-xs text-[var(--text-secondary)] mb-4 font-medium">
                     Tap to view speakers & judges
@@ -349,7 +431,7 @@ export const SpeakersSection: React.FC = () => {
                     }}
                     className="flex gap-3.5 overflow-x-auto snap-x snap-mandatory pb-3 pt-1 px-1 scrollbar-none"
                   >
-                    {confirmedGuests.map((speaker) => (
+                    {speakers.map((speaker) => (
                       <div
                         key={speaker.id}
                         className="snap-center shrink-0 w-[78vw] max-w-[290px]"
@@ -359,6 +441,7 @@ export const SpeakersSection: React.FC = () => {
                             name={speaker.name}
                             image={speaker.image}
                             confirmed={speaker.confirmed}
+                            onOpen={speaker.image ? () => setActivePhoto(speaker) : undefined}
                           />
                           <Badge
                             variant="outline"
@@ -382,21 +465,6 @@ export const SpeakersSection: React.FC = () => {
                       </div>
                     ))}
 
-                    {unconfirmedGuests.length > 0 && (
-                      <div className="snap-center shrink-0 w-[78vw] max-w-[290px]">
-                        <div className="h-full min-h-[290px] rounded-2xl bg-[var(--bg-surface)] border-2 border-dashed border-[var(--border-color)] p-6 flex flex-col items-center justify-center text-center shadow-xs">
-                          <div className="w-12 h-12 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-center text-[var(--text-secondary)] mb-3">
-                            <User className="w-6 h-6 text-[var(--accent)]" />
-                          </div>
-                          <h4 className="text-lg font-bold text-[var(--text-primary)] mb-1">
-                            +{unconfirmedGuests.length} More
-                          </h4>
-                          <p className="text-xs text-[var(--text-secondary)] font-medium">
-                            To be announced soon
-                          </p>
-                        </div>
-                      </div>
-                    )}
                   </div>
 
                   {/* Interactive Clickable Dot Indicators */}
@@ -419,8 +487,7 @@ export const SpeakersSection: React.FC = () => {
               )}
 
               {/* Mobile Collapse Control */}
-              {!allUnconfirmed && (
-                <div className="mt-4 flex flex-col items-center gap-3">
+              <div className="mt-4 flex flex-col items-center gap-3">
                   <button
                     type="button"
                     data-nosound="true"
@@ -440,9 +507,7 @@ export const SpeakersSection: React.FC = () => {
                     )}
                   </button>
                 </div>
-              )}
             </motion.div>
-          )}
         </div>
 
         {/* DESKTOP VIEW (>= 640px): 3-column Stack & Flyout Grid preserved unchanged */}
@@ -454,8 +519,7 @@ export const SpeakersSection: React.FC = () => {
               role="list"
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative"
             >
-              {mockSpeakers.map((speaker, idx) => {
-                const isUnconfirmed = speaker.confirmed === false;
+              {speakers.map((speaker, idx) => {
                 const offset = cardOffsets[idx] || { x: 0, y: 0 };
 
                 // Collapsed stack offsets (intentional ~1.15 scale for top card)
@@ -536,24 +600,24 @@ export const SpeakersSection: React.FC = () => {
                           style={{ backfaceVisibility: 'hidden' }}
                         >
                           <SpeakerAvatar
-                            name={isUnconfirmed ? 'To Be Announced' : speaker.name}
+                            name={speaker.name}
                             image={speaker.image}
                             confirmed={speaker.confirmed}
+                            onOpen={
+                              speaker.image && (expanded || shouldReduceMotion)
+                                ? () => setActivePhoto(speaker)
+                                : undefined
+                            }
                           />
                           <Badge
                             variant="outline"
                             className="mb-2 uppercase text-[10px] font-mono tracking-wider font-bold border-[var(--accent)]/40 text-[var(--accent)] bg-[var(--accent)]/10"
                           >
-                            {isUnconfirmed ? 'TBA' : speaker.type}
+                            {speaker.type}
                           </Badge>
                           <h3 className="text-base font-extrabold text-[var(--text-primary)] transition-colors mt-1">
-                            {isUnconfirmed ? 'To be announced' : speaker.name}
+                            {speaker.name}
                           </h3>
-                          {isUnconfirmed ? (
-                            <p className="text-xs text-[var(--text-secondary)] font-medium mt-1.5">
-                              Guest details will be announced soon
-                            </p>
-                          ) : (
                             <>
                               <p className="text-[13px] text-[var(--accent)] font-bold mb-1 mt-1">
                                 {speaker.role}
@@ -565,7 +629,6 @@ export const SpeakersSection: React.FC = () => {
                                 {speaker.bio}
                               </p>
                             </>
-                          )}
                         </Card>
 
                         {/* CARD BACK FACE (Visible when stacked) */}
@@ -611,13 +674,13 @@ export const SpeakersSection: React.FC = () => {
                   className="pointer-events-auto px-8 py-7 rounded-2xl bg-[var(--bg-surface)] border-2 border-[var(--accent)] shadow-2xl flex flex-col items-center justify-center text-center group cursor-pointer focus:outline-none focus:ring-4 focus:ring-[var(--accent)]/50 transition-all hover:scale-105 max-w-sm"
                   aria-expanded={expanded}
                   aria-controls="guests-grid"
-                  aria-label={`Expand deck of ${mockSpeakers.length} guests and judges`}
+                  aria-label={`Expand deck of ${speakers.length} guests and judges`}
                 >
                   <span className="px-3.5 py-1 rounded-full bg-[var(--accent)]/15 text-[var(--accent)] border border-[var(--accent)]/40 text-xs font-bold font-mono tracking-widest uppercase mb-3">
                     GUESTS & JUDGES
                   </span>
                   <h3 className="text-3xl font-black text-[var(--text-primary)] tracking-tight mb-1.5">
-                    {mockSpeakers.length} Guests
+                    {speakers.length} {speakers.length === 1 ? 'Guest' : 'Guests'}
                   </h3>
                   <p className="text-sm text-[var(--text-primary)]/80 mb-5 font-medium">
                     Click or press Enter to unpack guest deck
@@ -655,9 +718,8 @@ export const SpeakersSection: React.FC = () => {
           </div>
         </div>
       </Container>
+
+      <SpeakerPhotoModal speaker={activePhoto} onClose={() => setActivePhoto(null)} />
     </section>
   );
 };
-
-
-
