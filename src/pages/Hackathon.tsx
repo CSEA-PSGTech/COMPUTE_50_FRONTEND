@@ -1,7 +1,6 @@
 import React from 'react';
 import { Container } from '../components/common/Container';
 import { SectionHeading } from '../components/common/SectionHeading';
-import { PrizeBreakdown } from '../components/hackathon/PrizeBreakdown';
 import { RulesGuidelines } from '../components/hackathon/RulesGuidelines';
 import { ImportantInfo } from '../components/hackathon/ImportantInfo';
 import { ScheduleSection } from '../components/home/ScheduleSection';
@@ -17,12 +16,11 @@ export const Hackathon: React.FC = () => {
       <Container size="lg">
         <SectionHeading
           badge="HACKATHON DETAILS"
-          title="Compute 50 Event Portal"
+          title="Compute 50"
           subtitle="Everything you need to compete, build, and submit your project successfully."
         />
 
         <div className="space-y-12">
-          <PrizeBreakdown />
           {/* STASHED: <TracksSection /> */}
           <RulesGuidelines />
           <ScheduleSection />

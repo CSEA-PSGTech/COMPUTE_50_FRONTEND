@@ -14,7 +14,6 @@ const HOME_SECTIONS: SectionItem[] = [
   { id: 'hackathon', label: 'Hackathon' },
   { id: 'prizepool-home', label: 'Prizes' },
   { id: 'speakers', label: 'Speakers' },
-  { id: 'sponsors', label: 'Sponsors' },
   { id: 'faq', label: 'FAQ' },
   { id: 'contact', label: 'Contact' },
 ];

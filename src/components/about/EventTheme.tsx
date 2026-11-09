@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useSpring, useReducedMotion } from 'framer-motion';
 import { Badge } from '../common/Badge';
+import { DecryptText } from '../common/DecryptText';
 
 export const EventTheme: React.FC = () => {
   const shouldReduceMotion = useReducedMotion();
@@ -38,18 +39,16 @@ export const EventTheme: React.FC = () => {
           className="font-black font-mono tracking-tight leading-none text-center select-none"
           style={{ fontSize: 'clamp(2.5rem, 7vw, 5rem)' }}
         >
-          <span className="text-[var(--text-secondary)] font-medium">From </span>
-          <span className="text-[var(--text-secondary)]">Legacy </span>
-          <span className="text-[var(--text-secondary)] font-medium">to </span>
-          <motion.span
-            initial={shouldReduceMotion ? { opacity: 1, color: 'var(--accent)' } : { opacity: 0.4 }}
-            whileInView={shouldReduceMotion ? { opacity: 1, color: 'var(--accent)' } : { opacity: 1, color: 'var(--accent)' }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
-            className="font-extrabold inline-block"
-          >
-            Limitless
-          </motion.span>
+          <span className="sr-only">From Legacy to Limitless</span>
+          <span aria-hidden="true">
+            <DecryptText
+              text="From Legacy to Limitless"
+              highlightText="Limitless"
+              highlightClassName="text-[var(--accent)] font-extrabold"
+              className="text-[var(--text-secondary)]"
+              speed={16}
+            />
+          </span>
         </h1>
 
         {/* Sub-headline */}

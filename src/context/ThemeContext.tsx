@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useEffect, ReactNode } from 'react';
 
 export type Theme = 'dark' | 'light';
 
@@ -14,44 +14,24 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
+// Site is light-mode only. The provider is kept so existing useTheme() calls keep working.
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      // Check for user-selected theme preference; default to 'light'
-      const userTheme = localStorage.getItem('compute50_theme_v2') as Theme | null;
-      if (userTheme === 'dark' || userTheme === 'light') {
-        return userTheme;
-      }
-      // Clear legacy dark default key so light loads cleanly
-      try {
-        localStorage.removeItem('compute50_theme');
-      } catch {
-        // ignore
-      }
-    }
-    return 'light';
-  });
+  const theme: Theme = 'light';
 
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-      root.classList.remove('light');
-    } else {
-      root.classList.add('light');
-      root.classList.remove('dark');
+    root.classList.add('light');
+    root.classList.remove('dark');
+    try {
+      localStorage.removeItem('compute50_theme_v2');
+      localStorage.removeItem('compute50_theme');
+    } catch {
+      // ignore
     }
-    localStorage.setItem('compute50_theme_v2', theme);
-    localStorage.setItem('compute50_theme', theme);
-  }, [theme]);
+  }, []);
 
-  const toggleTheme = () => {
-    setThemeState((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  };
-
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
-  };
+  const toggleTheme = () => {};
+  const setTheme = () => {};
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>

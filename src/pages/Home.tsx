@@ -4,7 +4,6 @@ import { AboutSection } from '../components/home/AboutSection';
 import { HackathonSection } from '../components/home/HackathonSection';
 import { PrizePool } from '../components/home/PrizePool';
 import { SpeakersSection } from '../components/home/SpeakersSection';
-import { SponsorsSection } from '../components/home/SponsorsSection';
 import { FaqSection } from '../components/home/FaqSection';
 import { SectionTransition } from '../components/common/SectionTransition';
 
@@ -25,9 +24,6 @@ export const Home: React.FC = () => {
       </SectionTransition>
       <SectionTransition>
         <SpeakersSection />
-      </SectionTransition>
-      <SectionTransition>
-        <SponsorsSection />
       </SectionTransition>
       <SectionTransition>
         <FaqSection />

@@ -278,7 +278,7 @@ export const Hero: React.FC = () => {
           <motion.h1
             variants={itemVariants}
             aria-label="COMPUTE 50"
-            className="font-mono font-black tracking-normal text-[var(--text-primary)] leading-none text-center select-none"
+            className="font-mono font-black tracking-normal text-[#060D21] leading-none text-center select-none"
             style={{ fontSize: 'clamp(2.5rem, 9vw, 6.5rem)', letterSpacing: '0' }}
           >
             <span aria-hidden="true">
@@ -298,12 +298,13 @@ export const Hero: React.FC = () => {
             style={{ fontSize: 'clamp(1.25rem, 3.2vw, 2.25rem)' }}
           >
             <span aria-hidden="true" className="inline-block">
-              <span className="inline-block whitespace-nowrap">From</span>{' '}
-              <span className="inline-block whitespace-nowrap">Legacy</span>{' '}
-              <span className="inline-block whitespace-nowrap">to</span>{' '}
-              <span className="inline-block whitespace-nowrap text-[var(--accent)] font-bold">
-                Limitless
-              </span>
+              <DecryptText
+                text="From Legacy to Limitless"
+                highlightText="Limitless"
+                highlightClassName="text-[var(--accent)] font-bold"
+                className="[font-family:inherit]!"
+                speed={30}
+              />
             </span>
           </motion.p>
 

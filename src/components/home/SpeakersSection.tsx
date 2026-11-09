@@ -79,12 +79,15 @@ const SpeakerPhotoModal: React.FC<{ speaker: Speaker | null; onClose: () => void
   );
 };
 
-const SpeakerAvatar: React.FC<{ name: string; image?: string; confirmed?: boolean; onOpen?: () => void }> = ({ name, image, confirmed, onOpen }) => {
+const SpeakerAvatar: React.FC<{ name: string; image?: string; confirmed?: boolean; onOpen?: () => void; compact?: boolean }> = ({ name, image, confirmed, onOpen, compact = false }) => {
   const [imgError, setImgError] = React.useState(false);
+  // compact = smaller desktop grid avatar so all 8 cards fit on screen
+  const sizeCls = compact ? 'w-16 h-16' : 'w-20 h-20';
+  const gapCls = compact ? 'mb-2.5' : 'mb-4';
 
   if (confirmed === false || name.toLowerCase().includes('announced')) {
     return (
-      <div className="w-20 h-20 rounded-full bg-[var(--bg-secondary)] border-2 border-dashed border-[var(--border-color)] flex items-center justify-center text-[var(--text-secondary)] mb-4 shadow-xs">
+      <div className={`${sizeCls} ${gapCls} rounded-full bg-[var(--bg-secondary)] border-2 border-dashed border-[var(--border-color)] flex items-center justify-center text-[var(--text-secondary)] shadow-xs`}>
         <User className="w-9 h-9 opacity-50" />
       </div>
     );
@@ -94,7 +97,7 @@ const SpeakerAvatar: React.FC<{ name: string; image?: string; confirmed?: boolea
     const parts = name.replace(/^(Dr\.|Mr\.|Mrs\.|Ms\.)\s+/, '').trim().split(' ');
     const initials = parts.length >= 2 ? `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase() : name.slice(0, 2).toUpperCase();
     return (
-      <div className="w-20 h-20 rounded-full bg-[var(--accent-muted)] border-2 border-[var(--accent)] flex items-center justify-center text-[var(--accent)] font-mono font-bold text-xl mb-4 shadow-xs">
+      <div className={`${sizeCls} ${gapCls} rounded-full bg-[var(--accent-muted)] border-2 border-[var(--accent)] flex items-center justify-center text-[var(--accent)] font-mono font-bold text-xl shadow-xs`}>
         {initials}
       </div>
     );
@@ -107,7 +110,7 @@ const SpeakerAvatar: React.FC<{ name: string; image?: string; confirmed?: boolea
       src={image}
       alt={name}
       onError={() => setImgError(true)}
-      className="w-20 h-20 rounded-full object-cover object-[center_20%] bg-[var(--bg-secondary)]"
+      className={`${sizeCls} rounded-full object-cover object-[center_20%] bg-[var(--bg-secondary)]`}
     />
   );
 
@@ -120,7 +123,7 @@ const SpeakerAvatar: React.FC<{ name: string; image?: string; confirmed?: boolea
           onOpen();
         }}
         aria-label={`View photo of ${name}`}
-        className="relative overflow-hidden rounded-full mb-4 border-2 border-[var(--border-color)] group-hover:border-[var(--accent)] transition-colors cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+        className={`relative overflow-hidden rounded-full ${gapCls} border-2 border-[var(--border-color)] group-hover:border-[var(--accent)] transition-colors cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-[var(--accent)]`}
       >
         {photo}
       </button>
@@ -128,7 +131,7 @@ const SpeakerAvatar: React.FC<{ name: string; image?: string; confirmed?: boolea
   }
 
   return (
-    <div className="relative overflow-hidden rounded-full mb-4 border-2 border-[var(--border-color)] group-hover:border-[var(--accent)] transition-colors">
+    <div className={`relative overflow-hidden rounded-full ${gapCls} border-2 border-[var(--border-color)] group-hover:border-[var(--accent)] transition-colors`}>
       {photo}
     </div>
   );
@@ -437,7 +440,7 @@ export const SpeakersSection: React.FC = () => {
   };
 
   return (
-    <section id="speakers" ref={sectionRef} className="py-12 sm:py-16 md:py-24 bg-[var(--bg-main)] border-b border-[var(--border-color)] transition-colors">
+    <section id="speakers" ref={sectionRef} className="py-12 sm:py-14 md:py-16 bg-[var(--bg-main)] border-b border-[var(--border-color)] transition-colors">
       <Container size="lg">
         <Reveal>
           <SectionHeading
@@ -641,7 +644,7 @@ export const SpeakersSection: React.FC = () => {
               ref={gridRef}
               id="guests-grid"
               role="list"
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6 relative"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative"
             >
               {Array.from({ length: PAGE_SIZE }).map((_, idx) => {
                 const frontSpeaker = speakers[(frontPage - 1) * PAGE_SIZE + idx];
@@ -765,12 +768,13 @@ export const SpeakersSection: React.FC = () => {
                             {frontSpeaker ? (
                               <Card
                                 hoverable={expanded && currentPage === frontPage && !isFlippingPage}
-                                className="group text-center flex flex-col items-center justify-start overflow-hidden h-full p-5 w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-xs min-h-[330px]"
+                                className="group text-center flex flex-col items-center justify-start overflow-hidden h-full p-4 w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-xs min-h-[236px]"
                               >
                                 <SpeakerAvatar
                                   name={frontSpeaker.name}
                                   image={frontSpeaker.image}
                                   confirmed={frontSpeaker.confirmed}
+                                  compact
                                   onOpen={
                                     frontSpeaker.image && (expanded || shouldReduceMotion) && !isFlippingPage
                                       ? () => setActivePhoto(frontSpeaker)
@@ -779,25 +783,25 @@ export const SpeakersSection: React.FC = () => {
                                 />
                                 <Badge
                                   variant="outline"
-                                  className="mb-2 uppercase text-[10px] font-mono tracking-wider font-bold border-[var(--accent)]/40 text-[var(--accent)] bg-[var(--accent)]/10"
+                                  className="mb-1.5 uppercase text-[9px] font-mono tracking-wider font-bold border-[var(--accent)]/40 text-[var(--accent)] bg-[var(--accent)]/10"
                                 >
                                   {frontSpeaker.type}
                                 </Badge>
-                                <h3 className="text-sm sm:text-base font-extrabold text-[var(--text-primary)] transition-colors mt-1 line-clamp-1">
+                                <h3 className="text-sm font-extrabold text-[var(--text-primary)] transition-colors line-clamp-1">
                                   {frontSpeaker.name}
                                 </h3>
-                                <p className="text-[12px] sm:text-[13px] text-[var(--accent)] font-bold mb-0.5 mt-1 line-clamp-1">
+                                <p className="text-[12px] text-[var(--accent)] font-bold mt-0.5 line-clamp-1">
                                   {frontSpeaker.role}
                                 </p>
-                                <p className="text-[12px] sm:text-[13px] text-[var(--text-secondary)] font-medium mb-3 line-clamp-1">
+                                <p className="text-[12px] text-[var(--text-secondary)] font-medium mb-2 line-clamp-1">
                                   {frontSpeaker.organization}
                                 </p>
-                                <p className="text-[12px] text-[var(--text-secondary)] leading-relaxed border-t border-[var(--border-color)] pt-3 w-full line-clamp-3">
+                                <p className="text-[11px] text-[var(--text-secondary)] leading-snug border-t border-[var(--border-color)] pt-2 w-full line-clamp-2">
                                   {frontSpeaker.bio}
                                 </p>
                               </Card>
                             ) : (
-                              <div className="w-full h-full min-h-[330px]" />
+                              <div className="w-full h-full min-h-[236px]" />
                             )}
                           </div>
 
@@ -813,12 +817,13 @@ export const SpeakersSection: React.FC = () => {
                             {backSpeaker ? (
                               <Card
                                 hoverable={expanded && currentPage === backPage && !isFlippingPage}
-                                className="group text-center flex flex-col items-center justify-start overflow-hidden h-full p-5 w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-xs min-h-[330px]"
+                                className="group text-center flex flex-col items-center justify-start overflow-hidden h-full p-4 w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-xs min-h-[236px]"
                               >
                                 <SpeakerAvatar
                                   name={backSpeaker.name}
                                   image={backSpeaker.image}
                                   confirmed={backSpeaker.confirmed}
+                                  compact
                                   onOpen={
                                     backSpeaker.image && (expanded || shouldReduceMotion) && !isFlippingPage
                                       ? () => setActivePhoto(backSpeaker)
@@ -827,25 +832,25 @@ export const SpeakersSection: React.FC = () => {
                                 />
                                 <Badge
                                   variant="outline"
-                                  className="mb-2 uppercase text-[10px] font-mono tracking-wider font-bold border-[var(--accent)]/40 text-[var(--accent)] bg-[var(--accent)]/10"
+                                  className="mb-1.5 uppercase text-[9px] font-mono tracking-wider font-bold border-[var(--accent)]/40 text-[var(--accent)] bg-[var(--accent)]/10"
                                 >
                                   {backSpeaker.type}
                                 </Badge>
-                                <h3 className="text-sm sm:text-base font-extrabold text-[var(--text-primary)] transition-colors mt-1 line-clamp-1">
+                                <h3 className="text-sm font-extrabold text-[var(--text-primary)] transition-colors line-clamp-1">
                                   {backSpeaker.name}
                                 </h3>
-                                <p className="text-[12px] sm:text-[13px] text-[var(--accent)] font-bold mb-0.5 mt-1 line-clamp-1">
+                                <p className="text-[12px] text-[var(--accent)] font-bold mt-0.5 line-clamp-1">
                                   {backSpeaker.role}
                                 </p>
-                                <p className="text-[12px] sm:text-[13px] text-[var(--text-secondary)] font-medium mb-3 line-clamp-1">
+                                <p className="text-[12px] text-[var(--text-secondary)] font-medium mb-2 line-clamp-1">
                                   {backSpeaker.organization}
                                 </p>
-                                <p className="text-[12px] text-[var(--text-secondary)] leading-relaxed border-t border-[var(--border-color)] pt-3 w-full line-clamp-3">
+                                <p className="text-[11px] text-[var(--text-secondary)] leading-snug border-t border-[var(--border-color)] pt-2 w-full line-clamp-2">
                                   {backSpeaker.bio}
                                 </p>
                               </Card>
                             ) : (
-                              <div className="w-full h-full min-h-[330px]" />
+                              <div className="w-full h-full min-h-[236px]" />
                             )}
                           </div>
                         </motion.div>
@@ -895,11 +900,11 @@ export const SpeakersSection: React.FC = () => {
           </div>
 
           {/* DESKTOP CONTROLS & PAGINATION BELOW GRID */}
-          <div className="mt-8 flex flex-col items-center gap-4">
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
             {/* 8+8 Coordinated Page Navigation Bar */}
             {expanded && totalPages > 1 && (
               <div
-                className="flex items-center gap-3 bg-[var(--bg-surface)] px-4 py-2 rounded-2xl border border-[var(--border-color)] shadow-xs transition-colors"
+                className="flex items-center gap-2 bg-[var(--bg-surface)] px-2 py-1.5 rounded-2xl border border-[var(--border-color)] shadow-xs transition-colors"
                 role="region"
                 aria-label="Judges pagination"
               >
@@ -909,7 +914,7 @@ export const SpeakersSection: React.FC = () => {
                     type="button"
                     disabled={isFlippingPage}
                     onClick={() => handlePageChange(currentPage - 1)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--accent)] text-black font-extrabold text-xs tracking-wider uppercase shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--accent)] text-black font-extrabold text-[11px] tracking-wider uppercase shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     aria-label="Previous 8 judges"
                   >
                     <ChevronLeft className="w-4 h-4 stroke-[3]" />
@@ -930,7 +935,7 @@ export const SpeakersSection: React.FC = () => {
                     type="button"
                     disabled={isFlippingPage}
                     onClick={() => handlePageChange(currentPage + 1)}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--accent)] text-black font-extrabold text-xs tracking-wider uppercase shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--accent)] text-black font-extrabold text-[11px] tracking-wider uppercase shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     aria-label="Meet the next 8 judges"
                   >
                     <span>MEET THE NEXT {Math.min(PAGE_SIZE, speakers.length - currentPage * PAGE_SIZE)}</span>
@@ -944,7 +949,7 @@ export const SpeakersSection: React.FC = () => {
             <button
               type="button"
               onClick={handleToggleExpand}
-              className="px-6 py-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-primary)] dark:hover:text-[var(--accent)] text-xs font-semibold transition-all shadow-xs flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] cursor-pointer"
+              className="px-4 py-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-primary)] dark:hover:text-[var(--accent)] text-xs font-semibold transition-all shadow-xs flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] cursor-pointer"
               aria-expanded={expanded}
               aria-controls="guests-grid"
             >

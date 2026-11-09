@@ -4,24 +4,35 @@ import {
   User as UserIcon,
   Volume2,
   VolumeX,
-  Sun,
-  Moon,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import { useTheme } from '../../hooks/useTheme';
 import { isMuted, setMuted, soundSwitch } from '../../lib/sound';
 import { Container } from '../common/Container';
 import { Button } from '../common/Button';
 import { CircuitNav } from './CircuitNav';
-import compute50Logo from '../../assets/logos/compute 50 logo.png';
+import compute50Logo from '../../assets/logos/compute 50_logo.png';
 import psgLogo from '../../assets/logos/psg-logo.png';
 import cseaLogo from '../../assets/logos/csea-logo.png';
-import psg100Logo from '../../assets/logos/psg-100years-logo.png';
+import psg75Logo from '../../assets/logos/psg-75-logo.png';
+
+// Wordmark fonts are loaded here so the change stays inside the navbar.
+const NAVBAR_FONTS_URL =
+  'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap';
+
+const useNavbarFonts = () => {
+  useEffect(() => {
+    if (document.querySelector(`link[href="${NAVBAR_FONTS_URL}"]`)) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = NAVBAR_FONTS_URL;
+    document.head.appendChild(link);
+  }, []);
+};
 
 export const Navbar: React.FC = () => {
+  useNavbarFonts();
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const { isAuthenticated, user } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const [muted, setMutedState] = useState<boolean>(isMuted());
 
@@ -37,11 +48,6 @@ export const Navbar: React.FC = () => {
       setMutedState(false);
       soundSwitch();
     }
-  };
-
-  const handleToggleTheme = () => {
-    soundSwitch();
-    toggleTheme();
   };
 
   useEffect(() => {
@@ -95,26 +101,42 @@ export const Navbar: React.FC = () => {
       }`}
     >
       <Container size="lg">
-        <div className="flex items-center justify-between h-16 sm:h-20 gap-2">
+        <div className="flex items-center justify-between h-16 sm:h-20 lg:h-[88px] gap-3">
           {/* Top Left: Compute 50 Logo & Brand */}
           <Link
             to="/"
             className="flex items-center gap-2.5 sm:gap-3 group focus:outline-none focus:ring-2 focus:ring-[var(--accent)] rounded-xl p-1 shrink-0"
             aria-label="Compute 50 Homepage"
           >
-            <div className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center transition-transform duration-200 group-hover:scale-110 cursor-pointer">
+            <div className="w-11 h-11 sm:w-14 sm:h-14 flex items-center justify-center transition-transform duration-200 group-hover:scale-110 cursor-pointer">
               <img
                 src={compute50Logo}
                 alt="Compute 50"
                 className="w-full h-full object-contain transition-transform duration-200"
               />
             </div>
-            <div>
-              <span className="font-black text-lg sm:text-xl text-[var(--text-primary)] tracking-tight block font-mono leading-none">
-                COMPUTE <span className="text-[var(--accent)]">50</span>
+            <div className="flex flex-col justify-center pl-3 sm:pl-3.5 border-l border-[var(--border-color)]">
+              <span className="flex items-baseline gap-2 leading-none">
+                <span
+                  className="text-[17px] sm:text-[20px] font-bold tracking-[0.14em] text-[var(--text-primary)]"
+                  style={{ fontFamily: "'Space Grotesk', 'Inter', sans-serif" }}
+                >
+                  COMPUTE
+                </span>
+                <span
+                  className="text-[17px] sm:text-[20px] font-bold tracking-[0.14em] text-[var(--accent)]"
+                  style={{ fontFamily: "'Space Grotesk', 'Inter', sans-serif" }}
+                >
+                  50
+                </span>
               </span>
-              <span className="text-[10px] text-[var(--text-secondary)] block mt-0.5 tracking-wider uppercase font-semibold">
-                CSEA · PSG Tech
+              <span
+                className="flex items-center gap-1.5 mt-1.5 leading-none text-[10px] sm:text-[11px] font-light text-[var(--text-secondary)]"
+                style={{ fontFamily: "'Space Grotesk', 'Inter', sans-serif" }}
+              >
+                <span className="h-px w-3 bg-[var(--accent)]/70" aria-hidden="true" />
+                <span className="tracking-[0.12em]">powered by</span>
+                <span className="font-medium tracking-[0.32em] text-[var(--accent-hover)]">CSEA</span>
               </span>
             </div>
           </Link>
@@ -123,48 +145,33 @@ export const Navbar: React.FC = () => {
           <CircuitNav items={navLinks} className="hidden lg:block w-[400px] xl:w-[460px]" />
 
           {/* Top Right: Institutional Logos & Actions */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-3 md:gap-5 shrink-0">
             {/* Institutional Logos Row: Hidden on narrow mobile (<640px) to prevent pushing sound & menu off-screen */}
-            <div className="hidden sm:flex items-center gap-2 sm:gap-3 px-2 py-1">
+            <div className="hidden sm:flex items-center gap-3 md:gap-4 lg:gap-5 px-1">
               <img
                 src={psgLogo}
                 alt="PSG Tech"
-                className="h-8 sm:h-9 md:h-10 w-auto object-contain transition-transform duration-200 hover:scale-110 cursor-pointer filter drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]"
+                className="h-10 md:h-12 lg:h-14 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer"
                 title="PSG College of Technology"
               />
-              <div className="h-4 sm:h-5 w-[1px] bg-[var(--border-color)]" />
+              <div className="h-8 md:h-9 w-px bg-[var(--border-color)]" />
               <img
                 src={cseaLogo}
                 alt="CSEA"
-                className="h-8 sm:h-9 md:h-10 w-auto object-contain transition-transform duration-200 hover:scale-110 cursor-pointer filter drop-shadow-[0_0_8px_rgba(34,197,94,0.25)]"
+                className="h-10 md:h-12 lg:h-14 w-auto object-contain transition-transform duration-300 hover:scale-105 cursor-pointer"
                 title="Computer Science & Engineering Association"
               />
-              <div className="h-4 sm:h-5 w-[1px] bg-[var(--border-color)] hidden md:block" />
+              <div className="h-8 md:h-9 w-px bg-[var(--border-color)] hidden md:block" />
               <img
-                src={psg100Logo}
-                alt="PSG 100 Years"
-                className="h-8 sm:h-9 md:h-10 w-auto object-contain hidden md:block transition-transform duration-200 hover:scale-110 cursor-pointer filter drop-shadow-[0_0_6px_rgba(255,255,255,0.25)]"
+                src={psg75Logo}
+                alt="PSG 75 Years"
+                className="h-10 md:h-12 lg:h-14 w-auto object-contain hidden md:block transition-transform duration-300 hover:scale-105 cursor-pointer"
                 title="PSG Centenary"
               />
             </div>
 
-            {/* Desktop Theme Switch & Auth Buttons */}
+            {/* Desktop Sound Switch & Profile Button (only when logged in) */}
             <div className="hidden md:flex items-center gap-2">
-              <button
-                type="button"
-                onClick={handleToggleTheme}
-                data-nosound="true"
-                className="min-h-[40px] min-w-[40px] p-2 rounded-full border border-[var(--border-color)] bg-[var(--bg-surface)] text-[var(--text-primary)] hover:border-[var(--accent)] transition-all cursor-pointer flex items-center justify-center"
-                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-                title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-              >
-                {theme === 'dark' ? (
-                  <Sun className="w-4 h-4 text-amber-400" />
-                ) : (
-                  <Moon className="w-4 h-4 text-slate-700" />
-                )}
-              </button>
-
               <button
                 type="button"
                 onClick={handleToggleSound}
@@ -180,7 +187,7 @@ export const Navbar: React.FC = () => {
                 )}
               </button>
 
-              {isAuthenticated ? (
+              {isAuthenticated && (
                 <Link to="/profile">
                   <Button
                     variant={isActive('/profile') ? 'primary' : 'outline'}
@@ -190,45 +197,11 @@ export const Navbar: React.FC = () => {
                     {user?.name || 'Profile'}
                   </Button>
                 </Link>
-              ) : (
-                <>
-                  <Link to="/login">
-                    <Button variant={isActive('/login') ? 'primary' : 'ghost'} size="sm">
-                      Login
-                    </Button>
-                  </Link>
-                  <Link to="/register">
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      className="bg-[var(--accent)] text-[var(--accent-text)] hover:bg-[var(--accent-hover)] font-extrabold shadow-[0_0_15px_rgba(var(--accent-rgb),0.35)] hover:shadow-[0_0_22px_rgba(var(--accent-rgb),0.55)] transition-all transform hover:scale-105"
-                    >
-                      Register
-                    </Button>
-                  </Link>
-                </>
               )}
             </div>
 
-            {/* Mobile Actions: Compact Theme & Sound Controls Pill */}
+            {/* Mobile Actions: Compact Sound Control Pill */}
             <div className="flex md:hidden items-center gap-1 p-1 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] shadow-xs shrink-0">
-              <button
-                type="button"
-                onClick={handleToggleTheme}
-                data-nosound="true"
-                className="w-9 h-9 rounded-xl text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] hover:text-[var(--accent)] transition-all cursor-pointer flex items-center justify-center shrink-0"
-                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-                title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-              >
-                {theme === 'dark' ? (
-                  <Sun className="w-4 h-4 text-amber-400" />
-                ) : (
-                  <Moon className="w-4 h-4 text-slate-700" />
-                )}
-              </button>
-
-              <div className="w-[1px] h-4 bg-[var(--border-color)]" />
-
               <button
                 type="button"
                 onClick={handleToggleSound}
