@@ -19,14 +19,9 @@ export const FloatingSupport: React.FC = () => {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   const isAuthPage = location.pathname === '/login';
-  const hasRegisterInBottomNav =
-    !isAuthPage && location.pathname !== '/register' && location.pathname !== '/profile';
-
-  // Responsive bottom offset: places Help button safely above BottomNav's Register CTA on mobile
+  // Responsive bottom offset: places Help button safely above the mobile BottomNav
   const bottomPositionClass = isAuthPage
     ? 'bottom-6 md:bottom-8'
-    : hasRegisterInBottomNav
-    ? 'bottom-[calc(142px+env(safe-area-inset-bottom,0px))] md:bottom-8'
     : 'bottom-[calc(80px+env(safe-area-inset-bottom,0px))] md:bottom-8';
 
   const handleOpen = () => {
@@ -122,7 +117,7 @@ export const FloatingSupport: React.FC = () => {
                   : { opacity: 0, scale: 0.95, y: 20 }
               }
               transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="relative z-10 w-full sm:w-[420px] max-w-[calc(100vw-32px)] bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[75vh] mb-[calc(142px+env(safe-area-inset-bottom,0px))] md:mb-12"
+              className="relative z-10 w-full sm:w-[420px] max-w-[calc(100vw-32px)] bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[75vh] mb-[calc(80px+env(safe-area-inset-bottom,0px))] md:mb-12"
               role="dialog"
               aria-modal="true"
               aria-labelledby="support-drawer-title"

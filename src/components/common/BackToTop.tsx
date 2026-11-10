@@ -31,7 +31,7 @@ export const BackToTop: React.FC = () => {
           whileTap={{ scale: 0.9 }}
           transition={{ type: 'spring', stiffness: 400, damping: 25 }}
           onClick={scrollToTop}
-          className="fixed bottom-[calc(140px+env(safe-area-inset-bottom,0px))] md:bottom-8 right-4 sm:right-6 z-50 w-11 h-11 rounded-full bg-[var(--accent)] text-black font-bold shadow-lg shadow-[var(--accent)]/30 flex items-center justify-center hover:shadow-xl transition-all cursor-pointer"
+          className="fixed bottom-[calc(80px+env(safe-area-inset-bottom,0px))] md:bottom-8 right-4 sm:right-6 z-50 w-11 h-11 rounded-full bg-[var(--accent)] text-black font-bold shadow-lg shadow-[var(--accent)]/30 flex items-center justify-center hover:shadow-xl transition-all cursor-pointer"
           aria-label="Back to top"
         >
           <ArrowUp className="w-5 h-5 text-black stroke-[2.5]" />

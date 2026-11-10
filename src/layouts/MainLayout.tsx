@@ -27,7 +27,7 @@ export const MainLayout: React.FC = () => {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--bg-main)] text-[var(--text-primary)] transition-colors pb-[140px] md:pb-0 relative overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-[var(--bg-main)] text-[var(--text-primary)] transition-colors pb-[76px] md:pb-0 relative overflow-x-hidden">
       <TexturedBackground />
       <ScrollProgressBar />
       <IntroLoader />
