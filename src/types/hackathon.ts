@@ -11,7 +11,7 @@ export interface Speaker {
   name: string;
   role: string;
   organization: string;
-  bio: string;
+  bio?: string;
   image: string;
   type: 'speaker' | 'judge' | 'mentor';
   confirmed?: boolean;

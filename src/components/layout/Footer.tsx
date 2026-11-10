@@ -12,7 +12,6 @@ import compute50Logo from '../../assets/logos/compute 50 logo.png';
 import { HolographicContactSection } from './HolographicContactSection';
 import { InstagramIcon } from '../common/InstagramIcon';
 import { GithubIcon } from '../common/GithubIcon';
-import { RepellingTeamOrb } from './RepellingTeamOrb';
 
 export const Footer: React.FC = () => {
   const { pathname } = useLocation();
@@ -98,12 +97,6 @@ export const Footer: React.FC = () => {
         {/* (Loads names & contact details with holographic laser unroll) */}
         {/* ========================================================= */}
         <HolographicContactSection />
-
-        {/* ========================================================= */}
-        {/* MEET THE DEV TEAM INTERACTIVE ORB & HOLOGRAPHIC REVEAL    */}
-        {/* (Pressing orb reveals Frontend, Backend, Coordinator)     */}
-        {/* ========================================================= */}
-        <RepellingTeamOrb />
 
         {/* ========================================================= */}
         {/* CENTER SOCIAL ICONS (Instagram, GitHub, Globe)  */}

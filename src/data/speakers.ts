@@ -7,6 +7,9 @@ import shananthikaImg from '../assets/images/speakers/Shananthika.jpeg';
 import mathanImg from '../assets/images/speakers/Mathan_kumar.jpeg';
 import narenImg from '../assets/images/speakers/Naren_siddharth.jpeg';
 import abinavImg from '../assets/images/speakers/Abinav_p.jpeg';
+import kishoreImg from '../assets/images/speakers/kishore.jpeg';
+import prasheethaImg from '../assets/images/speakers/prasheetha.jpeg';
+import simrithaaImg from '../assets/images/speakers/simrithaa.jpeg';
 
 export const mockSpeakers: Speaker[] = [
   {
@@ -91,31 +94,31 @@ export const mockSpeakers: Speaker[] = [
   },
   {
     id: 'spk-9',
-    name: 'To Be Announced',
-    role: 'To Be Announced',
-    organization: 'To Be Announced',
-    bio: 'Judge details will be announced soon.',
-    image: '',
+    name: 'Mr Kishoreadhith',
+    role: 'Software Engineer',
+    organization: 'Texas Instruments Bangalore',
+    bio: 'Software Engineer at Texas Instruments Bangalore · BE CSE 2026 Alumnus',
+    image: kishoreImg,
     type: 'judge',
     confirmed: true,
   },
   {
     id: 'spk-10',
-    name: 'To Be Announced',
-    role: 'To Be Announced',
-    organization: 'To Be Announced',
-    bio: 'Judge details will be announced soon.',
-    image: '',
+    name: 'Ms. Simrithaa N V',
+    role: 'Software Engineer',
+    organization: 'Fidelity investments Bangalore',
+    bio: 'Software Engineer at Fidelity investments Bangalore · BE CSE 2026 Alumnus',
+    image: simrithaaImg,
     type: 'judge',
     confirmed: true,
   },
   {
     id: 'spk-11',
-    name: 'To Be Announced',
-    role: 'To Be Announced',
-    organization: 'To Be Announced',
-    bio: 'Judge details will be announced soon.',
-    image: '',
+    name: 'Ms. J Prasheetha',
+    role: 'Analyst',
+    organization: 'Deloitte Bangalore',
+    bio: 'Analyst at Deloitte Bangalore · BE CSE 2026 Alumnus',
+    image: prasheethaImg,
     type: 'judge',
     confirmed: true,
   },

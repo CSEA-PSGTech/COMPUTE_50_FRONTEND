@@ -82,13 +82,13 @@ const SpeakerPhotoModal: React.FC<{ speaker: Speaker | null; onClose: () => void
 const SpeakerAvatar: React.FC<{ name: string; image?: string; confirmed?: boolean; onOpen?: () => void; compact?: boolean }> = ({ name, image, confirmed, onOpen, compact = false }) => {
   const [imgError, setImgError] = React.useState(false);
   // compact = smaller desktop grid avatar so all 8 cards fit on screen
-  const sizeCls = compact ? 'w-16 h-16' : 'w-20 h-20';
-  const gapCls = compact ? 'mb-2.5' : 'mb-4';
+  const sizeCls = compact ? 'w-[88px] h-[88px]' : 'w-24 h-24';
+  const gapCls = compact ? 'mb-3' : 'mb-4';
 
   if (confirmed === false || name.toLowerCase().includes('announced')) {
     return (
       <div className={`${sizeCls} ${gapCls} rounded-full bg-[var(--bg-secondary)] border-2 border-dashed border-[var(--border-color)] flex items-center justify-center text-[var(--text-secondary)] shadow-xs`}>
-        <User className="w-9 h-9 opacity-50" />
+        <User className="w-10 h-10 opacity-50" />
       </div>
     );
   }
@@ -536,7 +536,7 @@ export const SpeakersSection: React.FC = () => {
                       key={speaker.id}
                       className="snap-center shrink-0 w-[78vw] max-w-[290px]"
                     >
-                      <Card className="group text-center flex flex-col items-center justify-start p-5 w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-xs min-h-[320px] h-full">
+                      <Card className="group text-center flex flex-col items-center justify-start p-5 w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-xs min-h-[280px] h-full">
                         <SpeakerAvatar
                           name={speaker.name}
                           image={speaker.image}
@@ -555,11 +555,8 @@ export const SpeakersSection: React.FC = () => {
                         <p className="text-[13px] text-[var(--accent)] font-bold mb-1 mt-1 line-clamp-1">
                           {speaker.role}
                         </p>
-                        <p className="text-[13px] text-[var(--text-secondary)] font-medium mb-3 line-clamp-1">
+                        <p className="text-[13px] text-[var(--text-secondary)] font-medium line-clamp-1">
                           {speaker.organization}
-                        </p>
-                        <p className="text-[12px] text-[var(--text-secondary)] leading-relaxed border-t border-[var(--border-color)] pt-3 w-full line-clamp-3">
-                          {speaker.bio}
                         </p>
                       </Card>
                     </div>
@@ -727,6 +724,7 @@ export const SpeakersSection: React.FC = () => {
                             backfaceVisibility: 'hidden',
                             WebkitBackfaceVisibility: 'hidden',
                             transform: 'rotateY(180deg)',
+                            pointerEvents: expanded ? 'none' : 'auto',
                           }}
                         >
                           <div className="w-12 h-12 rounded-xl bg-[var(--accent)]/15 border border-[var(--accent)]/40 flex items-center justify-center text-[var(--accent)] mb-3">
@@ -750,8 +748,11 @@ export const SpeakersSection: React.FC = () => {
                             ease: [0.4, 0, 0.2, 1],
                           }}
                           style={{
-                            backfaceVisibility: 'hidden',
-                            WebkitBackfaceVisibility: 'hidden',
+                            // Hidden backface is only needed while collapsed (so the Guest Pass shows).
+                            // When expanded it must stay 'visible': a flipped (180°) container with a hidden
+                            // backface makes the page-2 photos unclickable in Chrome.
+                            backfaceVisibility: expanded ? 'visible' : 'hidden',
+                            WebkitBackfaceVisibility: expanded ? 'visible' : 'hidden',
                             transformStyle: 'preserve-3d',
                           }}
                           className="relative w-full h-full"
@@ -763,12 +764,14 @@ export const SpeakersSection: React.FC = () => {
                               backfaceVisibility: 'hidden',
                               WebkitBackfaceVisibility: 'hidden',
                               transform: 'rotateY(0deg)',
+                              // hidden faces still catch clicks in 3D; only the visible page is interactive
+                              pointerEvents: flipAngle === 0 ? 'auto' : 'none',
                             }}
                           >
                             {frontSpeaker ? (
                               <Card
                                 hoverable={expanded && currentPage === frontPage && !isFlippingPage}
-                                className="group text-center flex flex-col items-center justify-start overflow-hidden h-full p-4 w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-xs min-h-[236px]"
+                                className="group text-center flex flex-col items-center justify-start overflow-hidden h-full p-4 w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-xs min-h-[220px]"
                               >
                                 <SpeakerAvatar
                                   name={frontSpeaker.name}
@@ -793,15 +796,12 @@ export const SpeakersSection: React.FC = () => {
                                 <p className="text-[12px] text-[var(--accent)] font-bold mt-0.5 line-clamp-1">
                                   {frontSpeaker.role}
                                 </p>
-                                <p className="text-[12px] text-[var(--text-secondary)] font-medium mb-2 line-clamp-1">
+                                <p className="text-[12px] text-[var(--text-secondary)] font-medium line-clamp-1">
                                   {frontSpeaker.organization}
-                                </p>
-                                <p className="text-[11px] text-[var(--text-secondary)] leading-snug border-t border-[var(--border-color)] pt-2 w-full line-clamp-2">
-                                  {frontSpeaker.bio}
                                 </p>
                               </Card>
                             ) : (
-                              <div className="w-full h-full min-h-[236px]" />
+                              <div className="w-full h-full min-h-[220px]" />
                             )}
                           </div>
 
@@ -812,12 +812,13 @@ export const SpeakersSection: React.FC = () => {
                               backfaceVisibility: 'hidden',
                               WebkitBackfaceVisibility: 'hidden',
                               transform: 'rotateY(180deg)',
+                              pointerEvents: flipAngle === 180 ? 'auto' : 'none',
                             }}
                           >
                             {backSpeaker ? (
                               <Card
                                 hoverable={expanded && currentPage === backPage && !isFlippingPage}
-                                className="group text-center flex flex-col items-center justify-start overflow-hidden h-full p-4 w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-xs min-h-[236px]"
+                                className="group text-center flex flex-col items-center justify-start overflow-hidden h-full p-4 w-full bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl shadow-xs min-h-[220px]"
                               >
                                 <SpeakerAvatar
                                   name={backSpeaker.name}
@@ -842,15 +843,12 @@ export const SpeakersSection: React.FC = () => {
                                 <p className="text-[12px] text-[var(--accent)] font-bold mt-0.5 line-clamp-1">
                                   {backSpeaker.role}
                                 </p>
-                                <p className="text-[12px] text-[var(--text-secondary)] font-medium mb-2 line-clamp-1">
+                                <p className="text-[12px] text-[var(--text-secondary)] font-medium line-clamp-1">
                                   {backSpeaker.organization}
-                                </p>
-                                <p className="text-[11px] text-[var(--text-secondary)] leading-snug border-t border-[var(--border-color)] pt-2 w-full line-clamp-2">
-                                  {backSpeaker.bio}
                                 </p>
                               </Card>
                             ) : (
-                              <div className="w-full h-full min-h-[236px]" />
+                              <div className="w-full h-full min-h-[220px]" />
                             )}
                           </div>
                         </motion.div>
