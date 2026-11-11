@@ -23,23 +23,37 @@ export const PaymentGuidelinesModal: React.FC<PaymentGuidelinesModalProps> = ({ 
   };
 
   const steps: Array<[string, React.ReactNode]> = [
-    ['Official portal only', 'Pay only through the PSG College of Technology fee portal using the button below.'],
-    ['Choose “Student”', 'Select the Student participant category. Payments in the wrong category are not refunded.'],
+    ['Official portal only', 'Pay only through the PSG College of Technology events portal using the button below.'],
     [
-      'Use your Compute 50 details',
+      'Use your Compute 50 mobile number',
       <>
-        Enter the same email and mobile number as your Compute 50 account
+        Enter the same mobile number and email as your Compute 50 account
         {(name || email || phone) && (
           <span className="block mt-1 font-mono text-[12px] text-[var(--text-primary)]">
             {[name, email, phone].filter(Boolean).join(' · ')}
           </span>
         )}
-        Payments are matched to your account using these details — a different number means it won't show up.
+        Payments are matched using your mobile number — a different number means it won't show up here.
       </>,
     ],
     [
+      'Keep these ready',
+      <>
+        The portal verifies your mobile and email with an OTP, then asks for:
+        <ul className="mt-1.5 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-[12.5px]">
+          <li>• A passport-size photo (max 512 KB)</li>
+          <li>• Prefix, full name and gender</li>
+          <li>• Participant type: choose “Participant”</li>
+          <li>• Your college name</li>
+          <li>• Full address</li>
+          <li>• Pincode</li>
+        </ul>
+      </>,
+    ],
+    ['Review and pay ₹150', 'Check the details on the review page and click “Proceed to Payment”. Read the portal’s payment guidelines, continue, choose a payment mode and complete the payment. Keep the receipt or transaction ID.'],
+    [
       'Check your payment status',
-      'After paying, come back to this page and click “Check Payment Status”. Once it shows Paid, register for the hackathon.',
+      'Come back to this page and click “Check Payment Status”. Once it shows Paid, register for the hackathon.',
     ],
     ['Pay only once', 'Payments can take a few minutes to reflect. Check again later instead of paying twice.'],
     ['No refunds', 'All payments are non-refundable. Paying the fee alone does not register you — register for the hackathon afterwards.'],

@@ -61,7 +61,7 @@ export const FeePaymentCard: React.FC<FeePaymentCardProps> = ({ paymentStatus, u
       } else if (total === 0) {
         setMessage({
           type: 'info',
-          text: 'No payment found yet. If you just paid, wait a few minutes and check again.',
+          text: 'No payment found yet. If you just paid, wait a few minutes and check again. Make sure you paid with the same mobile number as your Compute 50 account.',
         });
       } else {
         setMessage({
