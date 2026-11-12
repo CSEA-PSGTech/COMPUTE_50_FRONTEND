@@ -64,7 +64,7 @@ export const mockSpeakers: Speaker[] = [
   },
   {
     id: 'spk-6',
-    name: 'Mr. Mathan kumar',
+    name: 'Mr. Mathan Kumar S ',
     role: 'Digital Specialist Engineer',
     organization: 'Infosys Bangalore',
     bio: 'Digital Specialist Engineer at Infosys Bangalore · BE CSE 2026 Alumnus',
