@@ -381,11 +381,8 @@ export const SpeakersSection: React.FC = () => {
                           <p className="text-[13px] text-[var(--accent)] font-bold mb-1 mt-1">
                             {speaker.role}
                           </p>
-                          <p className="text-[13px] text-[var(--text-secondary)] font-medium mb-3">
+                          <p className="text-[13px] text-[var(--text-secondary)] font-medium">
                             {speaker.organization}
-                          </p>
-                          <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed border-t border-[var(--border-color)] pt-3 w-full">
-                            {speaker.bio}
                           </p>
                         </Card>
                       </div>
@@ -567,11 +564,8 @@ export const SpeakersSection: React.FC = () => {
                               <p className="text-[13px] text-[var(--accent)] font-bold mb-1 mt-1">
                                 {speaker.role}
                               </p>
-                              <p className="text-[13px] text-[var(--text-secondary)] font-medium mb-3">
+                              <p className="text-[13px] text-[var(--text-secondary)] font-medium">
                                 {speaker.organization}
-                              </p>
-                              <p className="text-[13px] text-[var(--text-secondary)] leading-relaxed border-t border-[var(--border-color)] pt-3 w-full">
-                                {speaker.bio}
                               </p>
                             </>
                           )}
