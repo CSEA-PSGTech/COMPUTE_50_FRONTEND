@@ -5,7 +5,6 @@ import { Navbar } from '../components/layout/Navbar';
 import { Footer } from '../components/layout/Footer';
 import { BottomNav } from '../components/layout/BottomNav';
 import { BackToTop } from '../components/common/BackToTop';
-import { FloatingSupport } from '../components/common/FloatingSupport';
 import { CursorGlow } from '../components/common/CursorGlow';
 import { AnnouncementPopup } from '../components/common/AnnouncementPopup';
 import { SectionDotNav } from '../components/common/SectionDotNav';
@@ -27,7 +26,7 @@ export const MainLayout: React.FC = () => {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--bg-main)] text-[var(--text-primary)] transition-colors pb-[76px] md:pb-0 relative overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-[var(--bg-main)] text-[var(--text-primary)] transition-colors pb-[140px] md:pb-0 relative overflow-x-hidden">
       <TexturedBackground />
       <ScrollProgressBar />
       <IntroLoader />
@@ -62,7 +61,6 @@ export const MainLayout: React.FC = () => {
 
       <Footer />
       {/* Floating Support widget on desktop & tablet */}
-      <FloatingSupport />
       <BackToTop />
       {/* Mobile persistent bottom bar with prominent Register CTA */}
       <BottomNav />

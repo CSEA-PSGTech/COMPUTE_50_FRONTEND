@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
-import { Volume2, VolumeX, ArrowLeft } from 'lucide-react';
+import { Volume2, VolumeX, ArrowLeft, Sun, Moon } from 'lucide-react';
 import { TexturedBackground } from '../components/common/TexturedBackground';
 import { CursorGlow } from '../components/common/CursorGlow';
-import { FloatingSupport } from '../components/common/FloatingSupport';
 import { isMuted, setMuted, soundSwitch } from '../lib/sound';
+import { useTheme } from '../hooks/useTheme';
 import cseaLogo from '../assets/logos/csea-logo.png';
 
 export const AuthLayout: React.FC = () => {
   const [muted, setMutedState] = useState<boolean>(isMuted());
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleToggle = (e: Event) => {
@@ -34,12 +35,17 @@ export const AuthLayout: React.FC = () => {
     }
   };
 
+  const handleToggleTheme = () => {
+    soundSwitch();
+    toggleTheme();
+  };
+
   return (
     <div className="min-h-screen flex flex-col justify-between bg-[var(--bg-main)] text-[var(--text-primary)] transition-colors relative select-none">
       <TexturedBackground />
       <CursorGlow />
 
-      {/* Streamlined Top Header: Home + Center Branding */}
+      {/* Streamlined Top Header: Home + Center Branding + Theme Toggle */}
       <header className="relative z-20 w-full px-4 sm:px-8 py-3 sm:py-4 flex items-center justify-between">
         {/* Top-Left: Return to Home Button */}
         <Link
@@ -63,8 +69,18 @@ export const AuthLayout: React.FC = () => {
           </div>
         </div>
 
-        {/* Top-Right: spacer keeps the center badge centered */}
-        <div className="w-9 h-9" aria-hidden="true" />
+        {/* Top-Right: Theme Switcher */}
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={handleToggleTheme}
+            data-nosound="true"
+            className="p-2 rounded-full bg-[var(--bg-surface)] border border-[var(--border-color)] hover:border-[var(--accent)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] shadow-sm hover:shadow-md transition-all cursor-pointer"
+            aria-label="Toggle Theme"
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+        </div>
       </header>
 
       {/* Main Viewport Centered Content Area (Scrollable on small screens) */}
@@ -74,7 +90,6 @@ export const AuthLayout: React.FC = () => {
 
       {/* Bottom Controls */}
       {/* Symmetrical Helpdesk (Bottom-Left) */}
-      <FloatingSupport />
 
       {/* Symmetrical Audio Toggle (Bottom-Right) */}
       <div className="fixed bottom-6 right-6 z-40">
