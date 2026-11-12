@@ -6,6 +6,7 @@ export const YEAR_LABELS = [
   '2nd Year',
   '3rd Year',
   '4th Year',
+  '5th Year',
   'Postgraduate (M.E. / M.Tech / MCA)',
 ] as const;
 
