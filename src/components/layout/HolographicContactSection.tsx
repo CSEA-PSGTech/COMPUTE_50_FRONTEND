@@ -28,6 +28,7 @@ const FOOTER_CATEGORIES: ContactCategory[] = [
     title: 'TECH SUPPORT',
     people: [
       { name: 'Adhish Krishna S', phone: '+91 82178 96832' },
+      {name: 'Srivarshini G', phone: '+91 81110 10806'},
       { name: 'Ahamed Shalman H', phone: '+91 63695 51733' },
       { name: 'Abinayasri', phone: '+91 89038 87312' },
     ],
