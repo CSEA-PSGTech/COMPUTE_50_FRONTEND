@@ -9,7 +9,8 @@ import narenImg from '../assets/images/speakers/Naren_siddharth.jpeg';
 import abinavImg from '../assets/images/speakers/Abinav_p.jpeg';
 import kishoreImg from '../assets/images/speakers/kishore.jpeg';
 import prasheethaImg from '../assets/images/speakers/prasheetha.jpeg';
-import simrithaaImg from '../assets/images/speakers/simrithaa.jpeg';
+import simrithaaImg from '../assets/images/speakers/simrithaa2.jpeg';
+import sreeragImg from '../assets/images/speakers/sreeraghavan.jpeg';
 
 export const mockSpeakers: Speaker[] = [
   {
@@ -94,7 +95,7 @@ export const mockSpeakers: Speaker[] = [
   },
   {
     id: 'spk-9',
-    name: 'Mr Kishoreadhith',
+    name: 'Mr. Kishoreadhith',
     role: 'Software Engineer',
     organization: 'Texas Instruments Bangalore',
     bio: 'Software Engineer at Texas Instruments Bangalore · BE CSE 2026 Alumnus',
@@ -124,11 +125,11 @@ export const mockSpeakers: Speaker[] = [
   },
   {
     id: 'spk-12',
-    name: 'To Be Announced',
-    role: 'To Be Announced',
-    organization: 'To Be Announced',
+    name: 'Mr. Sreeraghavan Ramamoorthy',
+    role: 'Software Engineer',
+    organization: 'Microsoft IDC',
     bio: 'Judge details will be announced soon.',
-    image: '',
+    image: sreeragImg,
     type: 'judge',
     confirmed: true,
   },
