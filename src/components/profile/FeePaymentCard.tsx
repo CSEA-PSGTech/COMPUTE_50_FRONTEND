@@ -58,6 +58,11 @@ export const FeePaymentCard: React.FC<FeePaymentCardProps> = ({ paymentStatus, u
             : 'Your payment is already verified.',
         });
         await onUpdated?.();
+      } else if ((res.summary?.claimedElsewhere ?? 0) > 0) {
+        setMessage({
+          type: 'error',
+          text: 'This payment is already linked to another Compute 50 account. Each payment can be used for one account only. If this is a mistake, contact the organisers.',
+        });
       } else if (total === 0) {
         setMessage({
           type: 'info',

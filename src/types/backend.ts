@@ -106,5 +106,5 @@ export interface BackendPaymentCheckResponse {
   success: boolean;
   message?: string;
   generalFeePaid?: boolean;
-  summary?: { totalRegistrations: number; recordsCreated: number; recordsSkipped: number };
+  summary?: { totalRegistrations: number; recordsCreated: number; recordsSkipped: number; claimedElsewhere?: number };
 }
