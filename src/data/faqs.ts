@@ -43,4 +43,11 @@ export const mockFaqs: FAQItem[] = [
     answer:
       'Yes, teams can build software, hardware, or hybrid solutions depending on the chosen problem track.',
   },
+    {
+    id: 'faq-certificates',
+    category: 'General',
+    question: 'Will participants receive certificates?',
+    answer:
+      'Yes. Every team that takes part in Round 1 will receive an e-certificate of participation, and the teams shortlisted for the finals at PSG Tech will be awarded physical certificates.',
+  },
 ];

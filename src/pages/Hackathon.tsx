@@ -4,6 +4,8 @@ import { SectionHeading } from '../components/common/SectionHeading';
 import { DecryptText } from '../components/common/DecryptText';
 import { RoundsTimeline } from '../components/hackathon/RoundsTimeline';
 import { PaymentGuidelines } from '../components/hackathon/PaymentGuidelines';
+import { Card } from '../components/common/Card';
+import { Award } from 'lucide-react';
 
 export const Hackathon: React.FC = () => {
   return (
@@ -45,6 +47,30 @@ export const Hackathon: React.FC = () => {
               subtitle="Key dates from Round 1 to the finals."
             />
             <RoundsTimeline />
+          </section>
+
+          <section id="certificates" className="scroll-mt-24 sm:scroll-mt-28">
+            <Card className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+              <div className="flex items-center gap-3 shrink-0">
+                <div className="p-2.5 rounded-xl bg-[var(--accent-muted)] border border-[var(--accent)]/30 text-[var(--accent)]">
+                  <Award className="w-6 h-6" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--accent)]">Certificates</p>
+      
+                </div>
+              </div>
+              <div className="grid w-full flex-1 grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="rounded-xl border border-[var(--border-color)] bg-[var(--bg-main)] p-3.5">
+                  <p className="text-[13px] font-bold text-[var(--text-primary)]">Round 1 participants</p>
+                  <p className="mt-0.5 text-[13px] text-[var(--text-secondary)]">E-certificate of Participation</p>
+                </div>
+                <div className="rounded-xl border border-[var(--accent)]/40 bg-[var(--accent-muted)]/40 p-3.5">
+                  <p className="text-[13px] font-bold text-[var(--text-primary)]">Finalists at PSG Tech</p>
+                  <p className="mt-0.5 text-[13px] text-[var(--text-secondary)]">Physical Certificate of Merit</p>
+                </div>
+              </div>
+            </Card>
           </section>
 
           <section id="payment" className="scroll-mt-24 sm:scroll-mt-28">
