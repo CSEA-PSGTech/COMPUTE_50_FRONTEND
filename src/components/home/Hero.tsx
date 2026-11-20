@@ -15,6 +15,7 @@ import { EVENT_CONFIG } from '../../config/event';
 import { home } from '../../data/content';
 import { ParticleBackground } from './ParticleBackground';
 import { useAuth } from '../../hooks/useAuth';
+import { RegistrationDeadlineAlert } from './RegistrationDeadlineAlert';
 
 const Compute50HeroLogo: React.FC<{ shouldReduceMotion: boolean | null }> = ({
   shouldReduceMotion,
@@ -353,7 +354,7 @@ export const Hero: React.FC = () => {
                     </span>
                   </div>
                   <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-                    Participate remotely from your location.
+                    Nov 23, 24 & 25 · Online prototype submission.
                   </p>
                 </div>
               </div>
@@ -373,7 +374,7 @@ export const Hero: React.FC = () => {
                     </span>
                   </div>
                   <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-                    PSG College of Technology, Coimbatore.
+                    Dec 4 & 5 at PSG Tech · New problem statements.
                   </p>
                 </div>
               </div>
@@ -386,9 +387,14 @@ export const Hero: React.FC = () => {
                 <strong className="text-[var(--accent)] font-mono font-bold uppercase tracking-wider mr-1.5">
                   IMPORTANT:
                 </strong>
-                Round 1 is conducted entirely online. Only shortlisted teams will attend the on-campus final round at PSG Tech.
+                Round 1 runs online Nov 23–25 with 10 domains (prototype required). Results announced Nov 30 at 10 AM. Round 2 finalists receive new problem statements at PSG Tech.
               </p>
             </div>
+          </motion.div>
+
+          {/* Urgent Registration Deadline Alert Box */}
+          <motion.div variants={itemVariants} className="w-full">
+            <RegistrationDeadlineAlert />
           </motion.div>
 
           {/* 6. Countdown (Order: 6) */}

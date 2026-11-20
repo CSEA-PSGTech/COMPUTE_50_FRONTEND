@@ -32,7 +32,7 @@ const steps = [
   {
     icon: Users,
     title: 'Form your team later',
-    text: `Team formation (${EVENT_CONFIG.teamSize.replace(/\s+/g, ' ')}) opens after registrations close. Round 1 details follow in the participants WhatsApp group.`,
+    text: `Team formation (${EVENT_CONFIG.teamSize.replace(/\s+/g, ' ')}) opens after registrations close on Nov 22 (4:30 PM). Round 1 details follow in the participants WhatsApp group.`,
   },
 ];
 

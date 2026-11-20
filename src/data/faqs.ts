@@ -12,9 +12,23 @@ export const mockFaqs: FAQItem[] = [
   {
     id: 'faq-format',
     category: 'Hackathon',
-    question: 'What is the event format?',
+    question: 'What is the event format and timeline?',
     answer:
-      'Round 1 Online · Finals at PSG Tech. The first round will be held online, and shortlisted teams will be invited to the PSG Tech campus for the final round.',
+      'Registration closes on November 22nd at 4:30 PM. Round 1 is held online on November 23, 24, and 25 where teams develop a working prototype based on one of the 10 Round 1 domains. Round 1 results are announced on November 30 at 10:00 AM. Shortlisted finalists then attend the on-campus finale at PSG College of Technology on December 4 & 5.',
+  },
+  {
+    id: 'faq-r1-domains',
+    category: 'Hackathon',
+    question: 'What are the domains for Round 1, and what must be submitted?',
+    answer:
+      'The 10 domains announced on the website are strictly for Round 1 prototype development. Teams must build and submit an end-to-end working prototype in one of these domains during the online round (Nov 23–25).',
+  },
+  {
+    id: 'faq-r2-statements',
+    category: 'Hackathon',
+    question: 'When will Round 2 problem statements be provided?',
+    answer:
+      'Round 2 problem statements will be released exclusively at the beginning of the final hackathon at PSG Tech (December 4 & 5) for all shortlisted teams.',
   },
   {
     id: 'faq-2',

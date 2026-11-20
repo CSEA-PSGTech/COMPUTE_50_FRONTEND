@@ -1,4 +1,5 @@
 import React from 'react';
+import { HomeNotificationBar } from '../components/home/HomeNotificationBar';
 import { Hero } from '../components/home/Hero';
 import { AboutSection } from '../components/home/AboutSection';
 import { HackathonSection } from '../components/home/HackathonSection';
@@ -10,6 +11,7 @@ import { SectionTransition } from '../components/common/SectionTransition';
 export const Home: React.FC = () => {
   return (
     <div className="w-full overflow-hidden">
+      <HomeNotificationBar />
       <SectionTransition>
         <Hero />
       </SectionTransition>

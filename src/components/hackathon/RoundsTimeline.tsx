@@ -12,32 +12,32 @@ interface Milestone {
 
 const milestones: Milestone[] = [
   {
-    title: 'Round 1 Starts',
-    date: '22 Nov',
+    title: 'Registration Closes',
+    date: '22 Nov (4:30 PM)',
     start: '2026-11-22',
     end: '2026-11-22',
-    description: 'Round 1 opens for all registered teams.',
+    description: 'Portal closes at 4:30 PM. Complete fee verification and individual registration.',
   },
   {
-    title: 'Round 1 Submission',
-    date: '25 Nov',
-    start: '2026-11-25',
+    title: 'Round 1 (Online)',
+    date: '23 - 25 Nov',
+    start: '2026-11-23',
     end: '2026-11-25',
-    description: 'Last day to submit your Round 1 entry.',
+    description: 'Online prototyping hackathon based on the 10 Round 1 domains.',
   },
   {
     title: 'Round 1 Results',
-    date: '29 Nov',
-    start: '2026-11-29',
-    end: '2026-11-29',
-    description: 'Shortlisted teams for the finals are announced.',
+    date: '30 Nov (10:00 AM)',
+    start: '2026-11-30',
+    end: '2026-11-30',
+    description: 'Results out at 10:00 AM; shortlisted teams qualify for on-campus finals.',
   },
   {
-    title: 'Finals',
+    title: 'Finals @ PSG Tech',
     date: '4 & 5 Dec',
     start: '2026-12-04',
     end: '2026-12-05',
-    description: 'Two-day on-campus finale at PSG College of Technology.',
+    description: 'Two-day on-campus finale with dedicated Round 2 problem statements.',
   },
 ];
 
