@@ -1,4 +1,5 @@
 import { Sponsor } from '../types/hackathon';
+import ForgeAlumnus from '../assets/sponsors/forge_alumnus.jpeg';
 
 export const mockSponsors: Sponsor[] = [
   {
@@ -37,3 +38,13 @@ export const mockSponsors: Sponsor[] = [
     website: 'mailto:csea.cse@psgtech.ac.in',
   },
 ];
+
+export const sponsor: Sponsor[] = [
+  {
+    id: 'sp-1',
+    name: "Forge Alumnus",
+    category: "Outreach Partner",
+    logo: ForgeAlumnus,
+    website: "#"
+  }
+]

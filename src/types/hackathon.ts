@@ -20,7 +20,7 @@ export interface Speaker {
 export interface Sponsor {
   id: string;
   name: string;
-  category: 'Title' | 'Gold' | 'Silver' | 'Community' | 'Partner';
+  category: 'Title' | 'Gold' | 'Silver' | 'Community' | 'Partner' | string;
   logo: string;
   website: string;
 }

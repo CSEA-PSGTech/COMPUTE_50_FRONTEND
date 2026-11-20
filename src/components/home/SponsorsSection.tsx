@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Container } from '../common/Container';
 import { SectionHeading } from '../common/SectionHeading';
-import { mockSponsors } from '../../data/sponsors';
+import { sponsor } from '../../data/sponsors';
 import { EVENT_CONFIG } from '../../config/event';
 import { Badge } from '../common/Badge';
 import { Reveal } from '../common/Reveal';
@@ -10,8 +10,8 @@ import { useReducedMotion } from 'framer-motion';
 import { Handshake } from 'lucide-react';
 import { Sponsor } from '../../types/hackathon';
 
-const SPONSORS_ANNOUNCED = false; // set to true once sponsors are confirmed
-const sponsors: Sponsor[] = SPONSORS_ANNOUNCED ? mockSponsors : [];
+const SPONSORS_ANNOUNCED = true; // set to true once sponsors are confirmed
+const sponsors: Sponsor[] = SPONSORS_ANNOUNCED ? sponsor : [];
 
 interface SponsorCardProps {
   sponsor: Sponsor;
