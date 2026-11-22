@@ -3,15 +3,11 @@ import { X } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 export interface AnnouncementPopupProps {
-  feePerPerson?: string;
   round?: string;
 }
 
 /* Compact info-only event-ticket strip: dark round stub, perforated tear line, one-line message. */
-export const AnnouncementPopup: React.FC<AnnouncementPopupProps> = ({
-  feePerPerson = '₹150 / person',
-  round = '01',
-}) => {
+export const AnnouncementPopup: React.FC<AnnouncementPopupProps> = ({ round = '01' }) => {
   const [isVisible, setIsVisible] = useState<boolean>(true);
   const shouldReduceMotion = useReducedMotion();
 
@@ -45,14 +41,9 @@ export const AnnouncementPopup: React.FC<AnnouncementPopupProps> = ({
                 {round}
               </span>
               <span className="inline-flex items-center gap-1 leading-none">
-                <span className="relative flex h-1.5 w-1.5">
-                  {!shouldReduceMotion && (
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                  )}
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                </span>
-                <span className="font-mono text-[8px] sm:text-[9px] font-bold tracking-[0.2em] text-emerald-300 uppercase">
-                  Live
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-rose-500" />
+                <span className="font-mono text-[8px] sm:text-[9px] font-bold tracking-[0.2em] text-rose-400 uppercase">
+                  Closed
                 </span>
               </span>
             </div>
@@ -71,13 +62,10 @@ export const AnnouncementPopup: React.FC<AnnouncementPopupProps> = ({
                   // Compute 50
                 </span>
                 <span className="block text-[13px] sm:text-[15px] font-extrabold tracking-tight text-[var(--text-primary)] whitespace-nowrap leading-tight">
-                  <span className="sm:hidden">Registrations open</span>
-                  <span className="hidden sm:inline">Round {Number(round)} registrations are open</span>
+                  <span className="sm:hidden">Registrations closed</span>
+                  <span className="hidden sm:inline">Registrations are now closed</span>
                 </span>
               </div>
-              <span className="font-mono text-[11px] sm:text-xs font-bold text-[var(--text-primary)] bg-[var(--accent-muted)] border border-[var(--accent)]/30 px-2 py-1 rounded-lg whitespace-nowrap shrink-0">
-                {feePerPerson}
-              </span>
 
               <button
                 type="button"

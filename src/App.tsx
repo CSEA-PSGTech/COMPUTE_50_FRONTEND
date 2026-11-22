@@ -7,6 +7,7 @@ import { ToastProvider } from './context/ToastContext';
 import { SmoothScrollProvider } from './context/SmoothScrollContext';
 import { ToastContainer } from './components/common/ToastContainer';
 import { SoundEffects } from './components/common/SoundEffects';
+import RegistrationClosedModal from './components/common/RegistrationClosedModal';
 import { AppRouter } from './routes/AppRouter';
 
 try {
@@ -39,6 +40,7 @@ export const App: React.FC = () => {
               </SmoothScrollProvider>
             </BrowserRouter>
             <ToastContainer />
+            <RegistrationClosedModal />
           </ToastProvider>
         </AuthProvider>
       </ThemeProvider>

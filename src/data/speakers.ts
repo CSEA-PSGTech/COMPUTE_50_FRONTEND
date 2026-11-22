@@ -192,7 +192,7 @@ export const mockSpeakers: Speaker[] = [
     id: 'spk-r2-2',
     name: 'Mr. Sujeet Senthilkumar',
     role: 'Salesforce Consultant ',
-    organization: 'Kontinuum Digital Solutions Bangalore',
+    organization: 'Kontinuum Digital Solutions',
     bio: '',
     image: r2judge2Img,
     type: 'judge',

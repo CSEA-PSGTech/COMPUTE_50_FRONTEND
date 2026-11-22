@@ -15,7 +15,6 @@ import { EVENT_CONFIG } from '../../config/event';
 import { home } from '../../data/content';
 import { ParticleBackground } from './ParticleBackground';
 import { useAuth } from '../../hooks/useAuth';
-import { RegistrationDeadlineAlert } from './RegistrationDeadlineAlert';
 
 const Compute50HeroLogo: React.FC<{ shouldReduceMotion: boolean | null }> = ({
   shouldReduceMotion,
@@ -392,10 +391,6 @@ export const Hero: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Urgent Registration Deadline Alert Box */}
-          <motion.div variants={itemVariants} className="w-full">
-            <RegistrationDeadlineAlert />
-          </motion.div>
 
           {/* 6. Countdown (Order: 6) */}
           <motion.div variants={itemVariants} className="w-full max-w-xl sm:max-w-2xl">
