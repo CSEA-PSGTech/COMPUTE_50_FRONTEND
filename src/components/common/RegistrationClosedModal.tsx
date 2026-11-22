@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Lock, AlertTriangle } from 'lucide-react';
+import { X, Lock} from 'lucide-react';
 
 /**
  * Compute 50 — "Registrations are closed" popup.
@@ -11,15 +11,11 @@ import { X, Lock, AlertTriangle } from 'lucide-react';
  */
 export default function RegistrationClosedModal({
   heading = 'Registrations are closed',
-  message = "Due to an overwhelming response, we've preponed the registration deadline to 4:00 PM today.",
-  warning = 'Any payments or registrations made after this will not be considered.',
   subnote = 'Thank you for the incredible interest in Compute 50. Stay tuned on our WhatsApp group for what comes next.',
   oncePerSession = false,
   storageKey = 'c50-reg-closed-popup',
 }: {
   heading?: string;
-  message?: string;
-  warning?: string;
   subnote?: string;
   oncePerSession?: boolean;
   storageKey?: string;
@@ -100,14 +96,8 @@ export default function RegistrationClosedModal({
               <h2 className="mt-2 text-2xl sm:text-[28px] font-extrabold text-[var(--text-primary)] leading-tight">
                 {heading}
               </h2>
-              <p className="mt-3 text-[14px] text-[var(--text-secondary)] leading-relaxed">{message}</p>
-
-              {warning && (
-                <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-left">
-                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-rose-400" />
-                  <p className="text-[13px] font-semibold text-rose-300 leading-relaxed">{warning}</p>
-                </div>
-              )}
+              
+              
 
               {subnote && (
                 <p className="mt-4 text-[13px] text-[var(--text-secondary)]/80 leading-relaxed">{subnote}</p>
