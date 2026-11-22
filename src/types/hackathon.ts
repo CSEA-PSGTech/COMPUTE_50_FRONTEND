@@ -15,6 +15,7 @@ export interface Speaker {
   image: string;
   type: 'speaker' | 'judge' | 'mentor';
   confirmed?: boolean;
+  round?: 1 | 2;
 }
 
 export interface Sponsor {
