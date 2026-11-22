@@ -8,7 +8,6 @@ import {
   Search,
   Pencil,
   Trash2,
-  LogOut,
   Check,
   X,
   Copy,
@@ -83,6 +82,72 @@ const MyIdChip: React.FC<{ myId: string }> = ({ myId }) => {
       {myId}
       {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5 opacity-70" />}
     </button>
+  );
+};
+
+const initials = (name?: string): string =>
+  (name || '?')
+    .trim()
+    .split(/\s+/)
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+
+const MemberAvatar: React.FC<{ name?: string; leader?: boolean }> = ({ name, leader }) => (
+  <div
+    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-mono text-xs font-bold ${
+      leader
+        ? 'bg-[var(--accent)] text-[var(--accent-text,#0A0A0A)]'
+        : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] border border-[var(--border-color)]'
+    }`}
+    aria-hidden
+  >
+    {initials(name)}
+  </div>
+);
+
+const CopyField: React.FC<{ label: string; value: string; hint?: string; highlight?: boolean }> = ({
+  label,
+  value,
+  hint,
+  highlight,
+}) => {
+  const [copied, setCopied] = useState(false);
+  return (
+    <div
+      className={`rounded-xl border p-3 ${
+        highlight
+          ? 'border-[var(--accent)]/50 bg-[var(--accent-muted)] shadow-[0_0_0_1px_rgba(251,191,36,0.15)]'
+          : 'border-[var(--border-color)] bg-[var(--bg-main)]'
+      }`}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span
+          className={`text-[10px] font-mono font-bold uppercase tracking-wider ${
+            highlight ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)]'
+          }`}
+        >
+          {label}
+        </span>
+        <button
+          type="button"
+          onClick={() => {
+            navigator.clipboard?.writeText(value).then(() => {
+              setCopied(true);
+              setTimeout(() => setCopied(false), 1800);
+            });
+          }}
+          className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-bold text-[var(--accent)] hover:bg-[var(--accent)]/10 transition-colors cursor-pointer"
+          title={`Copy ${label}`}
+        >
+          {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+          {copied ? 'Copied' : 'Copy'}
+        </button>
+      </div>
+      <p className="mt-1 font-mono text-[12.5px] text-[var(--text-primary)] break-all select-all">{value}</p>
+      {hint && <p className="mt-1 text-[11px] text-[var(--text-secondary)] leading-relaxed">{hint}</p>}
+    </div>
   );
 };
 
@@ -484,20 +549,23 @@ const TeamCardBody: React.FC<HackathonTeamCardProps> = ({ registered, myId }) =>
               }`}
             >
               <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <p className="text-sm font-bold text-[var(--text-primary)] truncate">
-                    {m.name || 'Unknown user'}
-                    {me && <span className="ml-1.5 text-[11px] font-semibold text-[var(--text-secondary)]">(you)</span>}
-                  </p>
-                  <p className="mt-0.5 flex items-center gap-1.5 font-mono text-[11.5px] text-[var(--text-secondary)]">
-                    {m.uniqueId}
-                    {m.isLeader && (
-                      <span className="inline-flex items-center gap-1 font-sans font-bold text-[var(--accent)]">
-                        <Crown className="w-3 h-3" /> Leader
-                      </span>
-                    )}
-                  </p>
-                  {m.college && <p className="mt-1 text-[12px] text-[var(--text-secondary)] truncate">{m.college}</p>}
+                <div className="flex items-start gap-3 min-w-0">
+                  <MemberAvatar name={m.name} leader={m.isLeader} />
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-[var(--text-primary)] truncate">
+                      {m.name || 'Unknown user'}
+                      {me && <span className="ml-1.5 text-[11px] font-semibold text-[var(--text-secondary)]">(you)</span>}
+                    </p>
+                    <p className="mt-0.5 flex items-center gap-1.5 font-mono text-[11.5px] text-[var(--text-secondary)]">
+                      {m.uniqueId}
+                      {m.isLeader && (
+                        <span className="inline-flex items-center gap-1 font-sans font-bold text-[var(--accent)]">
+                          <Crown className="w-3 h-3" /> Leader
+                        </span>
+                      )}
+                    </p>
+                    {m.college && <p className="mt-1 text-[12px] text-[var(--text-secondary)] truncate">{m.college}</p>}
+                  </div>
                 </div>
                 {canEdit && !m.isLeader && (
                   <div className="flex items-center gap-1 shrink-0">
@@ -537,6 +605,13 @@ const TeamCardBody: React.FC<HackathonTeamCardProps> = ({ registered, myId }) =>
             </li>
           ))}
       </ul>
+
+      <CopyField
+        label="Team ID"
+        value={team._id}
+        hint="Everyone on the team can copy this. Share it with the organisers if they ask for it."
+        highlight
+      />
 
       {canAdd && (
         <div className="space-y-2">
@@ -666,19 +741,10 @@ const TeamCardBody: React.FC<HackathonTeamCardProps> = ({ registered, myId }) =>
       )}
 
       {open && !isLeader && (
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border-color)] pt-4">
-          <p className="text-[12px] text-[var(--text-secondary)]">Only the team leader can add or remove members.</p>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setConfirm({ kind: 'leave' })}
-            isLoading={busy === 'leave'}
-            disabled={!!busy}
-            leftIcon={<LogOut className="w-4 h-4" />}
-            className="text-red-600 hover:bg-red-500/10"
-          >
-            Leave team
-          </Button>
+        <div className="flex flex-wrap items-center gap-3 border-t border-[var(--border-color)] pt-4">
+          <p className="text-[12px] text-[var(--text-secondary)]">
+            Only the team leader can change the team. If you need to leave, ask your leader to remove you.
+          </p>
         </div>
       )}
 
