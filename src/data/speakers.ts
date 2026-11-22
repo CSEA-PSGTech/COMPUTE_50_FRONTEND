@@ -11,6 +11,9 @@ import kishoreImg from '../assets/images/speakers/kishore.jpeg';
 import prasheethaImg from '../assets/images/speakers/prasheetha.jpeg';
 import simrithaaImg from '../assets/images/speakers/simrithaa2.jpeg';
 import sreeragImg from '../assets/images/speakers/sreeraghavan.jpeg';
+import r2judge1Img from '../assets/images/speakers/ravichandran.jpeg';
+import r2judge2Img from '../assets/images/speakers/Sujeet.jpeg';
+import r2judge3Img from '../assets/images/speakers/dhinakaran.jpeg';
 
 export const mockSpeakers: Speaker[] = [
   {
@@ -172,5 +175,39 @@ export const mockSpeakers: Speaker[] = [
     image: '',
     type: 'judge',
     confirmed: true,
+  },
+    // ===== Round 2 (Finals) judges — shown on the deck's front page, in this order =====
+  {
+    id: 'spk-r2-1',
+    name: 'Mr. Ravichandran N',
+    role: 'Software Developer',
+    organization: 'Zoho Chennai',
+    bio: '',
+    image: r2judge1Img,   // or '' for an initials avatar
+    type: 'judge',
+    confirmed: true,
+    round: 2,
+  },
+  {
+    id: 'spk-r2-2',
+    name: 'Mr. Sujeet Senthilkumar',
+    role: 'Salesforce Consultant ',
+    organization: 'Kontinuum Digital Solutions Bangalore',
+    bio: '',
+    image: r2judge2Img,
+    type: 'judge',
+    confirmed: true,
+    round: 2,
+  },
+  {
+    id: 'spk-r2-3',
+    name: 'Mr. Dhinakaran Thangaraj',
+    role: 'AI Engineer',
+    organization: 'SQ1 Security Technologies Chennai',
+    bio: '',
+    image: r2judge3Img,
+    type: 'judge',
+    confirmed: true,
+    round: 2,
   },
 ];

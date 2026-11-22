@@ -25,6 +25,8 @@ export const API_CONFIG = {
 
   profileEditEnabled: (env('VITE_PROFILE_EDIT', import.meta.env.VITE_PROFILE_EDIT) ?? 'false') === 'true',
 
+  teamFormation: (env('VITE_TEAM_FORMATION', import.meta.env.VITE_TEAM_FORMATION) ?? 'false') === 'true',
+
   participantWhatsappUrl: env('VITE_PARTICIPANT_WHATSAPP_URL', import.meta.env.VITE_PARTICIPANT_WHATSAPP_URL) || '',
 
   paymentPortalUrl: env('VITE_PAYMENT_PORTAL_URL', import.meta.env.VITE_PAYMENT_PORTAL_URL) || '',

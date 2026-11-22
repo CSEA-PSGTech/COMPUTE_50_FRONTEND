@@ -15,14 +15,29 @@ import { Speaker } from '../../types/hackathon';
 // Only confirmed guests are shown; anyone with confirmed: false is hidden entirely.
 const sortName = (name: string) => name.replace(/^((mr|mrs|ms|dr|prof)\.?\s+)+/i, '').trim().toLowerCase();
 const isPlaceholder = (s: Speaker) => /^to be announced$/i.test(s.name.trim());
-const speakers: Speaker[] = mockSpeakers
-  .filter((s) => s.confirmed !== false)
+const allSpeakers: Speaker[] = mockSpeakers.filter((s) => s.confirmed !== false);
+// Round 1 fills the deck pages, sorted alphabetically.
+const speakers: Speaker[] = allSpeakers
+  .filter((s) => (s.round ?? 1) !== 2)
   .sort(
     (a, b) =>
       Number(isPlaceholder(a)) - Number(isPlaceholder(b)) ||
       sortName(a.name).localeCompare(sortName(b.name)),
   );
-const PAGE_SIZE = 8;
+// Newer judges (marked round: 2) are placed FIRST, in insertion order — i.e. before the
+// alphabetical 12 (so ahead of Abinav). They are not sorted.
+const round2Judges: Speaker[] = allSpeakers.filter((s) => s.round === 2);
+const PAGE_SIZE = 6;
+
+const chunkPages = (arr: Speaker[], size: number): Speaker[][] => {
+  const out: Speaker[][] = [];
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+  return out;
+};
+// One continuous deck: new judges (insertion order) then the alphabetical 12, paged uniformly by 6.
+const deckSpeakers: Speaker[] = [...round2Judges, ...speakers];
+const pageGroups: Speaker[][] = chunkPages(deckSpeakers, PAGE_SIZE);
+const pageAt = (page: number): Speaker[] => pageGroups[page - 1] ?? [];
 
 /* Fullscreen photo card shown when a speaker photo is clicked.
    Rendered through a portal so parent transforms (deck/flip animations) can't break fixed positioning. */
@@ -160,7 +175,7 @@ export const SpeakersSection: React.FC = () => {
   const [activePhoto, setActivePhoto] = useState<Speaker | null>(null);
 
   // Pagination state (8 per page)
-  const totalPages = Math.ceil(speakers.length / PAGE_SIZE);
+  const totalPages = pageGroups.length;
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   // True continuous 3D card flip architecture
@@ -178,8 +193,15 @@ export const SpeakersSection: React.FC = () => {
   const [activeMobileIndex, setActiveMobileIndex] = useState<number>(0);
   const activeIndexRef = useRef<number>(0);
   activeIndexRef.current = activeMobileIndex;
-  const mobilePageSpeakers = speakers.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const mobilePageSpeakers = pageAt(currentPage);
   const mobileGroupTotal = mobilePageSpeakers.length;
+
+  // Desktop deck slot count: while flipping, render enough slots for both faces;
+  // when settled, render only the current page's cards so short pages (e.g. Round 2
+  // with 3) don't reserve empty slot rows below them.
+  const deckSlotCount = isFlippingPage
+    ? Math.max(pageAt(frontPage).length, pageAt(backPage).length)
+    : pageAt(currentPage).length;
 
   // Photo modal: close on Escape, lock page scroll while open
   useEffect(() => {
@@ -467,7 +489,7 @@ export const SpeakersSection: React.FC = () => {
           />
         </Reveal>
 
-        {/* MOBILE VIEW (< 640px): Compact summary card ⇄ Swipeable carousel for current 8 cards */}
+        {/* MOBILE VIEW (< 640px): Compact summary card ⇄ Swipeable carousel for current page */}
         <div className="block sm:hidden w-full my-4">
           <motion.div layout className="w-full overflow-hidden">
             {!expanded ? (
@@ -484,7 +506,7 @@ export const SpeakersSection: React.FC = () => {
                   GUESTS & JUDGES
                 </span>
                 <h3 className="text-2xl font-black text-[var(--text-primary)] mb-1">
-                  {speakers.length} {speakers.length === 1 ? 'Guest' : 'Guests'}
+                  {allSpeakers.length} {allSpeakers.length === 1 ? 'Guest' : 'Guests'}
                 </h3>
                 <p className="text-xs text-[var(--text-secondary)] mb-4 font-medium">
                   Tap to view speakers & judges
@@ -608,7 +630,7 @@ export const SpeakersSection: React.FC = () => {
                         aria-label="Previous 8 judges"
                       >
                         <ChevronLeft className="w-3.5 h-3.5 stroke-[3]" />
-                        <span>PREVIOUS {PAGE_SIZE}</span>
+                        <span>PREVIOUS {pageAt(currentPage - 1).length}</span>
                       </button>
                     )}
                     {currentPage < totalPages && (
@@ -618,7 +640,7 @@ export const SpeakersSection: React.FC = () => {
                         className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--accent)] text-black font-extrabold text-[11px] uppercase tracking-wider shadow-xs active:scale-95 transition-all cursor-pointer"
                         aria-label="Meet the next 8 judges"
                       >
-                        <span>MEET THE NEXT {Math.min(PAGE_SIZE, speakers.length - currentPage * PAGE_SIZE)}</span>
+                        <span>MEET THE NEXT {pageAt(currentPage + 1).length}</span>
                         <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
                       </button>
                     )}
@@ -658,11 +680,11 @@ export const SpeakersSection: React.FC = () => {
               ref={gridRef}
               id="guests-grid"
               role="list"
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 relative"
             >
-              {Array.from({ length: PAGE_SIZE }).map((_, idx) => {
-                const frontSpeaker = speakers[(frontPage - 1) * PAGE_SIZE + idx];
-                const backSpeaker = speakers[(backPage - 1) * PAGE_SIZE + idx];
+              {Array.from({ length: deckSlotCount }).map((_, idx) => {
+                const frontSpeaker = pageAt(frontPage)[idx];
+                const backSpeaker = pageAt(backPage)[idx];
                 const offset = cardOffsets[idx] || { x: 0, y: 0 };
 
                 // Collapsed stack offsets (intentional ~1.15 scale for top card)
@@ -894,13 +916,13 @@ export const SpeakersSection: React.FC = () => {
                   className="pointer-events-auto px-8 py-7 rounded-2xl bg-[var(--bg-surface)] border-2 border-[var(--accent)] shadow-2xl flex flex-col items-center justify-center text-center group cursor-pointer focus:outline-none focus:ring-4 focus:ring-[var(--accent)]/50 transition-all hover:scale-105 max-w-sm"
                   aria-expanded={expanded}
                   aria-controls="guests-grid"
-                  aria-label={`Expand deck of ${speakers.length} guests and judges`}
+                  aria-label={`Expand deck of ${allSpeakers.length} guests and judges`}
                 >
                   <span className="px-3.5 py-1 rounded-full bg-[var(--accent)]/15 text-[var(--accent)] border border-[var(--accent)]/40 text-xs font-bold font-mono tracking-widest uppercase mb-3">
                     GUESTS & JUDGES
                   </span>
                   <h3 className="text-3xl font-black text-[var(--text-primary)] tracking-tight mb-1.5">
-                    {speakers.length} {speakers.length === 1 ? 'Guest' : 'Guests'}
+                    {allSpeakers.length} {allSpeakers.length === 1 ? 'Guest' : 'Guests'}
                   </h3>
                   <p className="text-sm text-[var(--text-primary)]/80 mb-5 font-medium">
                     Click or press Enter to unpack guest deck
@@ -933,7 +955,7 @@ export const SpeakersSection: React.FC = () => {
                     aria-label="Previous 8 judges"
                   >
                     <ChevronLeft className="w-4 h-4 stroke-[3]" />
-                    <span>PREVIOUS {PAGE_SIZE}</span>
+                    <span>PREVIOUS {pageAt(currentPage - 1).length}</span>
                   </button>
                 )}
 
@@ -953,7 +975,7 @@ export const SpeakersSection: React.FC = () => {
                     className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--accent)] text-black font-extrabold text-[11px] tracking-wider uppercase shadow-xs hover:brightness-110 active:scale-95 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                     aria-label="Meet the next 8 judges"
                   >
-                    <span>MEET THE NEXT {Math.min(PAGE_SIZE, speakers.length - currentPage * PAGE_SIZE)}</span>
+                    <span>MEET THE NEXT {pageAt(currentPage + 1).length}</span>
                     <ChevronRight className="w-4 h-4 stroke-[3]" />
                   </button>
                 )}

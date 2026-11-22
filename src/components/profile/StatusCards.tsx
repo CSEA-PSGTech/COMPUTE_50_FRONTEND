@@ -92,7 +92,7 @@ export const StatusCards: React.FC<StatusCardsProps> = ({
       </Card>
 
       {paymentStatus && (
-        <FeePaymentCard paymentStatus={paymentStatus} user={user} onUpdated={onFeeUpdated} />
+        <FeePaymentCard paymentStatus={paymentStatus} user={user} closed={closed} onUpdated={onFeeUpdated} />
       )}
     </div>
   );

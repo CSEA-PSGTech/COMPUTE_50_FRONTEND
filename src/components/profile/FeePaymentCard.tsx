@@ -13,6 +13,7 @@ import type { User } from '../../types/auth';
 interface FeePaymentCardProps {
   paymentStatus: PaymentStatus;
   user?: User;
+  closed?: boolean;
   onUpdated?: () => Promise<void> | void;
 }
 
@@ -23,7 +24,7 @@ const formatDate = (value: string | null) =>
     ? new Date(value).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
     : '—';
 
-export const FeePaymentCard: React.FC<FeePaymentCardProps> = ({ paymentStatus, user, onUpdated }) => {
+export const FeePaymentCard: React.FC<FeePaymentCardProps> = ({ paymentStatus, user, closed = false, onUpdated }) => {
   const [showGuide, setShowGuide] = useState(false);
   const [checking, setChecking] = useState(false);
   const [records, setRecords] = useState<BackendPaymentRecord[]>([]);
@@ -88,6 +89,8 @@ export const FeePaymentCard: React.FC<FeePaymentCardProps> = ({ paymentStatus, u
     ? 'Your registration fee is confirmed.'
     : notApplicable
     ? 'No registration fee is required.'
+    : closed
+    ? 'Registrations are closed. If you already paid, use “Check Payment Status” to verify.'
     : 'Pay on the college fee portal, then click “Check Payment Status”.';
 
   const messageStyles = {
@@ -114,20 +117,30 @@ export const FeePaymentCard: React.FC<FeePaymentCardProps> = ({ paymentStatus, u
         </div>
 
         {!paid && !notApplicable && (
-          <div className="flex flex-col sm:flex-row gap-2.5">
-            <Button size="sm" onClick={() => setShowGuide(true)} className="whitespace-nowrap">
-              Pay Now
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleCheck}
-              isLoading={checking}
-              leftIcon={!checking ? <RefreshCw className="w-4 h-4" /> : undefined}
-              className="whitespace-nowrap"
-            >
-              Check Payment Status
-            </Button>
+          <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col sm:flex-row gap-2.5">
+              {!closed && (
+                <Button size="sm" onClick={() => setShowGuide(true)} className="whitespace-nowrap">
+                  Pay Now
+                </Button>
+              )}
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleCheck}
+                isLoading={checking}
+                leftIcon={!checking ? <RefreshCw className="w-4 h-4" /> : undefined}
+                className="whitespace-nowrap"
+              >
+                Check Payment Status
+              </Button>
+            </div>
+            {closed && (
+              <p className="flex items-start gap-2 rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] px-3.5 py-2.5 text-[12.5px] leading-relaxed text-[var(--text-secondary)]">
+                <Info className="w-4 h-4 mt-0.5 shrink-0" />
+                <span>Registrations are now closed, so new payments are no longer accepted. If you already paid, use “Check Payment Status” above to confirm it.</span>
+              </p>
+            )}
           </div>
         )}
 

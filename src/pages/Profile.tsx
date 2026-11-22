@@ -5,6 +5,7 @@ import { SectionHeading } from '../components/common/SectionHeading';
 import { PersonalDetails } from '../components/profile/PersonalDetails';
 import { EditProfileModal } from '../components/profile/EditProfileModal';
 import { WhatsAppGroupCard } from '../components/profile/WhatsAppGroupCard';
+import { HackathonTeamCard } from '../components/profile/HackathonTeamCard';
 import { ProfilePhotoCard } from '../components/profile/ProfilePhotoCard';
 import { hasProfilePhoto } from '../lib/profilePhoto';
 import { StatusCards } from '../components/profile/StatusCards';
@@ -126,6 +127,7 @@ export const Profile: React.FC = () => {
             onFeeUpdated={fetchProfileData}
             photoOk={hasProfilePhoto(profile.user.profilePhoto)}
           />
+          <HackathonTeamCard registered={profile.registrationStatus === 'Confirmed'} myId={profile.user.uniqueId} />
           <WhatsAppGroupCard registered={profile.registrationStatus === 'Confirmed'} />
         </div>
 
