@@ -197,16 +197,19 @@ const TeamCardBody: React.FC<HackathonTeamCardProps> = ({ registered, myId }) =>
   }, []);
 
   useEffect(() => {
-    if (registered && API_CONFIG.teamFormation) load();
+    if (registered) load();
   }, [registered, load]);
 
   const isLeader = !!team && team.leaderId === myId;
+  // Backend open flag AND the frontend feature flag. When either is off, the team
+  // is read-only — details stay visible, only editing is disabled (never masked).
   const open = !!settings?.open;
+  const formationOpen = open && API_CONFIG.teamFormation;
   const maxSize = settings?.maxSize ?? 4;
   const minSize = settings?.minSize ?? 1;
   const size = team?.members.length ?? 0;
   const full = size >= maxSize;
-  const canEdit = open && isLeader && !finalized;
+  const canEdit = formationOpen && isLeader && !finalized;
   const canAdd = canEdit && !full;
 
   const teamId = team?._id;
@@ -356,20 +359,6 @@ const TeamCardBody: React.FC<HackathonTeamCardProps> = ({ registered, myId }) =>
     );
   }
 
-  if (!API_CONFIG.teamFormation) {
-    return (
-      <CardShell icon={<Lock className="w-5 h-5" />} title="Your Team" muted>
-        <p className="text-[13px] text-[var(--text-secondary)] mt-0.5 leading-relaxed">
-          Team formation opens after registrations close. You will be able to create a team or be added to one here,
-          and updates will be shared in the WhatsApp group.
-        </p>
-        <div className="mt-3 flex flex-wrap items-center gap-2 text-[12.5px] text-[var(--text-secondary)]">
-          Your ID <MyIdChip myId={myId} />
-        </div>
-      </CardShell>
-    );
-  }
-
   if (loading) {
     return (
       <CardShell icon={<Users className="w-5 h-5" />} title="Your Team">
@@ -395,11 +384,11 @@ const TeamCardBody: React.FC<HackathonTeamCardProps> = ({ registered, myId }) =>
   if (!team) {
     return (
       <CardShell
-        icon={open ? <Users className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
-        title={open ? 'Create a team' : 'Your Team'}
-        muted={!open}
+        icon={formationOpen ? <Users className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
+        title={formationOpen ? 'Create a team' : 'Your Team'}
+        muted={!formationOpen}
       >
-        {open ? (
+        {formationOpen ? (
           <>
             <p className="text-[13px] text-[var(--text-secondary)] mt-0.5 leading-relaxed">
               Teams have {minSize === maxSize ? maxSize : `${minSize} to ${maxSize}`} members, including the leader.
@@ -515,7 +504,7 @@ const TeamCardBody: React.FC<HackathonTeamCardProps> = ({ registered, myId }) =>
                 Ready
               </span>
             )}
-            {!open && (
+            {!formationOpen && (
               <span className="inline-flex items-center gap-1 rounded-lg border border-[var(--border-color)] bg-[var(--bg-secondary)] px-2.5 py-1 text-xs font-semibold text-[var(--text-secondary)]">
                 <Lock className="w-3 h-3" /> Locked
               </span>
@@ -682,13 +671,13 @@ const TeamCardBody: React.FC<HackathonTeamCardProps> = ({ registered, myId }) =>
         <p className="text-[12.5px] text-[var(--text-secondary)]">Your team is full. Remove a member to add someone else.</p>
       )}
 
-      {!open && (
+      {!formationOpen && (
         <p className="text-[12.5px] text-[var(--text-secondary)]">
-          Team formation is closed, so this team can no longer be changed. Contact the organisers if something is wrong.
+          Team formation is closed, so this team can no longer be changed. You can still view your team details above.
         </p>
       )}
 
-      {open && isLeader && (
+      {formationOpen && isLeader && (
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border-color)] pt-4">
           {finalized ? (
             <>
@@ -740,7 +729,7 @@ const TeamCardBody: React.FC<HackathonTeamCardProps> = ({ registered, myId }) =>
         </div>
       )}
 
-      {open && !isLeader && (
+      {formationOpen && !isLeader && (
         <div className="flex flex-wrap items-center gap-3 border-t border-[var(--border-color)] pt-4">
           <p className="text-[12px] text-[var(--text-secondary)]">
             Only the team leader can change the team. If you need to leave, ask your leader to remove you.
