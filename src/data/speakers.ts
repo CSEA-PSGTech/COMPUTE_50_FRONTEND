@@ -14,6 +14,7 @@ import sreeragImg from '../assets/images/speakers/sreeraghavan.jpeg';
 import r2judge1Img from '../assets/images/speakers/ravichandran.jpeg';
 import r2judge2Img from '../assets/images/speakers/Sujeet.jpeg';
 import r2judge3Img from '../assets/images/speakers/dhinakaran.jpeg';
+import r2judge4Img from '../assets/images/speakers/Vishnu.jpeg';
 
 export const mockSpeakers: Speaker[] = [
   {
@@ -177,7 +178,18 @@ export const mockSpeakers: Speaker[] = [
     confirmed: true,
   },
     // ===== Round 2 (Finals) judges — shown on the deck's front page, in this order =====
-  {
+    {
+      id:'spk-r2-0',
+      name: 'Mr. Vishnu Prabhu S',
+      role: 'Associate Manager',
+      organization: 'Accenture',
+      bio: '',
+      image: r2judge4Img,
+      type: 'judge',
+      confirmed: true,
+      round: 2,
+    },
+    {
     id: 'spk-r2-1',
     name: 'Mr. Ravichandran N',
     role: 'Software Developer',
