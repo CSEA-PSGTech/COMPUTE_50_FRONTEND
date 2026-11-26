@@ -15,6 +15,7 @@ import r2judge1Img from '../assets/images/speakers/ravichandran.jpeg';
 import r2judge2Img from '../assets/images/speakers/Sujeet.jpeg';
 import r2judge3Img from '../assets/images/speakers/dhinakaran.jpeg';
 import r2judge4Img from '../assets/images/speakers/Vishnu.jpeg';
+import r2judge5Img from '../assets/images/speakers/Sarvaesh.jpeg';
 
 export const mockSpeakers: Speaker[] = [
   {
@@ -202,6 +203,17 @@ export const mockSpeakers: Speaker[] = [
   },
   {
     id: 'spk-r2-2',
+    name: 'Mr. Sarvaesh Raam',
+    role: 'Associate Engineer', 
+    organization: 'Verticurl',
+    bio: '',
+    image: r2judge5Img,
+    type: 'judge',
+    confirmed: true,
+    round: 2,
+  },
+  {
+    id: 'spk-r2-3',
     name: 'Mr. Sujeet Senthilkumar',
     role: 'Salesforce Consultant ',
     organization: 'Kontinuum Digital Solutions',
@@ -212,7 +224,7 @@ export const mockSpeakers: Speaker[] = [
     round: 2,
   },
   {
-    id: 'spk-r2-3',
+    id: 'spk-r2-4',
     name: 'Mr. Dhinakaran Thangaraj',
     role: 'AI Engineer',
     organization: 'SQ1 Security Technologies Chennai',
