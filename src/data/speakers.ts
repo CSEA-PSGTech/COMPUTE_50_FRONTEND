@@ -15,7 +15,7 @@ import r2judge1Img from '../assets/images/speakers/ravichandran.jpeg';
 import r2judge2Img from '../assets/images/speakers/Sujeet.jpeg';
 import r2judge3Img from '../assets/images/speakers/dhinakaran.jpeg';
 import r2judge4Img from '../assets/images/speakers/Vishnu.jpeg';
-import r2judge5Img from '../assets/images/speakers/Sarvaesh.jpeg';
+import r2judge5Img from '../assets/images/speakers/sarvaesh.jpeg';
 
 export const mockSpeakers: Speaker[] = [
   {
